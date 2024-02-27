@@ -21,7 +21,7 @@ repository               : "andisheghs.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "google profile.jpg"
+  avatar           : "profile_.jpg"
   name             : "Elahe Ghasemi"
   pronouns         : # example: "she/her"  
   bio              : "PhD student at Northeastern University"
