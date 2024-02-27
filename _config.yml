@@ -24,7 +24,7 @@ author:
   avatar           : "google profile.jpg"
   name             : "Elahe Ghasemi"
   pronouns         : # example: "she/her"  
-  bio              : "PhD student bio"
+  bio              : "PhD student at Northeastern University"
   location         : "Boston, USA"
   employer         : 
   uri              : # URL
@@ -36,7 +36,7 @@ author:
   researchgate     : # URL
 
   # Repositories and software development
-  github           : "andisheGhs"
+  github           : 
 
   # Social media
 
