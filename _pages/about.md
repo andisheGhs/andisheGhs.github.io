@@ -7,23 +7,6 @@ redirect_from:
   - /about.html
 ---
 
-I am a PhD student in the Department of Computer Science at Northeastern University.
-
-
-Education
-======
-* Ph.D in Computer Science, Northeastern University, 2024- (expected)
-* M.S. in Computer Science, University of Paris, 2022-2023
-* B.S. in Computer Science, Sharif University of Technology, 2017-2022
-
-{% if site.author.googlescholar %}
-  <div class="wordwrap">You can also find my articles on <a href="{{site.author.googlescholar}}">my Google Scholar profile</a>.</div>
-{% endif %}
-
-{% include base_path %}
-
-{% for post in site.publications reversed %}
-  {% include archive-single.html %}
-{% endfor %}
+I am a PhD student in the Department of Computer Science at Northeastern University. I am co-advised by Rajmohan Rajaraman and Mahsa Derakhshan. I am broadly interested in theoretical computer science and online algorithms. I was a master's student in the MPRI program at Université Paris Cité in France. I did my master's internship project with Chien-Chung Huang at ENS d'Ulm on a job scheduling problem with bag constraints. Before that, I was an undergraduate computer science student at Sharif University of Technology in Iran.
 
 
