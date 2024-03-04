@@ -11,7 +11,7 @@ I am a PhD student in the Department of Computer Science at Northeastern Univers
 
 [CV](files/Elahe_Ghasemi_2024_resume.pdf)
 
-#Publications
+# Publications
 
 Galloping in fast-growth natural merge sorts. Elahe Ghasemi, [Vincent Jug ́e](https://igm.univ-mlv.fr/~juge/), and [Ghazal Khalighinezhad](https://ghazalkhalighinejad.github.io/).
 Published in ICALP 2022 [pdf](https://drops.dagstuhl.de/storage/00lipics/lipics-vol229-icalp2022/LIPIcs.ICALP.2022.68/LIPIcs.ICALP.2022.68.pdf)
