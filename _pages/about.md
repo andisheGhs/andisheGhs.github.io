@@ -11,3 +11,11 @@ I am a PhD student in the Department of Computer Science at Northeastern Univers
 
 [CV](files/Elahe_Ghasemi_2024_resume.pdf)
 
+Publications
+
+Galloping in fast-growth natural merge sorts
+Published in 49th International Colloquium on Automata, Languages, and Programming (ICALP 2022), 2022 [pdf](https://drops.dagstuhl.de/storage/00lipics/lipics-vol229-icalp2022/LIPIcs.ICALP.2022.68/LIPIcs.ICALP.2022.68.pdf)
+
+Entropic weighted rank function
+Published in 10th Iran Workshop on Communication and Information Theory (IWCIT 2022), 2022 [pdf](https://arxiv.org/pdf/2206.05968.pdf)
+
