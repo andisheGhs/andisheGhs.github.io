@@ -13,12 +13,12 @@ I am a PhD student in the Department of Computer Science at Northeastern Univers
 
 # Publications
 
-##### Galloping in fast-growth natural merge sorts.
-Elahe Ghasemi, [Vincent Jugé](https://igm.univ-mlv.fr/~juge/), and [Ghazal Khalighinezhad](https://ghazalkhalighinejad.github.io/).
+#### Galloping in fast-growth natural merge sorts.
+#####Elahe Ghasemi, [Vincent Jugé](https://igm.univ-mlv.fr/~juge/), and [Ghazal Khalighinezhad](https://ghazalkhalighinejad.github.io/).
 (ICALP 2022) [pdf](https://drops.dagstuhl.de/storage/00lipics/lipics-vol229-icalp2022/LIPIcs.ICALP.2022.68/LIPIcs.ICALP.2022.68.pdf)
 
 
 
-###### Entropic weighted rank function.
-Mohammad Rashid, Elahe Ghasemi, and [Javad B Ebrahimi](http://math.sharif.ir/faculties/ebrahimi). (IWCIT 2022) [pdf](https://arxiv.org/pdf/2206.05968.pdf)
+#### Entropic weighted rank function.
+##### Mohammad Rashid, Elahe Ghasemi, and [Javad B Ebrahimi](http://math.sharif.ir/faculties/ebrahimi). (IWCIT 2022) [pdf](https://arxiv.org/pdf/2206.05968.pdf)
 
