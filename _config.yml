@@ -8,7 +8,7 @@
 
 # Basic Site Settings
 locale                   : "en-US"
-title                    : "Elahe Ghasemi (Andishe)"
+title                    : "Elahe Ghasemi (Andisheh)"
 title_separator          : "-"
 name                     : &name "Andishe"
 description              : &description "PhD student at Northeastern University"
@@ -22,7 +22,7 @@ repository               : "andisheghs.github.io"
 author:
   # Biographic information
   avatar           : "profile_.jpg"
-  name             : "Elahe Ghasemi (Andishe)"
+  name             : "Elahe Ghasemi (Andisheh)"
   pronouns         : # example: "she/her"  
   bio              : "PhD student at Northeastern University"
   location         : "Boston, USA"
