@@ -11,6 +11,8 @@ I am a PhD student in the Department of Computer Science at [Northeastern Univer
 
 My legal name is Elahe Ghasemi, But I prefer to be called Andisheh.
 
+I am co-organizing [NEU Theory Seminar](https://www2.ccs.neu.edu/theory/seminar.html).
+
 [CV](files/Elahe_Ghasemi_2024_resume.pdf)
 
 # Publications
