@@ -15,7 +15,7 @@ In Fall 2024, I am co-organizing [NEU Theory Seminar](https://www2.ccs.neu.edu/t
 
 If you are a bachelor's or master's student seeking help with CVs and statements of purpose for PhD applications, feel free to contact me.
 
-My legal name is Elahe Ghasemi, But I prefer to be called Andisheh.
+My legal name is Elahe Ghasemi, But I go by Andisheh.
 
 [CV](files/Elahe_Ghasemi_2024_resume.pdf)
 
