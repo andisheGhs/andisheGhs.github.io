@@ -23,7 +23,7 @@ My legal name is Elahe Ghasemi, But I go by Andisheh.
 
 ### Galloping in fast-growth natural merge sorts.
  Elahe Ghasemi, [Vincent Jugé](https://igm.univ-mlv.fr/~juge/), and [Ghazal Khalighinezhad](https://ghazalkhalighinejad.github.io/).
-(ICALP 2022) [pdf](https://drops.dagstuhl.de/storage/00lipics/lipics-vol229-icalp2022/LIPIcs.ICALP.2022.68/LIPIcs.ICALP.2022.68.pdf)
+(ICALP 2022) [pdf](https://drops.dagstuhl.de/storage/00lipics/lipics-vol229-icalp2022/LIPIcs.ICALP.2022.68/LIPIcs.ICALP.2022.68.pdf). (Algorithmica 2024) [pdf](https://lnkd.in/exDaXE72).
 
 
 
