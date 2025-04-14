@@ -26,11 +26,11 @@ My legal name is Elahe Ghasemi, But I go by Andisheh.
   (ICALP 2025)
 
 ### Galloping in fast-growth natural merge sorts.
- Elahe Ghasemi, Vincent Jugé, and Ghazal Khalighinezhad.
+ Elahe Ghasemi, Vincent Jugé, Ghazal Khalighinezhad, and Helia Yazdanyar.
 (ICALP 2022) [pdf](https://drops.dagstuhl.de/storage/00lipics/lipics-vol229-icalp2022/LIPIcs.ICALP.2022.68/LIPIcs.ICALP.2022.68.pdf). (Algorithmica 2024) [pdf](https://lnkd.in/exDaXE72).
 
 
 
 ### Entropic weighted rank function.
- Mohammad Rashid, Elahe Ghasemi, and [Javad B Ebrahimi](http://math.sharif.ir/faculties/ebrahimi). (IWCIT 2022) [pdf](https://arxiv.org/pdf/2206.05968.pdf)
+ Mohammad Rashid, Elahe Ghasemi, and Javad B Ebrahimi. (IWCIT 2022) [pdf](https://arxiv.org/pdf/2206.05968.pdf)
 
