@@ -25,7 +25,7 @@ My legal name is Elahe Ghasemi, But I go by Andisheh.
 
 ### One-way Communication Complexity of Minimum Vertex Cover in General Graphs.
   Mahsa Derakhshan, Andisheh Ghasemi, and Rajmohan Rajaraman.
-  (ICALP 2025) [pdf](https://arxiv.org/abs/2505.00164)
+  (ICALP 2025) [pdf](https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ICALP.2025.66) arxiv(https://arxiv.org/abs/2505.00164)
 
 ### Galloping in fast-growth natural merge sorts.
  Elahe Ghasemi, Vincent Jugé, Ghazal Khalighinezhad, and Helia Yazdanyar.
