@@ -13,7 +13,7 @@ I am interested in theoretical computer science and online algorithms. Currently
 I was a master's student in the [MPRI program](https://wikimpri.dptinfo.ens-cachan.fr/doku.php) at Université Paris Cité in France. I did my master's internship project with [Chien-Chung Huang](https://www.di.ens.fr/~cchuang/) at ENS d'Ulm on a job scheduling problem with bag constraints. Before that, I was an undergraduate computer science student at [Sharif University of Technology](en.sharif.edu). In 2021, I was a research intern at Gustave Eiffel University, working with [Vincent Jugé](https://igm.univ-mlv.fr/~juge/).
 
 
-In Fall 2024, I am co-organizing [NEU Theory Seminar](https://www2.ccs.neu.edu/theory/seminar.html). Write to me with suggestions for speakers!
+I am co-organizing [NEU Theory Seminar](https://www2.ccs.neu.edu/theory/seminar.html). Write to me with suggestions for speakers!
 
 If you are a bachelor's or master's student seeking help with CVs and statements of purpose for PhD applications, feel free to contact me.
 
