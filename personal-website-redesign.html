@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Andisheh Ghasemi - PhD Student in Computer Science</title>
+    <!-- 
+    IMPORTANT: To add your photo:
+    1. Name your photo file "your-photo.jpg" (or .png)
+    2. Place it in the same folder as this HTML file
+    3. Or update the src="your-photo.jpg" in line 562 to match your photo filename
+    -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --text-dark: #2c3e50;
+            --text-light: #5a6c7d;
+            --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
+            --border-color: #e1e8ed;
+            --hover-bg: #f0f4f8;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #34495e 100%);
+            color: white;
+            padding: 60px 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            position: relative;
+            flex-wrap: wrap;
+        }
+
+        .profile-photo {
+            position: relative;
+            animation: fadeInScale 0.8s ease-out;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .profile-photo img {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .header-text {
+            text-align: left;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.95;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .affiliation {
+            font-size: 1em;
+            opacity: 0.9;
+            position: relative;
+        }
+
+        .affiliation a {
+            color: #a3d5ff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .affiliation a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        nav {
+            background: var(--bg-light);
+            padding: 0;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        nav li {
+            margin: 0;
+        }
+
+        nav a {
+            display: block;
+            padding: 20px 30px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: var(--accent-color);
+            transform: translateX(-50%);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover {
+            background: var(--hover-bg);
+            color: var(--accent-color);
+        }
+
+        nav a:hover::after {
+            width: 60%;
+        }
+
+        .content {
+            padding: 50px;
+        }
+
+        section {
+            margin-bottom: 60px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        section:last-child {
+            margin-bottom: 0;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--accent-color);
+            display: inline-block;
+        }
+
+        .about-content {
+            background: var(--bg-light);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #667eea30;
+        }
+
+        .publication {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .publication::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(135deg, var(--accent-color) 0%, #667eea 100%);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .publication:hover {
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .publication:hover::before {
+            transform: scaleY(1);
+        }
+
+        .publication h3 {
+            color: var(--primary-color);
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .publication .authors {
+            color: var(--text-light);
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .publication .venue {
+            color: var(--accent-color);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .publication .links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .publication .links a {
+            color: var(--accent-color);
+            text-decoration: none;
+            padding: 5px 12px;
+            border: 1px solid var(--accent-color);
+            border-radius: 20px;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .publication .links a:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .news-container {
+            max-width: 800px;
+        }
+
+        .news-item {
+            background: white;
+            padding: 20px 25px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 3px solid var(--accent-color);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .news-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .news-date {
+            display: inline-block;
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-right: 15px;
+        }
+
+        .news-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-right: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-publication {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            color: #667eea;
+            border: 1px solid #667eea30;
+        }
+
+        .tag-talk {
+            background: #3498db20;
+            color: #3498db;
+            border: 1px solid #3498db30;
+        }
+
+        .tag-service {
+            background: #2ecc7120;
+            color: #27ae60;
+            border: 1px solid #2ecc7130;
+        }
+
+        .tag-milestone {
+            background: #f39c1220;
+            color: #f39c12;
+            border: 1px solid #f39c1230;
+        }
+
+        .news-item p {
+            margin-top: 12px;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+
+        .contact-info {
+            background: linear-gradient(135deg, var(--bg-light) 0%, #ffffff 100%);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .contact-info p {
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+
+        .email-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, var(--accent-color) 0%, #667eea 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+        }
+
+        .email-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        .legal-name {
+            font-style: italic;
+            color: var(--text-light);
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--bg-light);
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 40px 30px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-text {
+                text-align: center;
+            }
+
+            .profile-photo img {
+                width: 150px;
+                height: 150px;
+            }
+
+            header h1 {
+                font-size: 2em;
+            }
+
+            .content {
+                padding: 30px;
+            }
+
+            nav a {
+                padding: 15px 20px;
+                font-size: 0.95em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            .news-item {
+                padding: 15px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            nav ul {
+                flex-direction: column;
+            }
+
+            nav a {
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="profile-photo">
+                    <img src="your-photo.jpg" alt="Andisheh Ghasemi">
+                </div>
+                <div class="header-text">
+                    <h1>Andisheh Ghasemi</h1>
+                    <p class="subtitle">PhD Student in Computer Science</p>
+                    <p class="affiliation">
+                        <a href="https://www.khoury.northeastern.edu/" target="_blank">Khoury College of Computer Sciences</a><br>
+                        Northeastern University
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="#about" onclick="smoothScroll('about')">About</a></li>
+                <li><a href="#news" onclick="smoothScroll('news')">News</a></li>
+                <li><a href="#research" onclick="smoothScroll('research')">Research</a></li>
+                <li><a href="#publications" onclick="smoothScroll('publications')">Publications</a></li>
+                <li><a href="#contact" onclick="smoothScroll('contact')">Contact</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section id="about">
+                <h2>About Me</h2>
+                <div class="about-content">
+                    <p>I am a PhD student in the Department of Computer Science at <a href="https://www.khoury.northeastern.edu/" target="_blank">Northeastern University</a>. I am co-advised by <a href="https://www.khoury.northeastern.edu/people/rajmohan-rajaraman/" target="_blank">Rajmohan Rajaraman</a> and <a href="https://www.khoury.northeastern.edu/home/derakhshan/" target="_blank">Mahsa Derakhshan</a>.</p>
+                    
+                    <p>My research interests lie in <strong>theoretical computer science</strong> and <strong>online algorithms</strong>. Currently, my focus is on <strong>Correlation Clustering</strong> and <strong>Online Algorithms with Predictions</strong>.</p>
+                </div>
+
+                <div class="highlight-box">
+                    <p><strong>🎓 Academic Background:</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Master's degree from the <a href="https://wikimpri.dptinfo.ens-cachan.fr/doku.php" target="_blank">MPRI program</a> at Université Paris Cité, France</li>
+                        <li>Master's internship with <a href="https://www.di.ens.fr/~cchuang/" target="_blank">Chien-Chung Huang</a> at ENS d'Ulm on job scheduling with bag constraints</li>
+                        <li>Undergraduate in Computer Science from <a href="https://en.sharif.edu" target="_blank">Sharif University of Technology</a></li>
+                        <li>Research intern at Gustave Eiffel University (2021) with <a href="https://igm.univ-mlv.fr/~juge/" target="_blank">Vincent Jugé</a></li>
+                    </ul>
+                </div>
+
+                <div class="highlight-box">
+                    <p><strong>📢 Community Involvement:</strong></p>
+                    <p style="margin-top: 10px;">I am co-organizing the <a href="https://www2.ccs.neu.edu/theory/seminar.html" target="_blank">NEU Theory Seminar</a>. Please write to me with suggestions for speakers!</p>
+                    <p style="margin-top: 10px;">If you are a bachelor's or master's student seeking help with CVs and statements of purpose for PhD applications, feel free to contact me.</p>
+                </div>
+
+                <p class="legal-name">
+                    <strong>Note:</strong> My legal name is Elahe Ghasemi, but I go by Andisheh.
+                </p>
+            </section>
+
+            <section id="news">
+                <h2>News</h2>
+                <div class="news-container">
+                    <div class="news-item">
+                        <span class="news-date">Dec 2024</span>
+                        <span class="news-tag tag-publication">Publication</span>
+                        <p>Our paper "One-way Communication Complexity of Minimum Vertex Cover in General Graphs" has been accepted to ICALP 2025!</p>
+                    </div>
+                    
+                    <div class="news-item">
+                        <span class="news-date">Nov 2024</span>
+                        <span class="news-tag tag-talk">Talk</span>
+                        <p>Presented our work on Correlation Clustering at the NEU Theory Seminar.</p>
+                    </div>
+                    
+                    <div class="news-item">
+                        <span class="news-date">Sep 2024</span>
+                        <span class="news-tag tag-service">Service</span>
+                        <p>Started co-organizing the NEU Theory Seminar. Looking forward to hosting great speakers this year!</p>
+                    </div>
+                    
+                    <div class="news-item">
+                        <span class="news-date">May 2024</span>
+                        <span class="news-tag tag-publication">Publication</span>
+                        <p>Our paper on "Galloping in fast-growth natural merge sorts" has been published in Algorithmica.</p>
+                    </div>
+                    
+                    <div class="news-item">
+                        <span class="news-date">Jan 2024</span>
+                        <span class="news-tag tag-milestone">Milestone</span>
+                        <p>Started my PhD journey at Northeastern University with Professors Rajmohan Rajaraman and Mahsa Derakhshan.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="research">
+                <h2>Research Interests</h2>
+                <div class="about-content">
+                    <p>My research focuses on the intersection of theoretical computer science and practical algorithmic challenges. I am particularly interested in:</p>
+                    <ul style="margin-left: 20px; margin-top: 15px; line-height: 1.8;">
+                        <li><strong>Correlation Clustering:</strong> Developing efficient algorithms for clustering problems with pairwise similarity/dissimilarity constraints</li>
+                        <li><strong>Online Algorithms with Predictions:</strong> Leveraging machine learning predictions to improve online algorithm performance</li>
+                        <li><strong>Communication Complexity:</strong> Understanding the fundamental limits of distributed computation</li>
+                        <li><strong>Natural Sorting Algorithms:</strong> Analyzing and optimizing adaptive sorting algorithms</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="publications">
+                <h2>Publications</h2>
+                
+                <div class="publication">
+                    <h3>One-way Communication Complexity of Minimum Vertex Cover in General Graphs</h3>
+                    <p class="authors">Mahsa Derakhshan, Andisheh Ghasemi, and Rajmohan Rajaraman</p>
+                    <p class="venue">ICALP 2025</p>
+                    <div class="links">
+                        <a href="https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ICALP.2025.66" target="_blank">PDF</a>
+                        <a href="https://arxiv.org/abs/2505.00164" target="_blank">arXiv</a>
+                    </div>
+                </div>
+
+                <div class="publication">
+                    <h3>Galloping in fast-growth natural merge sorts</h3>
+                    <p class="authors">Elahe Ghasemi, Vincent Jugé, Ghazal Khalighinezhad, and Helia Yazdanyar</p>
+                    <p class="venue">ICALP 2022 | Algorithmica 2024</p>
+                    <div class="links">
+                        <a href="https://drops.dagstuhl.de/storage/00lipics/lipics-vol229-icalp2022/LIPIcs.ICALP.2022.68/LIPIcs.ICALP.2022.68.pdf" target="_blank">ICALP PDF</a>
+                        <a href="https://lnkd.in/exDaXE72" target="_blank">Algorithmica PDF</a>
+                    </div>
+                </div>
+
+                <div class="publication">
+                    <h3>Entropic weighted rank function</h3>
+                    <p class="authors">Mohammad Rashid, Elahe Ghasemi, and Javad B Ebrahimi</p>
+                    <p class="venue">IWCIT 2022</p>
+                    <div class="links">
+                        <a href="https://arxiv.org/pdf/2206.05968.pdf" target="_blank">PDF</a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="contact">
+                <h2>Contact</h2>
+                <div class="contact-info">
+                    <p>I'm always happy to connect with fellow researchers, students, and anyone interested in theoretical computer science!</p>
+                    <p>Feel free to reach out for research discussions, collaboration opportunities, or advice on PhD applications.</p>
+                    <a href="mailto:ghasemi.a@northeastern.edu" class="email-button">Get in Touch</a>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        function smoothScroll(targetId) {
+            event.preventDefault();
+            const element = document.getElementById(targetId);
+            const navHeight = document.querySelector('nav').offsetHeight;
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - navHeight - 20;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+
+        // Add scroll-triggered animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.publication, .highlight-box, .news-item');
+            elements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'all 0.6s ease-out';
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>
