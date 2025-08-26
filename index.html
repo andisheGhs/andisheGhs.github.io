@@ -8,7 +8,14 @@
     IMPORTANT: To add your photo:
     1. Name your photo file "your-photo.jpg" (or .png)
     2. Place it in the same folder as this HTML file
-    3. Or update the src="your-photo.jpg" in line 562 to match your photo filename
+    3. Or update the src="your-photo.jpg" to match your photo filename
+    
+    To update social links:
+    1. Replace "YOUR_ID" in the Google Scholar link with your actual Google Scholar ID
+    2. Replace "YOUR_PROFILE" in the LinkedIn link with your LinkedIn username
+    3. The GitHub link already points to your profile (andisheGhs)
+    
+    Your CV file "08-14-2025.pdf" should be in the same folder as this HTML file
     -->
     <style>
         * {
@@ -114,6 +121,29 @@
 
         .header-text {
             text-align: left;
+        }
+
+        .header-links {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .header-link {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95em;
+            padding: 5px 0;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .header-link:hover {
+            color: white;
+            border-bottom-color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
         }
 
         header h1 {
@@ -412,22 +442,38 @@
             font-size: 1.05em;
         }
 
-        .email-button {
+        .contact-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .email-button, .cv-download-button {
             display: inline-block;
-            margin-top: 10px;
             padding: 12px 30px;
-            background: linear-gradient(135deg, var(--accent-color) 0%, #667eea 100%);
             color: white;
             text-decoration: none;
             border-radius: 25px;
             font-weight: 500;
             transition: all 0.3s ease;
+        }
+
+        .email-button {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #667eea 100%);
             box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
         }
 
-        .email-button:hover {
+        .cv-download-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .email-button:hover, .cv-download-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+            text-decoration: none;
         }
 
         a {
@@ -486,8 +532,24 @@
                 font-size: 1.5em;
             }
 
-            .news-item {
-                padding: 15px 20px;
+            .header-links {
+                margin-top: 15px;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .header-link {
+                font-size: 0.9em;
+            }
+
+            .contact-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .email-button, .cv-download-button {
+                width: 100%;
+                max-width: 250px;
             }
         }
 
@@ -524,6 +586,12 @@
                         <a href="https://www.khoury.northeastern.edu/" target="_blank">Khoury College of Computer Sciences</a><br>
                         Northeastern University
                     </p>
+                    <div class="header-links">
+                        <a href="08-14-2025.pdf" class="header-link" target="_blank">CV</a>
+                        <a href="https://scholar.google.com/citations?user=YOUR_ID" class="header-link" target="_blank">Google Scholar</a>
+                        <a href="https://github.com/andisheGhs" class="header-link" target="_blank">GitHub</a>
+                        <a href="https://linkedin.com/in/YOUR_PROFILE" class="header-link" target="_blank">LinkedIn</a>
+                    </div>
                 </div>
             </div>
         </header>
@@ -551,7 +619,7 @@
                     <p><strong>🎓 Academic Background:</strong></p>
                     <ul style="margin-left: 20px; margin-top: 10px;">
                         <li>Master's degree from the <a href="https://wikimpri.dptinfo.ens-cachan.fr/doku.php" target="_blank">MPRI program</a> at Université Paris Cité, France</li>
-                        <li>Master's internship with <a href="https://www.di.ens.fr/~cchuang/" target="_blank">Chien-Chung Huang</a> at ENS d'Ulm </li>
+                        <li>Master's internship with <a href="https://www.di.ens.fr/~cchuang/" target="_blank">Chien-Chung Huang</a> at ENS d'Ulm</li>
                         <li>Undergraduate in Computer Science from <a href="https://en.sharif.edu" target="_blank">Sharif University of Technology</a></li>
                         <li>Research intern at Gustave Eiffel University (2021) with <a href="https://igm.univ-mlv.fr/~juge/" target="_blank">Vincent Jugé</a></li>
                     </ul>
@@ -572,15 +640,27 @@
                 <h2>News</h2>
                 <div class="news-container">
                     <div class="news-item">
-                        <span class="news-date">Dec 2024</span>
-                        <span class="news-tag tag-publication">Publication</span>
-                        <p>Our paper "One-way Communication Complexity of Minimum Vertex Cover in General Graphs" has been accepted to ICALP 2025!</p>
+                        <span class="news-date">Aug 2025</span>
+                        <span class="news-tag tag-service">Workshop</span>
+                        <p>Attended the Workshop on Logic and Algorithms (WOLA) 2025.</p>
+                    </div>
+
+                    <div class="news-item">
+                        <span class="news-date">Jun 2025</span>
+                        <span class="news-tag tag-service">Workshop</span>
+                        <p>Attended the Women in Theory workshop.</p>
                     </div>
                     
                     <div class="news-item">
+                        <span class="news-date">Jun 2025</span>
+                        <span class="news-tag tag-publication">Publication</span>
+                        <p>Our paper "One-way Communication Complexity of Minimum Vertex Cover in General Graphs" has been published at ICALP 2025!</p>
+                    </div>
+
+                    <div class="news-item">
                         <span class="news-date">Nov 2024</span>
-                        <span class="news-tag tag-talk">Talk</span>
-                        <p>Presented our work on Correlation Clustering at the NEU Theory Seminar.</p>
+                        <span class="news-tag tag-publication">Publication</span>
+                        <p>Our paper "Galloping in fast-growth natural merge sorts" has been published in Algorithmica.</p>
                     </div>
                     
                     <div class="news-item">
@@ -590,15 +670,15 @@
                     </div>
                     
                     <div class="news-item">
-                        <span class="news-date">May 2024</span>
-                        <span class="news-tag tag-publication">Publication</span>
-                        <p>Our paper on "Galloping in fast-growth natural merge sorts" has been published in Algorithmica.</p>
-                    </div>
-                    
-                    <div class="news-item">
                         <span class="news-date">Jan 2024</span>
                         <span class="news-tag tag-milestone">Milestone</span>
                         <p>Started my PhD journey at Northeastern University with Professors Rajmohan Rajaraman and Mahsa Derakhshan.</p>
+                    </div>
+
+                    <div class="news-item">
+                        <span class="news-date">Dec 2023</span>
+                        <span class="news-tag tag-milestone">Milestone</span>
+                        <p>Completed my Master's degree in the MPRI program at Université Paris Cité.</p>
                     </div>
                 </div>
             </section>
@@ -635,7 +715,7 @@
                     <p class="venue">ICALP 2022 | Algorithmica 2024</p>
                     <div class="links">
                         <a href="https://drops.dagstuhl.de/storage/00lipics/lipics-vol229-icalp2022/LIPIcs.ICALP.2022.68/LIPIcs.ICALP.2022.68.pdf" target="_blank">ICALP PDF</a>
-                        <a href="https://link.springer.com/article/10.1007/s00453-024-01285-6" target="_blank">Algorithmica PDF</a>
+                        <a href="https://link.springer.com/article/10.1007/s00453-024-01285-6" target="_blank">Algorithmica</a>
                     </div>
                 </div>
 
@@ -654,7 +734,10 @@
                 <div class="contact-info">
                     <p>I'm always happy to connect with fellow researchers, students, and anyone interested in theoretical computer science!</p>
                     <p>Feel free to reach out for research discussions, collaboration opportunities, or advice on PhD applications.</p>
-                    <a href="mailto:ghasemi.a@northeastern.edu" class="email-button">Get in Touch</a>
+                    <div class="contact-buttons">
+                        <a href="mailto:ghasemi.a@northeastern.edu" class="email-button">✉️ Get in Touch</a>
+                        <a href="08-14-2025.pdf" class="cv-download-button" target="_blank">📄 Download CV</a>
+                    </div>
                 </div>
             </section>
         </div>
