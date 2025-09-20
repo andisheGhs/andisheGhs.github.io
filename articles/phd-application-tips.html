@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10 Tips for a Successful PhD Application in CS Theory - Andisheh Ghasemi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --text-dark: #2c3e50;
+            --text-light: #5a6c7d;
+            --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
+            --border-color: #e1e8ed;
+            --hover-bg: #f0f4f8;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.8;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #34495e 100%);
+            color: white;
+            padding: 30px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header-content {
+            position: relative;
+        }
+
+        .breadcrumb {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: white;
+        }
+
+        .article-content {
+            padding: 50px;
+        }
+
+        .article-header {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.2em;
+            line-height: 1.3;
+            margin-bottom: 20px;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+            color: var(--text-light);
+            font-size: 0.95em;
+        }
+
+        .article-category {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: #3498db20;
+            color: #3498db;
+            border: 1px solid #3498db30;
+        }
+
+        .reading-time {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .article-body {
+            font-size: 1.05em;
+            color: var(--text-dark);
+        }
+
+        .article-body h2 {
+            color: var(--primary-color);
+            font-size: 1.6em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .article-body h3 {
+            color: var(--primary-color);
+            font-size: 1.3em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .article-body p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .article-body ul, .article-body ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .article-body li {
+            margin-bottom: 10px;
+        }
+
+        .article-body blockquote {
+            border-left: 4px solid var(--accent-color);
+            padding-left: 20px;
+            margin: 30px 0;
+            font-style: italic;
+            color: var(--text-light);
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .article-body code {
+            background: var(--bg-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #e74c3c;
+        }
+
+        .article-body pre {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        .article-body pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-dark);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border: 1px solid #667eea30;
+        }
+
+        .tip-box {
+            background: #3498db10;
+            border-left: 4px solid var(--accent-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+
+        .tip-box strong {
+            color: var(--accent-color);
+        }
+
+        .author-box {
+            background: var(--bg-light);
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .author-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .author-box p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .author-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .author-links a {
+            padding: 8px 20px;
+            background: white;
+            color: var(--accent-color);
+            text-decoration: none;
+            border-radius: 20px;
+            border: 1px solid var(--accent-color);
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .author-links a:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px 50px;
+            background: var(--bg-light);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .nav-link {
+            color: var(--accent-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            gap: 12px;
+            color: #2980b9;
+        }
+
+        .nav-link.prev {
+            flex-direction: row-reverse;
+        }
+
+        @media (max-width: 768px) {
+            .article-content {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .article-body {
+                font-size: 1em;
+            }
+
+            .navigation {
+                padding: 20px 30px;
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .article-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="breadcrumb">
+                    <a href="../index.html">Home</a>
+                    <span>→</span>
+                    <a href="../writing.html">Writing</a>
+                    <span>→</span>
+                    <span>Article</span>
+                </div>
+            </div>
+        </header>
+
+        <article class="article-content">
+            <div class="article-header">
+                <h1>10 Tips for a Successful PhD Application in CS Theory</h1>
+                <div class="article-meta">
+                    <span class="article-date">January 15, 2025</span>
+                    <span class="article-category">PhD Advice</span>
+                    <span class="reading-time">📖 8 min read</span>
+                </div>
+            </div>
+
+            <div class="article-body">
+                <p>
+                    After helping numerous students with their PhD applications and having gone through the process myself for both master's and PhD programs, I've learned what makes an application stand out. Here are my top tips for aspiring theoretical computer science PhD students.
+                </p>
+
+                <h2>1. Start Early and Be Strategic</h2>
+                <p>
+                    The PhD application process is marathon, not a sprint. Begin preparing at least a year before your application deadline. This gives you time to:
+                </p>
+                <ul>
+                    <li>Build relationships with potential letter writers</li>
+                    <li>Gain research experience</li>
+                    <li>Prepare for and take the GRE (if required)</li>
+                    <li>Research programs thoroughly</li>
+                </ul>
+
+                <div class="tip-box">
+                    <strong>💡 Pro tip:</strong> Create a spreadsheet with all deadlines, requirements, and faculty of interest for each program. This will be invaluable when juggling multiple applications.
+                </div>
+
+                <h2>2. Research Experience Matters Most</h2>
+                <p>
+                    For theory programs, research experience is crucial. It demonstrates your ability to work on open-ended problems and your genuine interest in research. Here's how to gain meaningful experience:
+                </p>
+
+                <h3>Undergraduate Research</h3>
+                <p>
+                    Approach professors whose work interests you. Be specific about why their research appeals to you and what you hope to learn. Even if you start with simple tasks, showing dedication can lead to more substantial projects.
+                </p>
+
+                <h3>Summer Programs</h3>
+                <p>
+                    Apply to REUs (Research Experiences for Undergraduates) or similar programs. These provide intensive research experience and often result in strong recommendation letters.
+                </p>
+
+                <blockquote>
+                    "My summer research experience at Gustave Eiffel University was transformative. It not only resulted in a publication but also clarified my research interests."
+                </blockquote>
+
+                <h2>3. Craft a Compelling Statement of Purpose</h2>
+                <p>
+                    Your statement should tell a coherent story about your journey to theoretical computer science. Address these key points:
+                </p>
+
+                <div class="highlight-box">
+                    <h3>Essential Elements:</h3>
+                    <ul>
+                        <li><strong>Your background:</strong> How did you become interested in CS theory?</li>
+                        <li><strong>Research experience:</strong> What problems have you worked on? What did you learn?</li>
+                        <li><strong>Research interests:</strong> Be specific but not too narrow</li>
+                        <li><strong>Why this program:</strong> Mention 2-3 faculty members whose work aligns with your interests</li>
+                        <li><strong>Future goals:</strong> What do you hope to achieve?</li>
+                    </ul>
+                </div>
+
+                <h2>4. Choose Letter Writers Wisely</h2>
+                <p>
+                    Strong recommendation letters can make or break your application. Ideal letter writers:
+                </p>
+                <ul>
+                    <li>Know you well and can speak to your research potential</li>
+                    <li>Have supervised your research work</li>
+                    <li>Are known in the field (helpful but not essential)</li>
+                    <li>Can provide specific examples of your abilities</li>
+                </ul>
+
+                <p>
+                    Always provide your recommenders with a packet including your CV, statement draft, and a summary of your work with them. Give them at least a month's notice.
+                </p>
+
+                <h2>5. Don't Neglect Your GPA (But Don't Obsess)</h2>
+                <p>
+                    While research experience matters most, a strong GPA in relevant courses (algorithms, discrete math, complexity theory) signals your ability to handle graduate coursework. If your overall GPA is lower due to early struggles or unrelated courses, address this briefly in your statement.
+                </p>
+
+                <h2>6. Tailor Each Application</h2>
+                <p>
+                    Generic applications rarely succeed. For each program:
+                </p>
+                <ul>
+                    <li>Research the faculty thoroughly</li>
+                    <li>Read recent papers from potential advisors</li>
+                    <li>Understand the department's strengths</li>
+                    <li>Customize your statement accordingly</li>
+                </ul>
+
+                <h2>7. Apply Broadly</h2>
+                <p>
+                    The admissions process can be unpredictable. Apply to a range of programs:
+                </p>
+                <ul>
+                    <li>2-3 "reach" schools</li>
+                    <li>4-5 schools where you're competitive</li>
+                    <li>2-3 "safety" schools (though no PhD program is truly safe)</li>
+                </ul>
+
+                <h2>8. Reach Out (Carefully)</h2>
+                <p>
+                    Contacting faculty before applying can be beneficial, but do it right:
+                </p>
+
+                <div class="tip-box">
+                    <strong>Do:</strong>
+                    <ul>
+                        <li>Read their recent work first</li>
+                        <li>Ask thoughtful questions about their research</li>
+                        <li>Keep emails concise and professional</li>
+                    </ul>
+                    <strong>Don't:</strong>
+                    <ul>
+                        <li>Send generic mass emails</li>
+                        <li>Ask if they're taking students (check their website first)</li>
+                        <li>Attach lengthy documents uninvited</li>
+                    </ul>
+                </div>
+
+                <h2>9. Prepare for Interviews</h2>
+                <p>
+                    Some programs conduct interviews. Prepare by:
+                </p>
+                <ul>
+                    <li>Reviewing your application materials</li>
+                    <li>Being ready to discuss your research in detail</li>
+                    <li>Preparing questions about the program</li>
+                    <li>Practicing with mock interviews</li>
+                </ul>
+
+                <h2>10. Take Care of Yourself</h2>
+                <p>
+                    The application process is stressful. Remember to:
+                </p>
+                <ul>
+                    <li>Set aside time for activities you enjoy</li>
+                    <li>Connect with others going through the same process</li>
+                    <li>Remember that rejections aren't personal</li>
+                    <li>Have a backup plan</li>
+                </ul>
+
+                <h2>Final Thoughts</h2>
+                <p>
+                    Applying to PhD programs is challenging, but it's also an opportunity for self-reflection and growth. Use this process to clarify your research interests and career goals. Remember, there's no single "perfect" application – programs look for diverse perspectives and experiences.
+                </p>
+
+                <p>
+                    If you're applying to programs and have questions, feel free to reach out. I'm always happy to help aspiring researchers navigate this process.
+                </p>
+
+                <div class="highlight-box">
+                    <h3>Quick Checklist:</h3>
+                    <ul>
+                        <li>☐ Research experience secured</li>
+                        <li>☐ GRE scheduled (if required)</li>
+                        <li>☐ Letter writers confirmed</li>
+                        <li>☐ Program list finalized</li>
+                        <li>☐ Statement of Purpose drafted</li>
+                        <li>☐ CV updated</li>
+                        <li>☐ Transcripts requested</li>
+                        <li>☐ Application fees budgeted</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="author-box">
+                <h3>About the Author</h3>
+                <p>Andisheh Ghasemi is a PhD student at Northeastern University working on theoretical computer science. She's passionate about helping students navigate the PhD application process.</p>
+                <div class="author-links">
+                    <a href="../index.html">Main Site</a>
+                    <a href="../writing.html">More Articles</a>
+                    <a href="../index.html#contact">Contact</a>
+                </div>
+            </div>
+        </article>
+
+        <nav class="navigation">
+            <a href="../writing.html" class="nav-link prev">
+                ← Back to Writing
+            </a>
+            <a href="correlation-clustering-intro.html" class="nav-link next">
+                Next Article →
+            </a>
+        </nav>
+    </div>
+</body>
+</html>
