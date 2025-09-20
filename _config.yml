@@ -1,14 +1,28 @@
 title: Andisheh Ghasemi
-description: PhD Student in Computer Science
+description: PhD Student in Computer Science at Northeastern University
 url: https://andishehghasemi.com
 baseurl: ""
 
 # Build settings
 markdown: kramdown
-theme: minima
+highlighter: rouge
 
-# Collections
-collections:
-  posts:
-    output: true
-    permalink: /blog/:year/:month/:title/
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# Reading time (if not using plugin)
+words_per_minute: 200
+
+# Permalink structure
+permalink: /blog/:year/:month/:title/
+
+# Default front matter
+defaults:
+  - scope:
+      path: "_posts"
+      type: "posts"
+    values:
+      layout: "post"
+      author: "Andisheh Ghasemi"
