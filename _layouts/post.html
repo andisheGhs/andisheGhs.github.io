@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }} - {{ site.title }}</title>
+    <meta name="description" content="{{ page.excerpt | strip_html | truncate: 160 }}">
+    
+    <!-- Open Graph tags for social sharing -->
+    <meta property="og:title" content="{{ page.title }}">
+    <meta property="og:description" content="{{ page.excerpt | strip_html | truncate: 160 }}">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --text-dark: #2c3e50;
+            --text-light: #5a6c7d;
+            --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
+            --border-color: #e1e8ed;
+            --hover-bg: #f0f4f8;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.8;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #34495e 100%);
+            color: white;
+            padding: 30px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header-content {
+            position: relative;
+        }
+
+        .breadcrumb {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: white;
+        }
+
+        .article-content {
+            padding: 50px;
+        }
+
+        .article-header {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.2em;
+            line-height: 1.3;
+            margin-bottom: 20px;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+            color: var(--text-light);
+            font-size: 0.95em;
+        }
+
+        .article-category {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Category colors */
+        .category-research {
+            background: #667eea20;
+            color: #667eea;
+            border: 1px solid #667eea30;
+        }
+
+        .category-phd-advice {
+            background: #3498db20;
+            color: #3498db;
+            border: 1px solid #3498db30;
+        }
+
+        .category-personal {
+            background: #e91e6320;
+            color: #e91e63;
+            border: 1px solid #e91e6330;
+        }
+
+        .category-tutorial {
+            background: #2ecc7120;
+            color: #27ae60;
+            border: 1px solid #2ecc7130;
+        }
+
+        .category-conference {
+            background: #16a08520;
+            color: #16a085;
+            border: 1px solid #16a08530;
+        }
+
+        .reading-time {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Article body styles for markdown content */
+        .article-body {
+            font-size: 1.05em;
+            color: var(--text-dark);
+        }
+
+        .article-body h2 {
+            color: var(--primary-color);
+            font-size: 1.6em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .article-body h3 {
+            color: var(--primary-color);
+            font-size: 1.3em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .article-body h4 {
+            color: var(--primary-color);
+            font-size: 1.1em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+        }
+
+        .article-body p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .article-body ul, .article-body ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .article-body li {
+            margin-bottom: 10px;
+        }
+
+        .article-body blockquote {
+            border-left: 4px solid var(--accent-color);
+            padding-left: 20px;
+            margin: 30px 0;
+            font-style: italic;
+            color: var(--text-light);
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .article-body code {
+            background: var(--bg-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #e74c3c;
+        }
+
+        .article-body pre {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        .article-body pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-dark);
+        }
+
+        .article-body img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .article-body a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .article-body a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        .article-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .article-body table th,
+        .article-body table td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: left;
+        }
+
+        .article-body table th {
+            background: var(--bg-light);
+            font-weight: 600;
+        }
+
+        .article-body hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 40px 0;
+        }
+
+        /* Syntax highlighting for code blocks */
+        .highlight {
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .highlight .c { color: #999988; font-style: italic } /* Comment */
+        .highlight .k { font-weight: bold } /* Keyword */
+        .highlight .o { font-weight: bold } /* Operator */
+        .highlight .cm { color: #999988; font-style: italic } /* Comment.Multiline */
+        .highlight .cp { color: #999999; font-weight: bold } /* Comment.Preproc */
+        .highlight .c1 { color: #999988; font-style: italic } /* Comment.Single */
+        .highlight .cs { color: #999999; font-weight: bold; font-style: italic } /* Comment.Special */
+
+        .tags {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .tags-list {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 5px 15px;
+            background: var(--bg-light);
+            color: var(--text-light);
+            border-radius: 20px;
+            font-size: 0.9em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .tag:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .author-box {
+            background: var(--bg-light);
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .author-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .author-box p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .author-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .author-links a {
+            padding: 8px 20px;
+            background: white;
+            color: var(--accent-color);
+            text-decoration: none;
+            border-radius: 20px;
+            border: 1px solid var(--accent-color);
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .author-links a:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px 50px;
+            background: var(--bg-light);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .nav-link {
+            color: var(--accent-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            max-width: 45%;
+        }
+
+        .nav-link:hover {
+            gap: 12px;
+            color: #2980b9;
+        }
+
+        @media (max-width: 768px) {
+            .article-content {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .article-body {
+                font-size: 1em;
+            }
+
+            .navigation {
+                padding: 20px 30px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-link {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .article-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="breadcrumb">
+                    <a href="{{ site.baseurl }}/">Home</a>
+                    <span>→</span>
+                    <a href="{{ site.baseurl }}/blog/">Blog</a>
+                    <span>→</span>
+                    <span>{{ page.title | truncate: 40 }}</span>
+                </div>
+            </div>
+        </header>
+
+        <article class="article-content">
+            <div class="article-header">
+                <h1>{{ page.title }}</h1>
+                <div class="article-meta">
+                    <span class="article-date">{{ page.date | date: "%B %d, %Y" }}</span>
+                    {% if page.categories %}
+                        {% for category in page.categories %}
+                            <span class="article-category category-{{ category | slugify }}">{{ category | replace: "-", " " | capitalize }}</span>
+                        {% endfor %}
+                    {% endif %}
+                    <span class="reading-time">📖 {{ content | reading_time }} min read</span>
+                </div>
+            </div>
+
+            <div class="article-body">
+                {{ content }}
+            </div>
+
+            {% if page.tags %}
+            <div class="tags">
+                <h4>Tags:</h4>
+                <div class="tags-list">
+                    {% for tag in page.tags %}
+                        <a href="{{ site.baseurl }}/tags/#{{ tag | slugify }}" class="tag">#{{ tag }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="author-box">
+                <h3>About the Author</h3>
+                <p>{{ site.description }}</p>
+                <div class="author-links">
+                    <a href="{{ site.baseurl }}/">Main Site</a>
+                    <a href="{{ site.baseurl }}/blog/">More Articles</a>
+                    <a href="{{ site.baseurl }}/#contact">Contact</a>
+                </div>
+            </div>
+        </article>
+
+        <nav class="navigation">
+            {% if page.previous.url %}
+                <a href="{{ page.previous.url }}" class="nav-link prev">
+                    ← {{ page.previous.title | truncate: 30 }}
+                </a>
+            {% else %}
+                <span></span>
+            {% endif %}
+            
+            {% if page.next.url %}
+                <a href="{{ page.next.url }}" class="nav-link next">
+                    {{ page.next.title | truncate: 30 }} →
+                </a>
+            {% else %}
+                <span></span>
+            {% endif %}
+        </nav>
+    </div>
+</body>
+</html>
