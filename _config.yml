@@ -1,0 +1,14 @@
+title: Andisheh Ghasemi
+description: PhD Student in Computer Science
+url: https://andishehghasemi.com
+baseurl: ""
+
+# Build settings
+markdown: kramdown
+theme: minima
+
+# Collections
+collections:
+  posts:
+    output: true
+    permalink: /blog/:year/:month/:title/
