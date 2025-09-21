@@ -468,120 +468,90 @@
 
             <div class="article-body">
                 <p>
-                    When I first encountered correlation clustering during my research, I was struck by its elegant simplicity and surprising depth. Unlike traditional clustering methods where you need to specify the number of clusters in advance (think k-means), correlation clustering finds the natural groupings in your data based solely on pairwise relationships. Today, I want to share what makes this problem so fascinating and why it's become a central focus of my PhD research.
-                </p>
-
-                <h2>The Problem at Its Core</h2>
-                <p>
-                    Imagine you're organizing a conference and need to assign participants to discussion groups. You have information about which pairs of people would work well together (+) and which pairs might have conflicts (−). Your goal? Arrange everyone into groups that maximize harmony—keeping friends together and conflicts apart.
+                    Clustering is one of the most fundamental tasks in data analysis: given a set of objects, we want to group similar ones together. Traditionally, clustering algorithms like k-means or hierarchical clustering require a numeric notion of distance between points and often ask you to specify the number of clusters in advance.
                 </p>
 
                 <p>
-                    This is correlation clustering in a nutshell. Formally, we're given a graph where each edge is labeled either positive (+) or negative (−). The objective is to partition the vertices into clusters that minimize disagreements: positive edges cut between clusters and negative edges within the same cluster.
-                </p>
-
-                <div class="highlight-box">
-                    <h3>Key Insight:</h3>
-                    <p>The beauty of correlation clustering is that the optimal number of clusters emerges naturally from the data. You might end up with one giant cluster, many small clusters, or anything in between—whatever minimizes the total disagreement.</p>
-                </div>
-
-                <h2>Why Is It Hard?</h2>
-                <p>
-                    Correlation clustering is NP-hard, even on complete graphs. This means that finding the absolute best clustering is computationally intractable for large datasets. But here's where theory meets practice beautifully: we can design approximation algorithms that find near-optimal solutions efficiently.
+                    Correlation clustering takes a different approach. Rather than starting with distances, it starts with pairwise relationships between objects. For every pair of points, we are given a label that says whether they are "similar" (should belong to the same cluster) or "dissimilar" (should be separated). The goal is to find a clustering that agrees with these labels as much as possible.
                 </p>
 
                 <p>
-                    The first constant-factor approximation algorithm, achieving a factor of 3, was developed by Bansal, Blum, and Chawla in 2004. Since then, researchers have continued to improve these bounds and explore variants of the problem.
-                </p>
-
-                <h2>Real-World Applications</h2>
-                <p>
-                    What makes correlation clustering particularly exciting is its wide range of applications:
-                </p>
-
-                <div class="example-box">
-                    <h4>1. Social Network Analysis</h4>
-                    <p>Identifying communities where positive edges represent friendships and negative edges represent antagonistic relationships. The algorithm naturally finds cohesive groups while respecting the social dynamics.</p>
-                </div>
-
-                <div class="example-box">
-                    <h4>2. Entity Resolution</h4>
-                    <p>Determining which database records refer to the same real-world entity. Positive edges connect likely matches, negative edges connect likely non-matches. The clustering gives us our deduplicated entities.</p>
-                </div>
-
-                <div class="example-box">
-                    <h4>3. Image Segmentation</h4>
-                    <p>Grouping pixels where similarity measures determine edge labels. Unlike traditional methods, we don't need to specify how many objects are in the image—the algorithm discovers this automatically.</p>
-                </div>
-
-                <h2>The Online Setting: My Research Focus</h2>
-                <p>
-                    In my research, I'm particularly interested in the online version of correlation clustering, where the graph is revealed incrementally. Imagine a social network that grows over time, or a database that receives new records continuously. How do we maintain good clusters as the data evolves?
+                    More formally, imagine we have a graph where each edge is labeled "+" (similar) or "−" (dissimilar). A perfect clustering would put all "+" pairs in the same cluster and all "−" pairs in different clusters. But real data is noisy—conflicting labels are common—so we seek a partition that minimizes the number of disagreements (or equivalently, maximizes the number of agreements).
                 </p>
 
                 <p>
-                    This online setting introduces fascinating challenges. We must make irrevocable clustering decisions as vertices arrive, without knowing what future connections will look like. The key is balancing immediate clustering quality with flexibility for future arrivals.
+                    This makes correlation clustering a very flexible model. It does not require you to pick the number of clusters ahead of time: the "right" number emerges naturally from the data. It can also handle arbitrary similarity information—no need for a metric or Euclidean space.
                 </p>
 
-                <div class="tip-box">
-                    <strong>Research Direction:</strong> I'm exploring how machine learning predictions about future edges can improve online algorithms. If we have some (imperfect) information about likely future connections, can we make better clustering decisions in the present?
-                </div>
-
-                <h2>A Simple Algorithm to Get Started</h2>
+                <h2>The Pivot Algorithm: A Simple and Elegant Approach</h2>
+                
                 <p>
-                    Here's a basic algorithm that achieves a 3-approximation for correlation clustering:
-                </p>
-
-                <pre><code>1. Pick an arbitrary unclustered vertex v
-2. Create a cluster containing v and all its positive neighbors
-   that aren't yet clustered
-3. Repeat until all vertices are clustered</code></pre>
-
-                <p>
-                    This greedy approach, known as the "Pivot" algorithm, is surprisingly effective. While simple, it captures the essence of correlation clustering: growing clusters around vertices with strong positive connections.
-                </p>
-
-                <h2>Open Problems and Future Directions</h2>
-                <p>
-                    The field of correlation clustering remains vibrant with open questions:
-                </p>
-
-                <ul>
-                    <li><strong>Improved approximation ratios:</strong> Can we beat the current best approximation factors, especially for special graph classes?</li>
-                    <li><strong>Distributed algorithms:</strong> How can we efficiently solve correlation clustering when the data is distributed across multiple machines?</li>
-                    <li><strong>Dynamic settings:</strong> Beyond online algorithms, how do we handle edge insertions and deletions efficiently?</li>
-                    <li><strong>Practical implementations:</strong> Bridging the gap between theoretical guarantees and real-world performance remains an active area.</li>
-                </ul>
-
-                <h2>Getting Started with Correlation Clustering</h2>
-                <p>
-                    If you're interested in diving deeper into correlation clustering, here are my recommendations:
+                    One of the most famous algorithms for correlation clustering is the Pivot algorithm. Its idea is surprisingly simple:
                 </p>
 
                 <ol>
-                    <li>Start with the original paper by Bansal, Blum, and Chawla (2004) for the foundational concepts</li>
-                    <li>Explore the survey by Bonchi et al. (2022) for a comprehensive overview of recent developments</li>
-                    <li>Implement the basic Pivot algorithm to get hands-on experience</li>
-                    <li>Try applying it to a real dataset—social networks are particularly intuitive starting points</li>
+                    <li>Pick a random vertex as the "pivot."</li>
+                    <li>Form a cluster consisting of the pivot and all vertices labeled "+" with it.</li>
+                    <li>Remove these vertices from the graph.</li>
+                    <li>Repeat until no vertices remain.</li>
                 </ol>
 
-                <h2>Conclusion</h2>
                 <p>
-                    Correlation clustering exemplifies what I love about theoretical computer science: a simple, natural problem formulation that leads to deep theoretical questions and practical applications. It sits at the intersection of machine learning, graph theory, and algorithm design, making it a rich area for research.
+                    Despite its simplicity, the Pivot algorithm has a beautiful theoretical guarantee: it is a 3-approximation for minimizing disagreements on complete graphs. In other words, the number of disagreements it produces is at most three times the optimal value—an impressive result for such an intuitive procedure.
+                </p>
+
+                <h2>My Research</h2>
+
+                <p>
+                    My research explores approximation algorithms for correlation clustering, particularly when the number of clusters is fixed (the so-called k-correlation clustering problem). This variant is significantly harder, but also very relevant to practical applications where we know in advance that the data should naturally form a certain number of groups.
                 </p>
 
                 <p>
-                    Whether you're interested in the pure algorithmic challenges, the machine learning applications, or the systems aspects of implementing these algorithms at scale, correlation clustering offers something compelling. As I continue my PhD research in this area, I'm constantly surprised by new connections and applications that emerge.
+                    I work on developing new algorithms that achieve better guarantees for these problems and analyzing their performance both theoretically and experimentally. A major theme of my work is understanding how we can make algorithms robust in the presence of noisy data and efficient in streaming or online settings where data arrives over time.
                 </p>
+
+                <h2>How to Start Researching Correlation Clustering</h2>
 
                 <p>
-                    If you're working on related problems or have questions about correlation clustering, I'd love to hear from you. The best part of research is the community of people thinking about these problems together.
+                    If you are interested in working on correlation clustering, here are a few steps to get started:
                 </p>
 
-                <div class="highlight-box">
-                    <h3>Want to Learn More?</h3>
-                    <p>Check out my recent paper on one-way communication complexity of minimum vertex cover, where we explore related clustering and covering problems. Feel free to reach out if you'd like to discuss correlation clustering or related topics!</p>
+                <h3>1. Read the classic papers</h3>
+
+                <div class="example-box">
+                    <h4>The original formulation:</h4>
+                    <p><strong>Bansal, Blum, and Chawla (2004):</strong> "Correlation Clustering" – This is the seminal paper that introduced the problem and the Pivot algorithm.</p>
+
+                    <h4>Follow-up work on approximations:</h4>
+                    <p><strong>Charikar, Guruswami, and Wirth (2005):</strong> "Clustering with Qualitative Information" – Improves approximation ratios and analyzes several variants.</p>
+
+                    <h4>Recent progress:</h4>
+                    <p><strong>Giotis and Guruswami (2006):</strong> "Correlation Clustering with a Fixed Number of Clusters" – Introduces approximation schemes for the k-clustering variant.</p>
                 </div>
+
+                <h3>2. Try implementing the Pivot algorithm</h3>
+                <p>
+                    It is short and elegant—perfect for building intuition and running experiments on small datasets.
+                </p>
+
+                <h3>3. Explore open questions</h3>
+                <ul>
+                    <li>How do these algorithms behave on real-world graphs (e.g., social networks)?</li>
+                    <li>Can we design faster or more scalable approximation schemes?</li>
+                    <li>What happens if the similarity labels are partially missing, noisy, or adversarially corrupted?</li>
+                    <li>How do we adapt correlation clustering to streaming, online, or distributed models?</li>
+                </ul>
+
+                <h3>4. Experiment</h3>
+                <p>
+                    Generate synthetic data with known cluster structure and compare how different algorithms perform. Many papers provide benchmark datasets you can use.
+                </p>
+
+                <h2>Why It's Exciting</h2>
+
+                <p>
+                    Correlation clustering is a beautiful example of how theoretical computer science and machine learning meet. It is simple to state, rich in mathematical structure, and directly applicable to real problems like entity resolution, community detection, and deduplication. And because it is NP-hard, there is always room for new insights—whether that means proving tighter approximation guarantees, designing faster algorithms, or exploring entirely new models.
+                </p>
             </div>
 
             <div class="author-box">
@@ -599,8 +569,8 @@
             <a href="../writing.html" class="nav-link">
                 ← Back to Writing
             </a>
-            <a href="phd-application-tips.html" class="nav-link">
-                PhD Application Tips →
+            <a href="math-objects-humans.html" class="nav-link">
+                Math Objects vs Humans →
             </a>
         </nav>
     </div>
