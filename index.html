@@ -4,19 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Andisheh Ghasemi - PhD Student in Computer Science</title>
-    <!-- 
-    IMPORTANT: To add your photo:
-    1. Name your photo file "your-photo.jpg" (or .png)
-    2. Place it in the same folder as this HTML file
-    3. Or update the src="your-photo.jpg" to match your photo filename
-    
-    To update social links:
-    1. Replace "YOUR_ID" in the Google Scholar link with your actual Google Scholar ID
-    2. Replace "YOUR_PROFILE" in the LinkedIn link with your LinkedIn username
-    3. The GitHub link already points to your profile (andisheGhs)
-    
-    Your CV file "08-14-2025.pdf" should be in the same folder as this HTML file
-    -->
     <style>
         * {
             margin: 0;
@@ -28,8 +15,8 @@
         :root {
             --primary-color: #1a365d;  /* Deep professional blue */
             --accent-color: #2563eb;   /* Bright blue for links */
-            --text-dark: #1e293b;      /* Almost black */
-            --text-light: #64748b;      /* Gray */
+            --text-dark: #0f172a;      /* Much darker for better contrast */
+            --text-light: #475569;      /* Darker gray for better readability */
             --bg-light: #f8fafc;        /* Very light gray */
             --bg-white: #ffffff;
             --border-color: #e2e8f0;
@@ -59,6 +46,23 @@
             --card-shadow: rgba(0, 0, 0, 0.3);
         }
 
+        /* Page-specific accent colors */
+        body[data-page="research"] {
+            --accent-color: #10b981; /* Green for research */
+        }
+        
+        body[data-page="publications"] {
+            --accent-color: #8b5cf6; /* Purple for publications */
+        }
+        
+        body[data-page="writing"] {
+            --accent-color: #f59e0b; /* Amber for writing */
+        }
+        
+        body[data-page="contact"] {
+            --accent-color: #ef4444; /* Red for contact */
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             color: var(--text-dark);
@@ -66,9 +70,10 @@
             background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
             min-height: 100vh;
             padding: 20px;
+            transition: all var(--transition-speed) ease;
         }
 
-                /* Theme Toggle Button */
+        /* Theme Toggle Button */
         .theme-toggle {
             position: fixed;
             top: 30px;
@@ -113,14 +118,37 @@
             display: none;
         }
 
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            font-size: 0.95em;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
         .container {
             max-width: 900px;
             margin: 0 auto;
             background: var(--bg-white);
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 60px var(--card-shadow);
             overflow: hidden;
             animation: fadeInUp 0.6s ease-out;
+            transition: all var(--transition-speed) ease;
         }
 
         @keyframes fadeInUp {
@@ -135,11 +163,16 @@
         }
 
         header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #34495e 100%);
+            background: linear-gradient(135deg, var(--header-gradient-start) 0%, var(--header-gradient-end) 100%);
             color: white;
             padding: 60px 50px;
             position: relative;
             overflow: hidden;
+            transition: all var(--transition-speed) ease;
+        }
+
+        [data-theme="dark"] header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
         }
 
         header::before {
@@ -264,6 +297,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            transition: all var(--transition-speed) ease;
         }
 
         nav ul {
@@ -310,6 +344,7 @@
 
         .content {
             padding: 50px;
+            transition: all var(--transition-speed) ease;
         }
 
         section {
@@ -337,6 +372,7 @@
             padding-bottom: 10px;
             border-bottom: 3px solid var(--accent-color);
             display: inline-block;
+            transition: color var(--transition-speed) ease;
         }
 
         .about-content {
@@ -345,18 +381,25 @@
             border-radius: 12px;
             margin-bottom: 20px;
             border-left: 4px solid var(--accent-color);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .about-content p {
+            color: var(--text-dark);
+            font-weight: 500;
         }
 
         .highlight-box {
-            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            background: var(--bg-light);
             padding: 20px;
             border-radius: 10px;
             margin: 20px 0;
-            border: 1px solid #667eea30;
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-speed) ease;
         }
 
         .publication {
-            background: white;
+            background: var(--bg-white);
             padding: 25px;
             margin-bottom: 20px;
             border-radius: 12px;
@@ -364,6 +407,10 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+        }
+
+        [data-theme="dark"] .publication {
+            background: #1e293b;
         }
 
         .publication::before {
@@ -379,7 +426,7 @@
         }
 
         .publication:hover {
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 20px var(--card-shadow);
             transform: translateY(-2px);
         }
 
@@ -388,16 +435,18 @@
         }
 
         .publication h3 {
-            color: var(--primary-color);
+            color: var(--text-dark);
             font-size: 1.1em;
             margin-bottom: 10px;
             line-height: 1.4;
+            font-weight: 600;
         }
 
         .publication .authors {
             color: var(--text-light);
             margin-bottom: 8px;
             font-size: 0.95em;
+            font-weight: 500;
         }
 
         .publication .venue {
@@ -420,6 +469,7 @@
             border-radius: 20px;
             font-size: 0.9em;
             transition: all 0.3s ease;
+            font-weight: 500;
         }
 
         .publication .links a:hover {
@@ -434,20 +484,24 @@
         }
 
         .news-item {
-            background: white;
+            background: var(--bg-white);
             padding: 20px 25px;
             margin-bottom: 15px;
             border-radius: 10px;
             border-left: 3px solid var(--accent-color);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 10px var(--card-shadow);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
+        [data-theme="dark"] .news-item {
+            background: #1e293b;
+        }
+
         .news-item:hover {
             transform: translateX(5px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px var(--card-shadow);
         }
 
         .news-date {
@@ -473,6 +527,12 @@
             background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
             color: #667eea;
             border: 1px solid #667eea30;
+        }
+
+        [data-theme="dark"] .tag-publication {
+            background: rgba(96, 165, 250, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(96, 165, 250, 0.3);
         }
 
         .tag-talk {
@@ -503,18 +563,22 @@
             margin-top: 12px;
             line-height: 1.6;
             color: var(--text-dark);
+            font-weight: 500;
         }
 
         .contact-info {
-            background: linear-gradient(135deg, var(--bg-light) 0%, #ffffff 100%);
+            background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-white) 100%);
             padding: 30px;
             border-radius: 12px;
             text-align: center;
+            transition: all var(--transition-speed) ease;
         }
 
         .contact-info p {
             margin-bottom: 15px;
             font-size: 1.05em;
+            color: var(--text-dark);
+            font-weight: 500;
         }
 
         .contact-buttons {
@@ -555,10 +619,11 @@
             color: var(--accent-color);
             text-decoration: none;
             transition: color 0.3s ease;
+            font-weight: 500;
         }
 
         a:hover {
-            color: #2980b9;
+            color: var(--primary-color);
             text-decoration: underline;
         }
 
@@ -569,9 +634,15 @@
             padding: 15px;
             background: var(--bg-light);
             border-radius: 8px;
+            font-weight: 500;
         }
 
         @media (max-width: 768px) {
+            .theme-toggle {
+                top: 20px;
+                right: 20px;
+            }
+
             header {
                 padding: 40px 30px;
             }
@@ -647,7 +718,17 @@
         }
     </style>
 </head>
-<body>
+<body data-page="home">
+    <!-- Theme Toggle Button (MOVED TO CORRECT POSITION) -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+        <svg class="sun-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+        </svg>
+        <svg class="moon-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+        </svg>
+    </button>
+
     <div class="container">
         <header>
             <div class="header-content">
@@ -674,7 +755,7 @@
         <nav>
             <ul>
                 <li><a href="#about" onclick="smoothScroll('about')">About</a></li>
-                <li><a href="writing.html">Writing</a></li>  <!-- Add this -->
+                <li><a href="writing.html">Writing</a></li>
                 <li><a href="#research" onclick="smoothScroll('research')">Research</a></li>
                 <li><a href="#publications" onclick="smoothScroll('publications')">Publications</a></li>
                 <li><a href="#news" onclick="smoothScroll('news')">News</a></li>
@@ -712,7 +793,6 @@
                 </p>
             </section>
 
-            
             <section id="research">
                 <h2>Research Interests</h2>
                 <div class="about-content">
@@ -758,6 +838,7 @@
                     </div>
                 </div>
             </section>
+
             <section id="news">
                 <h2>News</h2>
                 <div class="news-container">
@@ -766,6 +847,7 @@
                         <span class="news-tag tag-conference">Conference</span>
                         <p>Attending the <a href="https://simons.berkeley.edu/workshops/algorithmic-foundations-emerging-computing-technologies-boot-camp" target="_blank">Algorithmic Foundations of Emerging Computing Technologies Boot Camp</a> as a visiting graduate student at the Simons Institute, UC Berkeley.</p>
                     </div>
+                    
                     <div class="news-item">
                         <span class="news-date">Aug 2025</span>
                         <span class="news-tag tag-service">Workshop</span>
@@ -832,6 +914,7 @@
     </div>
 
     <script>
+        // Smooth scroll function
         function smoothScroll(targetId) {
             event.preventDefault();
             const element = document.getElementById(targetId);
@@ -844,6 +927,58 @@
                 behavior: 'smooth'
             });
         }
+
+        // Theme toggle functionality with toast notification
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            localStorage.setItem('themeSetManually', 'true');
+            
+            // Show toast message
+            showThemeMessage(newTheme);
+        }
+
+        function showThemeMessage(theme) {
+            // Remove existing toast if any
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+            
+            // Create new toast
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = theme === 'dark' ? '🌙 Dark mode enabled' : '☀️ Light mode enabled';
+            document.body.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            // Hide and remove toast after 2 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
+        }
+
+        // Load saved theme preference or auto-detect
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const wasSetManually = localStorage.getItem('themeSetManually');
+            
+            // If user never manually set theme, use automatic time-based switching
+            if (!wasSetManually) {
+                const hour = new Date().getHours();
+                const autoTheme = (hour >= 19 || hour < 7) ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', autoTheme);
+            } else {
+                // Use saved preference
+                document.documentElement.setAttribute('data-theme', savedTheme || 'light');
+            }
+        })();
 
         // Add scroll-triggered animations
         const observerOptions = {
@@ -870,38 +1005,5 @@
             });
         });
     </script>
-
-    <script>
-    // Theme toggle functionality
-    function toggleTheme() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-    }
-    
-    // Load saved theme preference or default to light mode
-    (function() {
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-    })();
-    
-    // Optional: Auto-detect system preference
-    if (!localStorage.getItem('theme')) {
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-    }
-    </script>
 </body>
-
-    <!-- Theme Toggle Button -->
-<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
-    <svg class="sun-icon" fill="currentColor" viewBox="0 0 20 20">
-        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
-    </svg>
-    <svg class="moon-icon" fill="currentColor" viewBox="0 0 20 20">
-        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
-    </svg>
-</button>
 </html>
