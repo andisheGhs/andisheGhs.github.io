@@ -385,18 +385,6 @@
             border: 1px solid #e91e6330;
         }
 
-        .category-teaching {
-            background: #f59e0b20;
-            color: #f59e0b;
-            border: 1px solid #f59e0b30;
-        }
-
-        .category-events {
-            background: #16a08520;
-            color: #16a085;
-            border: 1px solid #16a08530;
-        }
-
         .article-card h3 {
             color: var(--text-dark);
             margin-bottom: 15px;
@@ -538,12 +526,23 @@
                 <button class="filter-btn active" onclick="filterArticles('all')">All</button>
                 <button class="filter-btn" onclick="filterArticles('computer-science')">Computer Science</button>
                 <button class="filter-btn" onclick="filterArticles('research')">Research</button>
-                <button class="filter-btn" onclick="filterArticles('teaching')">Teaching</button>
-                <button class="filter-btn" onclick="filterArticles('events')">Events</button>
                 <button class="filter-btn" onclick="filterArticles('personal')">Personal</button>
             </div>
 
             <div class="articles-grid">
+                <!-- Behavioral Economics Article -->
+                <article class="article-card" data-category="personal">
+                    <div class="article-meta">
+                        <span class="article-date">January 22, 2025</span>
+                        <span class="article-category category-personal">Personal</span>
+                    </div>
+                    <h3><a href="articles/math-objects-humans.html">Math Objects Do Not Behave the Same Way as Humans</a></h3>
+                    <p class="article-excerpt">
+                        Why do we buy lottery tickets with terrible odds while refusing favorable bets? Why does losing $100 hurt twice as much as winning $100 feels good? A exploration of how human decision-making consistently violates mathematical rationality—and why that makes us beautifully human...
+                    </p>
+                    <a href="articles/math-objects-humans.html" class="read-more">Read more →</a>
+                </article>
+
                 <!-- Correlation Clustering Article -->
                 <article class="article-card" data-category="computer-science">
                     <div class="article-meta">
@@ -555,32 +554,6 @@
                         Correlation clustering is a fascinating problem that sits at the intersection of machine learning and theoretical computer science. Unlike traditional clustering where you specify the number of clusters, correlation clustering finds the natural groupings in your data...
                     </p>
                     <a href="articles/correlation-clustering-intro.html" class="read-more">Read more →</a>
-                </article>
-
-                <!-- PhD Application Tips -->
-                <article class="article-card" data-category="personal">
-                    <div class="article-meta">
-                        <span class="article-date">January 15, 2025</span>
-                        <span class="article-category category-personal">Personal</span>
-                    </div>
-                    <h3><a href="articles/phd-application-tips.html">10 Tips for a Successful PhD Application in CS Theory</a></h3>
-                    <p class="article-excerpt">
-                        After helping numerous students with their applications and going through the process myself, I've compiled essential tips that can make your application stand out. From crafting your statement of purpose to choosing recommenders...
-                    </p>
-                    <a href="articles/phd-application-tips.html" class="read-more">Read more →</a>
-                </article>
-
-                <!-- Journey Article -->
-                <article class="article-card" data-category="personal">
-                    <div class="article-meta">
-                        <span class="article-date">November 10, 2024</span>
-                        <span class="article-category category-personal">Personal</span>
-                    </div>
-                    <h3><a href="articles/from-sharif-to-neu.html">My Journey: From Sharif to Northeastern via Paris</a></h3>
-                    <p class="article-excerpt">
-                        Reflecting on my academic journey from undergraduate studies at Sharif University, through the MPRI program in Paris, to my current PhD at Northeastern. The challenges, the growth, and the unexpected lessons...
-                    </p>
-                    <a href="articles/from-sharif-to-neu.html" class="read-more">Read more →</a>
                 </article>
 
                 <!-- Coming Soon -->
