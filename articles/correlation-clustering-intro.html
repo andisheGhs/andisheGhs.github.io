@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Correlation Clustering: A Gentle Introduction - Andisheh Ghasemi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Light Mode (Professional) */
+        :root {
+            --primary-color: #1a365d;
+            --accent-color: #2563eb;
+            --text-dark: #0f172a;
+            --text-light: #475569;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --border-color: #e2e8f0;
+            --hover-bg: #f1f5f9;
+            --gradient-start: #1e3a8a;
+            --gradient-end: #1e40af;
+            --header-gradient-start: #1a365d;
+            --header-gradient-end: #2c5282;
+            --card-shadow: rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+        
+        /* Dark Mode */
+        [data-theme="dark"] {
+            --primary-color: #93c5fd;
+            --accent-color: #60a5fa;
+            --text-dark: #f1f5f9;
+            --text-light: #cbd5e1;
+            --bg-light: #1e293b;
+            --bg-white: #0f172a;
+            --border-color: #334155;
+            --hover-bg: #334155;
+            --gradient-start: #0f172a;
+            --gradient-end: #1e293b;
+            --header-gradient-start: #1e293b;
+            --header-gradient-end: #334155;
+            --card-shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.8;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            transition: all var(--transition-speed) ease;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 1000;
+            background: var(--bg-white);
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 4px 6px var(--card-shadow);
+        }
+        
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px var(--card-shadow);
+        }
+        
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            display: block;
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .theme-toggle .sun-icon {
+            display: none;
+            color: var(--accent-color);
+        }
+        
+        .theme-toggle .moon-icon {
+            display: block;
+            color: var(--accent-color);
+        }
+        
+        [data-theme="dark"] .theme-toggle .sun-icon {
+            display: block;
+        }
+        
+        [data-theme="dark"] .theme-toggle .moon-icon {
+            display: none;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px var(--card-shadow);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
+            transition: all var(--transition-speed) ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--header-gradient-start) 0%, var(--header-gradient-end) 100%);
+            color: white;
+            padding: 30px 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-speed) ease;
+        }
+
+        [data-theme="dark"] header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header-content {
+            position: relative;
+        }
+
+        .breadcrumb {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: white;
+        }
+
+        .article-content {
+            padding: 50px;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .article-header {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.2em;
+            line-height: 1.3;
+            margin-bottom: 20px;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+            color: var(--text-light);
+            font-size: 0.95em;
+        }
+
+        .article-category {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: #667eea20;
+            color: #667eea;
+            border: 1px solid #667eea30;
+        }
+
+        .reading-time {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .article-body {
+            font-size: 1.05em;
+            color: var(--text-dark);
+        }
+
+        .article-body h2 {
+            color: var(--primary-color);
+            font-size: 1.6em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .article-body h3 {
+            color: var(--primary-color);
+            font-size: 1.3em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .article-body p {
+            margin-bottom: 20px;
+            text-align: justify;
+            font-weight: 500;
+        }
+
+        .article-body ul, .article-body ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .article-body li {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .article-body strong {
+            color: var(--primary-color);
+        }
+
+        .article-body blockquote {
+            border-left: 4px solid var(--accent-color);
+            padding-left: 20px;
+            margin: 30px 0;
+            font-style: italic;
+            color: var(--text-light);
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .article-body code {
+            background: var(--bg-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #e74c3c;
+        }
+
+        .article-body pre {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        .article-body pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-dark);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border: 1px solid #667eea30;
+        }
+
+        [data-theme="dark"] .highlight-box {
+            background: rgba(96, 165, 250, 0.1);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+        }
+
+        .tip-box {
+            background: #3498db10;
+            border-left: 4px solid var(--accent-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+
+        .tip-box strong {
+            color: var(--accent-color);
+        }
+
+        .example-box {
+            background: var(--bg-light);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .example-box h4 {
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        .author-box {
+            background: var(--bg-light);
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .author-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .author-box p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .author-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .author-links a {
+            padding: 8px 20px;
+            background: var(--bg-white);
+            color: var(--accent-color);
+            text-decoration: none;
+            border-radius: 20px;
+            border: 1px solid var(--accent-color);
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .author-links a:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px 50px;
+            background: var(--bg-light);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .nav-link {
+            color: var(--accent-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            gap: 12px;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .theme-toggle {
+                top: 20px;
+                right: 20px;
+            }
+
+            .article-content {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .article-body {
+                font-size: 1em;
+            }
+
+            .navigation {
+                padding: 20px 30px;
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .article-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+        <svg class="sun-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+        </svg>
+        <svg class="moon-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="breadcrumb">
+                    <a href="../index.html">Home</a>
+                    <span>→</span>
+                    <a href="../writing.html">Writing</a>
+                    <span>→</span>
+                    <span>Article</span>
+                </div>
+            </div>
+        </header>
+
+        <article class="article-content">
+            <div class="article-header">
+                <h1>Understanding Correlation Clustering: A Gentle Introduction</h1>
+                <div class="article-meta">
+                    <span class="article-date">January 20, 2025</span>
+                    <span class="article-category">Computer Science</span>
+                    <span class="reading-time">📖 10 min read</span>
+                </div>
+            </div>
+
+            <div class="article-body">
+                <p>
+                    When I first encountered correlation clustering during my research, I was struck by its elegant simplicity and surprising depth. Unlike traditional clustering methods where you need to specify the number of clusters in advance (think k-means), correlation clustering finds the natural groupings in your data based solely on pairwise relationships. Today, I want to share what makes this problem so fascinating and why it's become a central focus of my PhD research.
+                </p>
+
+                <h2>The Problem at Its Core</h2>
+                <p>
+                    Imagine you're organizing a conference and need to assign participants to discussion groups. You have information about which pairs of people would work well together (+) and which pairs might have conflicts (−). Your goal? Arrange everyone into groups that maximize harmony—keeping friends together and conflicts apart.
+                </p>
+
+                <p>
+                    This is correlation clustering in a nutshell. Formally, we're given a graph where each edge is labeled either positive (+) or negative (−). The objective is to partition the vertices into clusters that minimize disagreements: positive edges cut between clusters and negative edges within the same cluster.
+                </p>
+
+                <div class="highlight-box">
+                    <h3>Key Insight:</h3>
+                    <p>The beauty of correlation clustering is that the optimal number of clusters emerges naturally from the data. You might end up with one giant cluster, many small clusters, or anything in between—whatever minimizes the total disagreement.</p>
+                </div>
+
+                <h2>Why Is It Hard?</h2>
+                <p>
+                    Correlation clustering is NP-hard, even on complete graphs. This means that finding the absolute best clustering is computationally intractable for large datasets. But here's where theory meets practice beautifully: we can design approximation algorithms that find near-optimal solutions efficiently.
+                </p>
+
+                <p>
+                    The first constant-factor approximation algorithm, achieving a factor of 3, was developed by Bansal, Blum, and Chawla in 2004. Since then, researchers have continued to improve these bounds and explore variants of the problem.
+                </p>
+
+                <h2>Real-World Applications</h2>
+                <p>
+                    What makes correlation clustering particularly exciting is its wide range of applications:
+                </p>
+
+                <div class="example-box">
+                    <h4>1. Social Network Analysis</h4>
+                    <p>Identifying communities where positive edges represent friendships and negative edges represent antagonistic relationships. The algorithm naturally finds cohesive groups while respecting the social dynamics.</p>
+                </div>
+
+                <div class="example-box">
+                    <h4>2. Entity Resolution</h4>
+                    <p>Determining which database records refer to the same real-world entity. Positive edges connect likely matches, negative edges connect likely non-matches. The clustering gives us our deduplicated entities.</p>
+                </div>
+
+                <div class="example-box">
+                    <h4>3. Image Segmentation</h4>
+                    <p>Grouping pixels where similarity measures determine edge labels. Unlike traditional methods, we don't need to specify how many objects are in the image—the algorithm discovers this automatically.</p>
+                </div>
+
+                <h2>The Online Setting: My Research Focus</h2>
+                <p>
+                    In my research, I'm particularly interested in the online version of correlation clustering, where the graph is revealed incrementally. Imagine a social network that grows over time, or a database that receives new records continuously. How do we maintain good clusters as the data evolves?
+                </p>
+
+                <p>
+                    This online setting introduces fascinating challenges. We must make irrevocable clustering decisions as vertices arrive, without knowing what future connections will look like. The key is balancing immediate clustering quality with flexibility for future arrivals.
+                </p>
+
+                <div class="tip-box">
+                    <strong>Research Direction:</strong> I'm exploring how machine learning predictions about future edges can improve online algorithms. If we have some (imperfect) information about likely future connections, can we make better clustering decisions in the present?
+                </div>
+
+                <h2>A Simple Algorithm to Get Started</h2>
+                <p>
+                    Here's a basic algorithm that achieves a 3-approximation for correlation clustering:
+                </p>
+
+                <pre><code>1. Pick an arbitrary unclustered vertex v
+2. Create a cluster containing v and all its positive neighbors
+   that aren't yet clustered
+3. Repeat until all vertices are clustered</code></pre>
+
+                <p>
+                    This greedy approach, known as the "Pivot" algorithm, is surprisingly effective. While simple, it captures the essence of correlation clustering: growing clusters around vertices with strong positive connections.
+                </p>
+
+                <h2>Open Problems and Future Directions</h2>
+                <p>
+                    The field of correlation clustering remains vibrant with open questions:
+                </p>
+
+                <ul>
+                    <li><strong>Improved approximation ratios:</strong> Can we beat the current best approximation factors, especially for special graph classes?</li>
+                    <li><strong>Distributed algorithms:</strong> How can we efficiently solve correlation clustering when the data is distributed across multiple machines?</li>
+                    <li><strong>Dynamic settings:</strong> Beyond online algorithms, how do we handle edge insertions and deletions efficiently?</li>
+                    <li><strong>Practical implementations:</strong> Bridging the gap between theoretical guarantees and real-world performance remains an active area.</li>
+                </ul>
+
+                <h2>Getting Started with Correlation Clustering</h2>
+                <p>
+                    If you're interested in diving deeper into correlation clustering, here are my recommendations:
+                </p>
+
+                <ol>
+                    <li>Start with the original paper by Bansal, Blum, and Chawla (2004) for the foundational concepts</li>
+                    <li>Explore the survey by Bonchi et al. (2022) for a comprehensive overview of recent developments</li>
+                    <li>Implement the basic Pivot algorithm to get hands-on experience</li>
+                    <li>Try applying it to a real dataset—social networks are particularly intuitive starting points</li>
+                </ol>
+
+                <h2>Conclusion</h2>
+                <p>
+                    Correlation clustering exemplifies what I love about theoretical computer science: a simple, natural problem formulation that leads to deep theoretical questions and practical applications. It sits at the intersection of machine learning, graph theory, and algorithm design, making it a rich area for research.
+                </p>
+
+                <p>
+                    Whether you're interested in the pure algorithmic challenges, the machine learning applications, or the systems aspects of implementing these algorithms at scale, correlation clustering offers something compelling. As I continue my PhD research in this area, I'm constantly surprised by new connections and applications that emerge.
+                </p>
+
+                <p>
+                    If you're working on related problems or have questions about correlation clustering, I'd love to hear from you. The best part of research is the community of people thinking about these problems together.
+                </p>
+
+                <div class="highlight-box">
+                    <h3>Want to Learn More?</h3>
+                    <p>Check out my recent paper on one-way communication complexity of minimum vertex cover, where we explore related clustering and covering problems. Feel free to reach out if you'd like to discuss correlation clustering or related topics!</p>
+                </div>
+            </div>
+
+            <div class="author-box">
+                <h3>About the Author</h3>
+                <p>Andisheh Ghasemi is a PhD student at Northeastern University researching theoretical computer science, with a focus on correlation clustering and online algorithms with predictions.</p>
+                <div class="author-links">
+                    <a href="../index.html">Main Site</a>
+                    <a href="../writing.html">More Articles</a>
+                    <a href="../index.html#contact">Contact</a>
+                </div>
+            </div>
+        </article>
+
+        <nav class="navigation">
+            <a href="../writing.html" class="nav-link">
+                ← Back to Writing
+            </a>
+            <a href="phd-application-tips.html" class="nav-link">
+                PhD Application Tips →
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            localStorage.setItem('themeSetManually', 'true');
+        }
+
+        // Load saved theme preference
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const wasSetManually = localStorage.getItem('themeSetManually');
+            
+            if (!wasSetManually) {
+                const hour = new Date().getHours();
+                const autoTheme = (hour >= 19 || hour < 7) ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', autoTheme);
+            } else {
+                document.documentElement.setAttribute('data-theme', savedTheme || 'light');
+            }
+        })();
+    </script>
+</body>
+</html>
