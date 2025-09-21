@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Objects Do Not Behave the Same Way as Humans - Andisheh Ghasemi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Light Mode (Professional) */
+        :root {
+            --primary-color: #1a365d;
+            --accent-color: #2563eb;
+            --text-dark: #0f172a;
+            --text-light: #475569;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --border-color: #e2e8f0;
+            --hover-bg: #f1f5f9;
+            --gradient-start: #1e3a8a;
+            --gradient-end: #1e40af;
+            --header-gradient-start: #1a365d;
+            --header-gradient-end: #2c5282;
+            --card-shadow: rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+        
+        /* Dark Mode */
+        [data-theme="dark"] {
+            --primary-color: #93c5fd;
+            --accent-color: #60a5fa;
+            --text-dark: #f1f5f9;
+            --text-light: #cbd5e1;
+            --bg-light: #1e293b;
+            --bg-white: #0f172a;
+            --border-color: #334155;
+            --hover-bg: #334155;
+            --gradient-start: #0f172a;
+            --gradient-end: #1e293b;
+            --header-gradient-start: #1e293b;
+            --header-gradient-end: #334155;
+            --card-shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.8;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            transition: all var(--transition-speed) ease;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 1000;
+            background: var(--bg-white);
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 4px 6px var(--card-shadow);
+        }
+        
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px var(--card-shadow);
+        }
+        
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            display: block;
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .theme-toggle .sun-icon {
+            display: none;
+            color: var(--accent-color);
+        }
+        
+        .theme-toggle .moon-icon {
+            display: block;
+            color: var(--accent-color);
+        }
+        
+        [data-theme="dark"] .theme-toggle .sun-icon {
+            display: block;
+        }
+        
+        [data-theme="dark"] .theme-toggle .moon-icon {
+            display: none;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px var(--card-shadow);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
+            transition: all var(--transition-speed) ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--header-gradient-start) 0%, var(--header-gradient-end) 100%);
+            color: white;
+            padding: 30px 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-speed) ease;
+        }
+
+        [data-theme="dark"] header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header-content {
+            position: relative;
+        }
+
+        .breadcrumb {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: white;
+        }
+
+        .article-content {
+            padding: 50px;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .article-header {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.2em;
+            line-height: 1.3;
+            margin-bottom: 20px;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+            color: var(--text-light);
+            font-size: 0.95em;
+        }
+
+        .article-category {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: #e91e6320;
+            color: #e91e63;
+            border: 1px solid #e91e6330;
+        }
+
+        .reading-time {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .article-body {
+            font-size: 1.05em;
+            color: var(--text-dark);
+        }
+
+        .article-body h2 {
+            color: var(--primary-color);
+            font-size: 1.6em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .article-body h3 {
+            color: var(--primary-color);
+            font-size: 1.3em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .article-body p {
+            margin-bottom: 20px;
+            text-align: justify;
+            font-weight: 500;
+        }
+
+        .article-body ul, .article-body ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .article-body li {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .article-body strong {
+            color: var(--primary-color);
+        }
+
+        .article-body blockquote {
+            border-left: 4px solid var(--accent-color);
+            padding-left: 20px;
+            margin: 30px 0;
+            font-style: italic;
+            color: var(--text-light);
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .example-box {
+            background: var(--bg-light);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .example-box h4 {
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #e91e6315 0%, #f59e0b15 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border: 1px solid #e91e6330;
+        }
+
+        [data-theme="dark"] .highlight-box {
+            background: rgba(233, 30, 99, 0.1);
+            border: 1px solid rgba(233, 30, 99, 0.3);
+        }
+
+        .author-box {
+            background: var(--bg-light);
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .author-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .author-box p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .author-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .author-links a {
+            padding: 8px 20px;
+            background: var(--bg-white);
+            color: var(--accent-color);
+            text-decoration: none;
+            border-radius: 20px;
+            border: 1px solid var(--accent-color);
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .author-links a:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px 50px;
+            background: var(--bg-light);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .nav-link {
+            color: var(--accent-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            gap: 12px;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .theme-toggle {
+                top: 20px;
+                right: 20px;
+            }
+
+            .article-content {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .article-body {
+                font-size: 1em;
+            }
+
+            .navigation {
+                padding: 20px 30px;
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .article-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+        <svg class="sun-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+        </svg>
+        <svg class="moon-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="breadcrumb">
+                    <a href="../index.html">Home</a>
+                    <span>→</span>
+                    <a href="../writing.html">Writing</a>
+                    <span>→</span>
+                    <span>Article</span>
+                </div>
+            </div>
+        </header>
+
+        <article class="article-content">
+            <div class="article-header">
+                <h1>Math Objects Do Not Behave the Same Way as Humans</h1>
+                <div class="article-meta">
+                    <span class="article-date">January 22, 2025</span>
+                    <span class="article-category">Personal</span>
+                    <span class="reading-time">📖 12 min read</span>
+                </div>
+            </div>
+
+            <div class="article-body">
+                <p>
+                    In the idealized world of probability theory, decision-making is straightforward: calculate the expected value, choose the option with the highest return. A perfectly rational agent would never buy a lottery ticket, would always take the statistically superior choice, and would treat a 50% chance identically whether the probability was 50 out of 100 or 500,000 out of 1,000,000. But humans aren't mathematical objects, and our brains consistently violate these rational principles in predictable, fascinating ways.
+                </p>
+
+                <h2>The Expected Value Fallacy</h2>
+                <p>
+                    Mathematical expected value is simple: multiply each outcome by its probability and sum the results. A 50% chance of winning $100 has an expected value of $50. A rational mathematical agent would prefer this to a guaranteed $40.
+                </p>
+
+                <p>
+                    Yet in real experiments, most people take the guaranteed $40. This might seem reasonable until you consider that the same people who refuse a favorable bet at $100 will often buy lottery tickets with catastrophically negative expected values. Americans spend over $80 billion annually on lotteries where the expected return is typically around 50 cents per dollar—a worse investment than literally setting half your money on fire.
+                </p>
+
+                <p>
+                    Why? Because humans don't process probabilities mathematically. We overweight tiny probabilities when they offer enormous rewards, transforming a 0.00000001% chance into something that feels possible, even likely. "Someone has to win" our brain whispers, conveniently ignoring that fourteen million other someones won't.
+                </p>
+
+                <h2>When Numbers Lose Their Meaning</h2>
+                <p>
+                    Present a mathematical object with the difference between $1 million and $1 billion, and the relationship is clear: one is 1,000 times larger. Present this to a human brain, and both figures collapse into a vague category of "really large amount."
+                </p>
+
+                <p>
+                    This scope insensitivity appears everywhere. In studies, people donate roughly the same amount to save 2,000 birds from oil spills as to save 200,000 birds. The human brain simply cannot emotionally process the difference between large numbers. Joseph Stalin allegedly understood this when he noted that "one death is a tragedy; a million deaths is a statistic."
+                </p>
+
+                <p>
+                    Consider how this plays out in real decisions: A CEO might spend hours negotiating to save $10,000 on a $50,000 car purchase but won't spend five minutes reviewing a $10,000 line item in a $10 million budget. Mathematically identical savings, psychologically different worlds.
+                </p>
+
+                <h2>The Certainty Effect and Probability Weighting</h2>
+                <p>
+                    Humans have a bizarre relationship with certainty. The psychological difference between 99% and 100% probability feels massive, while the difference between 33% and 34% feels negligible—even though both represent a 1% change in probability.
+                </p>
+
+                <div class="example-box">
+                    <h4>The Allais Paradox demonstrates this beautifully:</h4>
+                    <p><strong>Choice A:</strong></p>
+                    <ul>
+                        <li>Option 1: $1 million guaranteed</li>
+                        <li>Option 2: 89% chance of $1 million, 10% chance of $5 million, 1% chance of nothing</li>
+                    </ul>
+                    <p><strong>Choice B:</strong></p>
+                    <ul>
+                        <li>Option 3: 11% chance of $1 million, 89% chance of nothing</li>
+                        <li>Option 4: 10% chance of $5 million, 90% chance of nothing</li>
+                    </ul>
+                </div>
+
+                <p>
+                    Most people choose Option 1 in Choice A (preferring certainty) but Option 4 in Choice B (preferring the higher payoff). Mathematically, this is inconsistent. If you prefer Option 1 to Option 2, you should prefer Option 3 to Option 4. The math is indisputable, yet human brains consistently violate it.
+                </p>
+
+                <h2>Loss Aversion: When Negative Isn't the Opposite of Positive</h2>
+                <p>
+                    In mathematics, +100 and -100 are perfect opposites, equal in magnitude but opposite in sign. In the human brain, losses loom roughly twice as large as gains. Losing $100 feels about twice as bad as winning $100 feels good.
+                </p>
+
+                <p>
+                    This leads to seemingly irrational behavior everywhere. Investors hold losing stocks too long, hoping to break even. People drive across town to save $10 on a $50 purchase but won't make the same trip to save $10 on a $1,000 purchase. The same mathematical value ($10) is treated completely differently based on framing and context.
+                </p>
+
+                <p>
+                    Even more striking: people will often reject a bet with a 50% chance of winning $150 and a 50% chance of losing $100, despite the positive expected value. The mathematical object sees +$25 expected value. The human brain sees potential pain that outweighs potential pleasure.
+                </p>
+
+                <h2>The Gambler's Fallacy and Pattern Madness</h2>
+                <p>
+                    Mathematical probability has no memory. A fair coin that has landed heads ten times in a row still has exactly a 50% chance of landing heads on the next flip. The coin doesn't know or care about its history.
+                </p>
+
+                <p>
+                    Human brains refuse to accept this. After seeing ten heads, most people become convinced tails is "due." Gamblers lose fortunes believing that previous losses somehow increase their chances of future wins. Parents with three boys convince themselves the fourth child is more likely to be a girl.
+                </p>
+
+                <p>
+                    We're so desperate to find patterns that we see them where none exist. Show people truly random sequences, and they'll complain it doesn't "look random" because it has too many clusters. Our pattern-seeking brains want randomness to be more evenly distributed than actual randomness is.
+                </p>
+
+                <h2>Framing Effects: When 90% Safe Isn't 10% Deadly</h2>
+                <p>
+                    In pure mathematics, describing something as "90% safe" or "10% deadly" conveys identical information. To humans, these framings create vastly different responses.
+                </p>
+
+                <p>
+                    Doctors know this. Tell a patient a surgery has a 90% survival rate, and they're likely to proceed. Tell them it has a 10% mortality rate, and they hesitate. The math is identical; the human response is opposite.
+                </p>
+
+                <p>
+                    This extends to every domain. Ground beef labeled "75% lean" sells better than "25% fat." A medical treatment that "saves 200 lives out of 600" seems better than one where "400 people will die out of 600." Marketers and politicians understand what mathematicians often don't: humans respond to narrative and framing more than numerical content.
+                </p>
+
+                <h2>Mental Accounting: When Money Isn't Fungible</h2>
+                <p>
+                    In mathematics, money is perfectly fungible—a dollar is a dollar regardless of its source or intended use. Humans create elaborate mental categories that would baffle any equation.
+                </p>
+
+                <p>
+                    People who wouldn't dream of gambling their salary happily gamble with "house money" from previous wins. A tax refund feels like free money to splurge with, even though it's just your own money returned. Someone might refuse to buy a $5 coffee because it's expensive, then lose a $5 bill and shrug it off.
+                </p>
+
+                <p>
+                    The most striking example: many people simultaneously carry credit card debt at 18% interest while keeping money in savings accounts earning 1%. Mathematically insane, psychologically comfortable.
+                </p>
+
+                <h2>Why We're Built This Way</h2>
+                <p>
+                    These "irrationalities" aren't bugs—they're features evolved for survival in ancestral environments. Our ancestors didn't need to calculate expected values across thousands of trials; they needed to survive the next encounter with a predator. Better to overreact to the rustling bush (even if it's usually just wind) than to accurately calculate probabilities and occasionally get eaten.
+                </p>
+
+                <p>
+                    Loss aversion makes evolutionary sense: for most of human history, losing resources you had could mean death, while gaining additional resources provided diminishing survival value. Our inability to grasp large numbers reflects a world where the difference between encountering 10 versus 100 hostile warriors was meaningless—both meant certain doom.
+                </p>
+
+                <h2>Living with Our Non-Mathematical Selves</h2>
+                <p>
+                    Understanding these systematic biases doesn't make them disappear. Even Nobel Prize-winning economists who discovered these patterns still fall for them. Daniel Kahneman, who won the Nobel Prize for his work on cognitive biases, admits he still experiences the same illusions he's spent his career documenting.
+                </p>
+
+                <p>
+                    But awareness helps. Knowing that we overweight small probabilities can help us resist lottery tickets and terrorism fears. Understanding loss aversion can help us make better investment decisions. Recognizing framing effects can help us see through manipulative presentations of data.
+                </p>
+
+                <h2>Conclusion: The Human Advantage</h2>
+                <p>
+                    Mathematics describes a world of perfect rationality, consistent preferences, and logical decisions. Thank goodness we don't live there. Our "irrational" biases make us human. They lead us to buy insurance we'll probably never need (overweighting small probabilities of catastrophe), to feel genuine joy at finding $20 despite losing $20 barely registering, to hope against statistical hope.
+                </p>
+
+                <p>
+                    Yes, these biases can be exploited—casinos and lotteries exist precisely because humans don't behave like mathematical objects. But they also lead us to take entrepreneurial risks no expected value calculation would justify, to feel empathy that transcends numerical optimization, and to find meaning in statistically insignificant events.
+                </p>
+
+                <p>
+                    Mathematical objects execute calculations. Humans live stories. And while our decisions may violate mathematical rationality, they create the rich, hopeful, sometimes tragic, deeply human world we actually inhabit. We are not equations to be solved but paradoxes to be experienced—predictably irrational, systematically biased, and wonderfully, irreducibly human.
+                </p>
+
+                <div class="highlight-box">
+                    <h3>Reflection</h3>
+                    <p>As someone who spends their days immersed in mathematical proofs and algorithmic analysis, I find the contrast between mathematical ideals and human reality endlessly fascinating. In my research on online algorithms with predictions, we often assume rational agents and perfect information. But the real world is messier, more interesting, and ultimately more beautiful because of our predictable irrationalities.</p>
+                </div>
+            </div>
+
+            <div class="author-box">
+                <h3>About the Author</h3>
+                <p>Andisheh Ghasemi is a PhD student at Northeastern University researching theoretical computer science. When not working on correlation clustering, she enjoys exploring the intersection of mathematics, psychology, and human decision-making.</p>
+                <div class="author-links">
+                    <a href="../index.html">Main Site</a>
+                    <a href="../writing.html">More Articles</a>
+                    <a href="../index.html#contact">Contact</a>
+                </div>
+            </div>
+        </article>
+
+        <nav class="navigation">
+            <a href="../writing.html" class="nav-link">
+                ← Back to Writing
+            </a>
+            <a href="correlation-clustering-intro.html" class="nav-link">
+                Correlation Clustering →
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            localStorage.setItem('themeSetManually', 'true');
+        }
+
+        // Load saved theme preference
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const wasSetManually = localStorage.getItem('themeSetManually');
+            
+            if (!wasSetManually) {
+                const hour = new Date().getHours();
+                const autoTheme = (hour >= 19 || hour < 7) ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', autoTheme);
+            } else {
+                document.documentElement.setAttribute('data-theme', savedTheme || 'light');
+            }
+        })();
+    </script>
+</body>
+</html>
