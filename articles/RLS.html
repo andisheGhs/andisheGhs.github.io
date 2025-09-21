@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raising Awareness About Restless Legs Syndrome (RLS) - Andisheh Ghasemi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Light Mode (Professional) */
+        :root {
+            --primary-color: #1a365d;
+            --accent-color: #2563eb;
+            --text-dark: #0f172a;
+            --text-light: #475569;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --border-color: #e2e8f0;
+            --hover-bg: #f1f5f9;
+            --gradient-start: #1e3a8a;
+            --gradient-end: #1e40af;
+            --header-gradient-start: #1a365d;
+            --header-gradient-end: #2c5282;
+            --card-shadow: rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+        
+        /* Dark Mode */
+        [data-theme="dark"] {
+            --primary-color: #93c5fd;
+            --accent-color: #60a5fa;
+            --text-dark: #f1f5f9;
+            --text-light: #cbd5e1;
+            --bg-light: #1e293b;
+            --bg-white: #0f172a;
+            --border-color: #334155;
+            --hover-bg: #334155;
+            --gradient-start: #0f172a;
+            --gradient-end: #1e293b;
+            --header-gradient-start: #1e293b;
+            --header-gradient-end: #334155;
+            --card-shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.8;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            transition: all var(--transition-speed) ease;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 1000;
+            background: var(--bg-white);
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 4px 6px var(--card-shadow);
+        }
+        
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px var(--card-shadow);
+        }
+        
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            display: block;
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .theme-toggle .sun-icon {
+            display: none;
+            color: var(--accent-color);
+        }
+        
+        .theme-toggle .moon-icon {
+            display: block;
+            color: var(--accent-color);
+        }
+        
+        [data-theme="dark"] .theme-toggle .sun-icon {
+            display: block;
+        }
+        
+        [data-theme="dark"] .theme-toggle .moon-icon {
+            display: none;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px var(--card-shadow);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
+            transition: all var(--transition-speed) ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--header-gradient-start) 0%, var(--header-gradient-end) 100%);
+            color: white;
+            padding: 30px 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-speed) ease;
+        }
+
+        [data-theme="dark"] header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header-content {
+            position: relative;
+        }
+
+        .breadcrumb {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: white;
+        }
+
+        .article-content {
+            padding: 50px;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .article-header {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.2em;
+            line-height: 1.3;
+            margin-bottom: 20px;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+            color: var(--text-light);
+            font-size: 0.95em;
+        }
+
+        .article-category {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: #e91e6320;
+            color: #e91e63;
+            border: 1px solid #e91e6330;
+        }
+
+        .reading-time {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .article-body {
+            font-size: 1.05em;
+            color: var(--text-dark);
+        }
+
+        .article-body h2 {
+            color: var(--primary-color);
+            font-size: 1.6em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .article-body h3 {
+            color: var(--primary-color);
+            font-size: 1.3em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .article-body p {
+            margin-bottom: 20px;
+            text-align: justify;
+            font-weight: 500;
+        }
+
+        .article-body ul, .article-body ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .article-body li {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .article-body strong {
+            color: var(--primary-color);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #10b98115 0%, #16a08515 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border: 1px solid #10b98130;
+        }
+
+        [data-theme="dark"] .highlight-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .info-box {
+            background: var(--bg-light);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .support-box {
+            background: linear-gradient(135deg, #e91e6315 0%, #f59e0b15 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            border: 1px solid #e91e6330;
+        }
+
+        [data-theme="dark"] .support-box {
+            background: rgba(233, 30, 99, 0.1);
+            border: 1px solid rgba(233, 30, 99, 0.3);
+        }
+
+        .author-box {
+            background: var(--bg-light);
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .author-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .author-box p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .author-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .author-links a {
+            padding: 8px 20px;
+            background: var(--bg-white);
+            color: var(--accent-color);
+            text-decoration: none;
+            border-radius: 20px;
+            border: 1px solid var(--accent-color);
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .author-links a:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px 50px;
+            background: var(--bg-light);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .nav-link {
+            color: var(--accent-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            gap: 12px;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .theme-toggle {
+                top: 20px;
+                right: 20px;
+            }
+
+            .article-content {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .article-body {
+                font-size: 1em;
+            }
+
+            .navigation {
+                padding: 20px 30px;
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .article-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+        <svg class="sun-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+        </svg>
+        <svg class="moon-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="breadcrumb">
+                    <a href="../index.html">Home</a>
+                    <span>→</span>
+                    <a href="../writing.html">Writing</a>
+                    <span>→</span>
+                    <span>Article</span>
+                </div>
+            </div>
+        </header>
+
+        <article class="article-content">
+            <div class="article-header">
+                <h1>Raising Awareness About Restless Legs Syndrome (RLS)</h1>
+                <div class="article-meta">
+                    <span class="article-date">January 24, 2025</span>
+                    <span class="article-category">Personal</span>
+                    <span class="reading-time">📖 6 min read</span>
+                </div>
+            </div>
+
+            <div class="article-body">
+                <p>
+                    Restless Legs Syndrome (RLS) is a surprisingly common yet often misunderstood neurological condition. It affects millions of people worldwide, but many suffer in silence, unaware that what they are experiencing has a name—or that effective treatments exist.
+                </p>
+
+                <h2>What Is RLS?</h2>
+                
+                <p>
+                    RLS is characterized by an irresistible urge to move the legs, usually accompanied by uncomfortable sensations such as tingling, crawling, or throbbing. These symptoms typically appear during periods of rest or inactivity, often in the evening or at night. Moving the legs—walking, stretching, or even just wiggling them—provides temporary relief.
+                </p>
+
+                <p>
+                    Because symptoms are worse at night, RLS frequently disrupts sleep, leaving sufferers exhausted and frustrated. This impact on sleep quality can spill over into daily life, affecting mood, concentration, and overall well-being.
+                </p>
+
+                <h2>Who Is Affected?</h2>
+
+                <p>
+                    RLS can affect anyone, though it is more common in women and tends to become more severe with age. It can also be associated with pregnancy, certain medications, and conditions such as iron deficiency, diabetes, and kidney disease.
+                </p>
+
+                <div class="info-box">
+                    <p><strong>Key Statistics:</strong></p>
+                    <ul>
+                        <li>Affects approximately 7-10% of the US population</li>
+                        <li>Women are twice as likely to develop RLS as men</li>
+                        <li>Can begin at any age, but often worsens in middle age and beyond</li>
+                        <li>Has a genetic component—about 50% of people with RLS have a family member with the condition</li>
+                    </ul>
+                </div>
+
+                <h2>Why Awareness Matters</h2>
+
+                <p>
+                    Many people with RLS go undiagnosed for years, assuming their symptoms are "just stress" or "bad circulation." This lack of awareness delays treatment and can seriously affect quality of life.
+                </p>
+
+                <p>
+                    Awareness is crucial for two reasons:
+                </p>
+
+                <ol>
+                    <li><strong>Early Diagnosis and Treatment</strong> – Recognizing the symptoms allows people to seek medical help sooner. Effective treatments exist, ranging from lifestyle adjustments to medication.</li>
+                    <li><strong>Reducing Stigma</strong> – RLS is often dismissed as a minor annoyance, but for many, it is a chronic and disruptive condition. Greater understanding helps validate the experiences of those living with it.</li>
+                </ol>
+
+                <h2>How to Support RLS Awareness</h2>
+
+                <div class="support-box">
+                    <ul>
+                        <li><strong>Learn and Share</strong> – Talk about RLS with friends and family. The more people know, the easier it is for those affected to seek help.</li>
+                        <li><strong>Encourage Medical Attention</strong> – If you or someone you know experiences restless, uncomfortable legs at night, encourage a visit to a healthcare provider.</li>
+                        <li><strong>Support Research</strong> – Consider supporting organizations funding RLS research and advocating for better treatments, such as the Restless Legs Syndrome Foundation.</li>
+                    </ul>
+                </div>
+
+                <h2>Living with RLS</h2>
+
+                <p>
+                    Although there is no one-size-fits-all cure, many people find relief through a combination of strategies:
+                </p>
+
+                <div class="highlight-box">
+                    <h3>Management Strategies:</h3>
+                    <ul>
+                        <li>Improving sleep hygiene (regular sleep schedule, cool bedroom, comfortable bedding)</li>
+                        <li>Exercising regularly (but not too close to bedtime)</li>
+                        <li>Reducing or eliminating caffeine and alcohol</li>
+                        <li>Addressing underlying conditions like iron deficiency</li>
+                        <li>Trying relaxation techniques such as yoga or meditation</li>
+                        <li>Using hot/cold therapy or massage</li>
+                    </ul>
+                </div>
+
+                <p>
+                    For those with more severe symptoms, doctors may prescribe medications that significantly reduce discomfort. These can include dopaminergic agents, gabapentin, or iron supplements if deficiency is present.
+                </p>
+
+                <h2>Final Thoughts</h2>
+
+                <p>
+                    Restless Legs Syndrome is more than a quirky nighttime habit—it is a neurological disorder that can deeply affect sleep and quality of life. By talking about it, we can help people find answers, receive treatment, and reclaim their rest.
+                </p>
+
+                <p>
+                    If you think you might have RLS, or if someone you care about is struggling with unexplained nighttime restlessness, know that help is available. Raising awareness is the first step toward better sleep and better lives.
+                </p>
+
+                <div class="info-box">
+                    <p><strong>Important Note:</strong> This article is for educational purposes only and should not replace professional medical advice. If you suspect you have RLS, please consult with a healthcare provider for proper diagnosis and treatment.</p>
+                </div>
+
+                <h2>Personal Note</h2>
+
+                <p>
+                    As someone in the academic world where long hours of sitting and research are common, I've seen how conditions like RLS can impact productivity and well-being. The intersection of neuroscience and daily life fascinates me, and I believe raising awareness about conditions like RLS is important for our community. If this article helps even one person recognize their symptoms and seek help, it will have served its purpose.
+                </p>
+            </div>
+
+            <div class="author-box">
+                <h3>About the Author</h3>
+                <p>Andisheh Ghasemi is a PhD student at Northeastern University. While her primary research focuses on theoretical computer science, she believes in using her platform to raise awareness about important health issues that affect many in the academic community and beyond.</p>
+                <div class="author-links">
+                    <a href="../index.html">Main Site</a>
+                    <a href="../writing.html">More Articles</a>
+                    <a href="../index.html#contact">Contact</a>
+                </div>
+            </div>
+        </article>
+
+        <nav class="navigation">
+            <a href="../writing.html" class="nav-link">
+                ← Back to Writing
+            </a>
+            <a href="math-objects-humans.html" class="nav-link">
+                Math Objects vs Humans →
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            localStorage.setItem('themeSetManually', 'true');
+        }
+
+        // Load saved theme preference
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const wasSetManually = localStorage.getItem('themeSetManually');
+            
+            if (!wasSetManually) {
+                const hour = new Date().getHours();
+                const autoTheme = (hour >= 19 || hour < 7) ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', autoTheme);
+            } else {
+                document.documentElement.setAttribute('data-theme', savedTheme || 'light');
+            }
+        })();
+    </script>
+</body>
+</html>
