@@ -11,24 +11,116 @@
             box-sizing: border-box;
         }
 
+        /* Light Mode (Professional) */
         :root {
-            --primary-color: #2c3e50;
-            --accent-color: #3498db;
-            --text-dark: #2c3e50;
-            --text-light: #5a6c7d;
-            --bg-light: #f8f9fa;
+            --primary-color: #1a365d;
+            --accent-color: #2563eb;
+            --text-dark: #0f172a;
+            --text-light: #475569;
+            --bg-light: #f8fafc;
             --bg-white: #ffffff;
-            --border-color: #e1e8ed;
-            --hover-bg: #f0f4f8;
+            --border-color: #e2e8f0;
+            --hover-bg: #f1f5f9;
+            --gradient-start: #1e3a8a;
+            --gradient-end: #1e40af;
+            --header-gradient-start: #1a365d;
+            --header-gradient-end: #2c5282;
+            --card-shadow: rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+        
+        /* Dark Mode */
+        [data-theme="dark"] {
+            --primary-color: #93c5fd;
+            --accent-color: #60a5fa;
+            --text-dark: #f1f5f9;
+            --text-light: #cbd5e1;
+            --bg-light: #1e293b;
+            --bg-white: #0f172a;
+            --border-color: #334155;
+            --hover-bg: #334155;
+            --gradient-start: #0f172a;
+            --gradient-end: #1e293b;
+            --header-gradient-start: #1e293b;
+            --header-gradient-end: #334155;
+            --card-shadow: rgba(0, 0, 0, 0.3);
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             color: var(--text-dark);
             line-height: 1.6;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
             min-height: 100vh;
             padding: 20px;
+            transition: all var(--transition-speed) ease;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 1000;
+            background: var(--bg-white);
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 4px 6px var(--card-shadow);
+        }
+        
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px var(--card-shadow);
+        }
+        
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            display: block;
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .theme-toggle .sun-icon {
+            display: none;
+            color: var(--accent-color);
+        }
+        
+        .theme-toggle .moon-icon {
+            display: block;
+            color: var(--accent-color);
+        }
+        
+        [data-theme="dark"] .theme-toggle .sun-icon {
+            display: block;
+        }
+        
+        [data-theme="dark"] .theme-toggle .moon-icon {
+            display: none;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            font-size: 0.95em;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
         }
 
         .container {
@@ -36,9 +128,10 @@
             margin: 0 auto;
             background: var(--bg-white);
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 60px var(--card-shadow);
             overflow: hidden;
             animation: fadeInUp 0.6s ease-out;
+            transition: all var(--transition-speed) ease;
         }
 
         @keyframes fadeInUp {
@@ -53,11 +146,16 @@
         }
 
         header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #34495e 100%);
+            background: linear-gradient(135deg, var(--header-gradient-start) 0%, var(--header-gradient-end) 100%);
             color: white;
             padding: 40px 50px;
             position: relative;
             overflow: hidden;
+            transition: all var(--transition-speed) ease;
+        }
+
+        [data-theme="dark"] header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
         }
 
         header::before {
@@ -107,6 +205,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            transition: all var(--transition-speed) ease;
         }
 
         nav ul {
@@ -153,6 +252,7 @@
 
         .content {
             padding: 50px;
+            transition: all var(--transition-speed) ease;
         }
 
         .intro {
@@ -186,7 +286,7 @@
         .filter-btn {
             padding: 8px 20px;
             border: 1px solid var(--accent-color);
-            background: white;
+            background: var(--bg-white);
             color: var(--accent-color);
             border-radius: 20px;
             cursor: pointer;
@@ -209,13 +309,17 @@
         }
 
         .article-card {
-            background: white;
+            background: var(--bg-white);
             border-radius: 12px;
             padding: 30px;
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+        }
+
+        [data-theme="dark"] .article-card {
+            background: #1e293b;
         }
 
         .article-card::before {
@@ -231,7 +335,7 @@
         }
 
         .article-card:hover {
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px var(--card-shadow);
             transform: translateY(-5px);
         }
 
@@ -250,6 +354,7 @@
         .article-date {
             color: var(--text-light);
             font-size: 0.9em;
+            font-weight: 500;
         }
 
         .article-category {
@@ -262,16 +367,16 @@
             letter-spacing: 0.5px;
         }
 
-        .category-research {
+        .category-computer-science {
             background: #667eea20;
             color: #667eea;
             border: 1px solid #667eea30;
         }
 
-        .category-phd {
-            background: #3498db20;
-            color: #3498db;
-            border: 1px solid #3498db30;
+        .category-research {
+            background: #10b98120;
+            color: #10b981;
+            border: 1px solid #10b98130;
         }
 
         .category-personal {
@@ -280,17 +385,24 @@
             border: 1px solid #e91e6330;
         }
 
-        .category-tutorial {
-            background: #2ecc7120;
-            color: #27ae60;
-            border: 1px solid #2ecc7130;
+        .category-teaching {
+            background: #f59e0b20;
+            color: #f59e0b;
+            border: 1px solid #f59e0b30;
+        }
+
+        .category-events {
+            background: #16a08520;
+            color: #16a085;
+            border: 1px solid #16a08530;
         }
 
         .article-card h3 {
-            color: var(--primary-color);
+            color: var(--text-dark);
             margin-bottom: 15px;
             font-size: 1.3em;
             line-height: 1.4;
+            font-weight: 600;
         }
 
         .article-card h3 a {
@@ -307,6 +419,7 @@
             color: var(--text-light);
             margin-bottom: 20px;
             line-height: 1.7;
+            font-weight: 500;
         }
 
         .read-more {
@@ -321,7 +434,7 @@
 
         .read-more:hover {
             gap: 10px;
-            color: #2980b9;
+            color: var(--primary-color);
         }
 
         .coming-soon {
@@ -339,6 +452,11 @@
         }
 
         @media (max-width: 768px) {
+            .theme-toggle {
+                top: 20px;
+                right: 20px;
+            }
+
             header {
                 padding: 30px 40px;
             }
@@ -381,11 +499,21 @@
     </style>
 </head>
 <body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+        <svg class="sun-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+        </svg>
+        <svg class="moon-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+        </svg>
+    </button>
+
     <div class="container">
         <header>
             <div class="header-content">
-                <h1>Writing & Articles</h1>
-                <p class="subtitle">Thoughts on Research, PhD Life, and Computer Science</p>
+                <h1>Writing</h1>
+                <p class="subtitle">Technical Articles and Personal Reflections</p>
                 <a href="index.html" class="back-link">← Back to main site</a>
             </div>
         </header>
@@ -402,24 +530,38 @@
 
         <div class="content">
             <div class="intro">
-                <h2>Welcome to my writing corner</h2>
-                <p>Here I share insights from my research journey, advice for aspiring PhD students, and thoughts on theoretical computer science.</p>
+                <h2>Welcome to my writing space</h2>
+                <p>A collection of technical articles, research insights, and personal reflections from my journey in computer science and academia.</p>
             </div>
 
             <div class="filter-buttons">
                 <button class="filter-btn active" onclick="filterArticles('all')">All</button>
+                <button class="filter-btn" onclick="filterArticles('computer-science')">Computer Science</button>
                 <button class="filter-btn" onclick="filterArticles('research')">Research</button>
-                <button class="filter-btn" onclick="filterArticles('phd')">PhD Advice</button>
-                <button class="filter-btn" onclick="filterArticles('tutorial')">Tutorials</button>
+                <button class="filter-btn" onclick="filterArticles('teaching')">Teaching</button>
+                <button class="filter-btn" onclick="filterArticles('events')">Events</button>
                 <button class="filter-btn" onclick="filterArticles('personal')">Personal</button>
             </div>
 
             <div class="articles-grid">
-                <!-- Sample Article 1 -->
-                <article class="article-card" data-category="phd">
+                <!-- Correlation Clustering Article -->
+                <article class="article-card" data-category="computer-science">
+                    <div class="article-meta">
+                        <span class="article-date">January 20, 2025</span>
+                        <span class="article-category category-computer-science">Computer Science</span>
+                    </div>
+                    <h3><a href="articles/correlation-clustering-intro.html">Understanding Correlation Clustering: A Gentle Introduction</a></h3>
+                    <p class="article-excerpt">
+                        Correlation clustering is a fascinating problem that sits at the intersection of machine learning and theoretical computer science. Unlike traditional clustering where you specify the number of clusters, correlation clustering finds the natural groupings in your data...
+                    </p>
+                    <a href="articles/correlation-clustering-intro.html" class="read-more">Read more →</a>
+                </article>
+
+                <!-- PhD Application Tips -->
+                <article class="article-card" data-category="personal">
                     <div class="article-meta">
                         <span class="article-date">January 15, 2025</span>
-                        <span class="article-category category-phd">PhD Advice</span>
+                        <span class="article-category category-personal">Personal</span>
                     </div>
                     <h3><a href="articles/phd-application-tips.html">10 Tips for a Successful PhD Application in CS Theory</a></h3>
                     <p class="article-excerpt">
@@ -428,20 +570,7 @@
                     <a href="articles/phd-application-tips.html" class="read-more">Read more →</a>
                 </article>
 
-                <!-- Sample Article 2 -->
-                <article class="article-card" data-category="research">
-                    <div class="article-meta">
-                        <span class="article-date">December 20, 2024</span>
-                        <span class="article-category category-research">Research</span>
-                    </div>
-                    <h3><a href="articles/correlation-clustering-intro.html">Understanding Correlation Clustering: A Gentle Introduction</a></h3>
-                    <p class="article-excerpt">
-                        Correlation clustering is a fascinating problem that sits at the intersection of machine learning and theoretical computer science. In this post, I'll walk through the basics and explain why it's such an interesting area...
-                    </p>
-                    <a href="articles/correlation-clustering-intro.html" class="read-more">Read more →</a>
-                </article>
-
-                <!-- Sample Article 3 -->
+                <!-- Journey Article -->
                 <article class="article-card" data-category="personal">
                     <div class="article-meta">
                         <span class="article-date">November 10, 2024</span>
@@ -463,6 +592,59 @@
     </div>
 
     <script>
+        // Theme toggle functionality with toast notification
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            localStorage.setItem('themeSetManually', 'true');
+            
+            // Show toast message
+            showThemeMessage(newTheme);
+        }
+
+        function showThemeMessage(theme) {
+            // Remove existing toast if any
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+            
+            // Create new toast
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = theme === 'dark' ? '🌙 Dark mode enabled' : '☀️ Light mode enabled';
+            document.body.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            // Hide and remove toast after 2 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
+        }
+
+        // Load saved theme preference or auto-detect
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const wasSetManually = localStorage.getItem('themeSetManually');
+            
+            // If user never manually set theme, use automatic time-based switching
+            if (!wasSetManually) {
+                const hour = new Date().getHours();
+                const autoTheme = (hour >= 19 || hour < 7) ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', autoTheme);
+            } else {
+                // Use saved preference
+                document.documentElement.setAttribute('data-theme', savedTheme || 'light');
+            }
+        })();
+
+        // Filter articles function
         function filterArticles(category) {
             const articles = document.querySelectorAll('.article-card');
             const buttons = document.querySelectorAll('.filter-btn');
@@ -470,8 +652,12 @@
             // Update active button
             buttons.forEach(btn => {
                 btn.classList.remove('active');
-                if (btn.textContent.toLowerCase().includes(category) || 
-                    (category === 'all' && btn.textContent === 'All')) {
+            });
+            
+            // Find and activate the clicked button
+            buttons.forEach(btn => {
+                const btnText = btn.textContent.toLowerCase().replace(' ', '-');
+                if (btnText === category || (category === 'all' && btn.textContent === 'All')) {
                     btn.classList.add('active');
                 }
             });
