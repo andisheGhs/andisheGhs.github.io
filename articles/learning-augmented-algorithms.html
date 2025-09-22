@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning to Match Better: How Machine Learning Enhances Classical Optimization - Andisheh Ghasemi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Light Mode (Professional) */
+        :root {
+            --primary-color: #1a365d;
+            --accent-color: #2563eb;
+            --text-dark: #0f172a;
+            --text-light: #475569;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --border-color: #e2e8f0;
+            --hover-bg: #f1f5f9;
+            --gradient-start: #1e3a8a;
+            --gradient-end: #1e40af;
+            --header-gradient-start: #1a365d;
+            --header-gradient-end: #2c5282;
+            --card-shadow: rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+        
+        /* Dark Mode */
+        [data-theme="dark"] {
+            --primary-color: #93c5fd;
+            --accent-color: #60a5fa;
+            --text-dark: #f1f5f9;
+            --text-light: #cbd5e1;
+            --bg-light: #1e293b;
+            --bg-white: #0f172a;
+            --border-color: #334155;
+            --hover-bg: #334155;
+            --gradient-start: #0f172a;
+            --gradient-end: #1e293b;
+            --header-gradient-start: #1e293b;
+            --header-gradient-end: #334155;
+            --card-shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.8;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            transition: all var(--transition-speed) ease;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 1000;
+            background: var(--bg-white);
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 4px 6px var(--card-shadow);
+        }
+        
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px var(--card-shadow);
+        }
+        
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            display: block;
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .theme-toggle .sun-icon {
+            display: none;
+            color: var(--accent-color);
+        }
+        
+        .theme-toggle .moon-icon {
+            display: block;
+            color: var(--accent-color);
+        }
+        
+        [data-theme="dark"] .theme-toggle .sun-icon {
+            display: block;
+        }
+        
+        [data-theme="dark"] .theme-toggle .moon-icon {
+            display: none;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px var(--card-shadow);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
+            transition: all var(--transition-speed) ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--header-gradient-start) 0%, var(--header-gradient-end) 100%);
+            color: white;
+            padding: 30px 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-speed) ease;
+        }
+
+        [data-theme="dark"] header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header-content {
+            position: relative;
+        }
+
+        .breadcrumb {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: white;
+        }
+
+        .article-content {
+            padding: 50px;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .article-header {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.2em;
+            line-height: 1.3;
+            margin-bottom: 20px;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+            color: var(--text-light);
+            font-size: 0.95em;
+        }
+
+        .article-category {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: #667eea20;
+            color: #667eea;
+            border: 1px solid #667eea30;
+        }
+
+        .reading-time {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .article-body {
+            font-size: 1.05em;
+            color: var(--text-dark);
+        }
+
+        .article-body h2 {
+            color: var(--primary-color);
+            font-size: 1.6em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .article-body h3 {
+            color: var(--primary-color);
+            font-size: 1.3em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .article-body p {
+            margin-bottom: 20px;
+            text-align: justify;
+            font-weight: 500;
+        }
+
+        .article-body ul, .article-body ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .article-body li {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .article-body strong {
+            color: var(--primary-color);
+        }
+
+        .article-body blockquote {
+            border-left: 4px solid var(--accent-color);
+            padding-left: 20px;
+            margin: 30px 0;
+            font-style: italic;
+            color: var(--text-light);
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .article-body code {
+            background: var(--bg-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #e74c3c;
+        }
+
+        .article-body pre {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        .article-body pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-dark);
+        }
+
+        /* Image Styling */
+        .article-body img {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            display: block;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+
+        .figure-caption {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.9em;
+            margin-top: -10px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border: 1px solid #667eea30;
+        }
+
+        [data-theme="dark"] .highlight-box {
+            background: rgba(96, 165, 250, 0.1);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+        }
+
+        .tip-box {
+            background: #3498db10;
+            border-left: 4px solid var(--accent-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+
+        .tip-box strong {
+            color: var(--accent-color);
+        }
+
+        .example-box {
+            background: var(--bg-light);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .example-box h4 {
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        .theorem-box {
+            background: #f39c1210;
+            border-left: 4px solid #f39c12;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+
+        .theorem-box strong {
+            color: #f39c12;
+        }
+
+        .author-box {
+            background: var(--bg-light);
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .author-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .author-box p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .author-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .author-links a {
+            padding: 8px 20px;
+            background: var(--bg-white);
+            color: var(--accent-color);
+            text-decoration: none;
+            border-radius: 20px;
+            border: 1px solid var(--accent-color);
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .author-links a:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px 50px;
+            background: var(--bg-light);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .nav-link {
+            color: var(--accent-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            gap: 12px;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .theme-toggle {
+                top: 20px;
+                right: 20px;
+            }
+
+            .article-content {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .article-body {
+                font-size: 1em;
+            }
+
+            .navigation {
+                padding: 20px 30px;
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .article-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+        <svg class="sun-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+        </svg>
+        <svg class="moon-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="breadcrumb">
+                    <a href="../index.html">Home</a>
+                    <span>→</span>
+                    <a href="../writing.html">Writing</a>
+                    <span>→</span>
+                    <span>Article</span>
+                </div>
+            </div>
+        </header>
+
+        <article class="article-content">
+            <div class="article-header">
+                <h1>Learning to Match Better: How Machine Learning Enhances Classical Optimization</h1>
+                <div class="article-meta">
+                    <span class="article-date">December 10, 2024</span>
+                    <span class="article-category">Computer Science</span>
+                    <span class="reading-time">📖 15 min read</span>
+                </div>
+            </div>
+
+            <div class="article-body">
+                <p>
+                    Imagine you're managing a ride-sharing service that needs to match drivers with passengers thousands of times per day. Or perhaps you're allocating computing tasks to servers in a data center. These are classic examples of the <strong>Minimum Weight Bipartite Matching</strong> problem—one of the fundamental challenges in combinatorial optimization.
+                </p>
+
+                <p>
+                    While classical algorithms like the Hungarian algorithm have solved these problems efficiently for decades, there's an exciting new frontier: what if we could teach these algorithms to get better over time by learning from past solutions? This is the promise of <strong>learning-augmented algorithms</strong>, which combine the robustness of traditional optimization with the adaptability of machine learning.
+                </p>
+
+                <p>
+                    In this article, we'll explore how to enhance the Hungarian algorithm with predictive capabilities, achieving what's known as <em>sublinear regret</em>—meaning the algorithm gets progressively better at making decisions as it processes more data.
+                </p>
+
+                <h2>The Core Problem: Minimum Weight Bipartite Matching</h2>
+
+                <h3>What is Bipartite Matching?</h3>
+
+                <p>
+                    A bipartite graph consists of two distinct sets of vertices where edges only connect vertices from different sets. The matching problem asks: how do we pair vertices from one set with vertices from the other to minimize the total cost?
+                </p>
+
+                <pre><code>import networkx as nx
+import numpy as np
+
+def create_bipartite_graph(n1, n2):
+    """Create a complete bipartite graph with n1 and n2 vertices."""
+    B = nx.complete_bipartite_graph(n1, n2)
+    return B
+
+def assign_weights(B, distribution='uniform', params={}):
+    """Assign random weights to edges based on specified distribution."""
+    weights = {}
+    for u, v in B.edges():
+        if distribution == 'uniform':
+            weight = np.random.uniform(params.get('low', 0), params.get('high', 1))
+        elif distribution == 'gaussian':
+            weight = np.random.normal(params.get('mean', 0), params.get('std', 1))
+        
+        # Bound weights by parameter C
+        weights[(u, v)] = np.clip(weight, -params.get('C', 1), params.get('C', 1))
+    
+    nx.set_edge_attributes(B, weights, "weight")
+    return weights</code></pre>
+
+                <h3>Real-World Applications</h3>
+
+                <p>The bipartite matching problem appears everywhere:</p>
+
+                <ul>
+                    <li><strong>Resource Allocation</strong>: Assigning workers to tasks with minimal cost</li>
+                    <li><strong>Logistics</strong>: Matching supply and demand in transportation networks</li>
+                    <li><strong>Network Design</strong>: Optimizing data flow in communication systems</li>
+                    <li><strong>Online Advertising</strong>: Matching ads to available slots to maximize revenue</li>
+                </ul>
+
+                <h2>The Hungarian Algorithm: A Classical Solution</h2>
+
+                <p>
+                    The Hungarian algorithm, developed in 1955, elegantly solves the bipartite matching problem using a primal-dual approach. It maintains <strong>dual variables</strong> for each vertex—think of these as "prices" that vertices contribute to edge costs.
+                </p>
+
+                <div class="highlight-box">
+                    <h4>The Mathematical Foundation</h4>
+                    <p><strong>Primal Problem (Finding the Matching):</strong></p>
+                    <p>Minimize Σ c(u,v) × x<sub>uv</sub> subject to matching constraints</p>
+                    
+                    <p><strong>Dual Problem (Finding Optimal Prices):</strong></p>
+                    <p>Maximize Σ y<sub>u</sub> + Σ z<sub>v</sub> subject to y<sub>u</sub> + z<sub>v</sub> ≤ c(u,v) for all edges</p>
+                </div>
+
+                <p>
+                    The key insight is that the optimal dual variables (y<sub>u</sub> and z<sub>v</sub>) provide valuable information about the structure of the optimal matching.
+                </p>
+
+                <h2>The Learning-Augmented Approach</h2>
+
+                <h3>The Core Innovation</h3>
+
+                <p>
+                    Traditional algorithms start fresh with each new problem instance. But what if we could use information from previously solved instances to warm-start the algorithm? This is where learning augmentation comes in.
+                </p>
+
+                <p>The approach involves three key components:</p>
+
+                <ol>
+                    <li><strong>Prediction</strong>: Use past solutions to predict good initial dual variables</li>
+                    <li><strong>Robustness</strong>: Maintain worst-case guarantees even with poor predictions</li>
+                    <li><strong>Adaptation</strong>: Continuously improve predictions using online learning</li>
+                </ol>
+
+                <h3>The Algorithm</h3>
+
+                <pre><code>def compute_regret(n1, n2, C, epsilon, delta, distribution='uniform'):
+    """
+    Learn predictors for bipartite matching using online gradient descent.
+    """
+    # Calculate number of iterations for theoretical guarantees
+    T = int((C * (n1 + n2) / epsilon)**2 * np.log(1 / delta))
+    
+    # Initialize with row-minimum heuristic
+    B = create_bipartite_graph(n1, n2)
+    x = row_minimum_initialization(weight_matrix)
+    
+    # Set learning rate
+    alpha_base = C / np.sqrt(2)
+    
+    regrets = []
+    x_values = []
+    
+    for t in range(1, T + 1):
+        # Adaptive learning rate
+        alpha = alpha_base / np.sqrt(t)
+        
+        # Sample new weight matrix
+        weight_matrix = sample_weight_matrix(B, distribution, C)
+        
+        # Compute optimal dual using Hungarian
+        x_star = run_hungarian(weight_matrix, x)
+        
+        # Update predictor using gradient descent
+        gradient = np.sign(x - x_star)
+        x = np.clip(x - alpha * gradient, -C, C)
+        
+        # Calculate regret
+        regret = np.linalg.norm(x - x_star, ord=1)
+        regrets.append(regret)
+    
+    # Return average predictor
+    x_hat = np.mean(np.array(x_values), axis=0)
+    return x_hat, regrets</code></pre>
+
+                <div class="theorem-box">
+                    <strong>Theorem:</strong> For any distribution over weight matrices with bounded L<sub>∞</sub>-norm ≤ C, the algorithm returns a predictor x̂ such that with probability ≥ 1 - δ:
+                    <p style="text-align: center; margin-top: 10px;">
+                        E[||x̂ - x*(c)||₁] ≤ min<sub>x</sub> ||x - x*(c)||₁ + ε
+                    </p>
+                </div>
+
+                <h2>Experimental Results: Theory Meets Practice</h2>
+
+                <h3>1. Achieving Sublinear Regret</h3>
+
+                <p>
+                    The most important result is that the algorithm achieves <strong>sublinear regret</strong>—the average error decreases over time following a 1/√t pattern:
+                </p>
+
+                <img src="regret_with_sublinear.png" alt="Regret Over Time with Sublinear Reference">
+                <p class="figure-caption">Figure 1: Regret decreases following 1/√t pattern, confirming theoretical predictions</p>
+
+                <p>
+                    This confirms that the algorithm genuinely learns and improves, rather than just memorizing specific instances.
+                </p>
+
+                <h3>2. Impact of the Bounding Parameter C</h3>
+
+                <p>The parameter C controls the range of weights and dual variables. Our experiments reveal a crucial trade-off:</p>
+
+                <ul>
+                    <li><strong>Larger C</strong>: More flexibility, potentially better solutions, but slower convergence</li>
+                    <li><strong>Smaller C</strong>: Faster convergence but may miss optimal solutions</li>
+                </ul>
+
+                <img src="regret_vs_C.png" alt="Impact of Bounding Parameter C on Regret">
+                <p class="figure-caption">Figure 2: Impact of Bounding Parameter C on Regret</p>
+
+                <h3>3. Robustness to Different Distributions</h3>
+
+                <p>The algorithm performs well across various weight distributions:</p>
+
+                <ul>
+                    <li><strong>Uniform</strong>: Fastest convergence due to predictable structure</li>
+                    <li><strong>Gaussian</strong>: Moderate convergence with natural variations</li>
+                    <li><strong>Exponential</strong>: Tests adaptability with skewed weight distributions</li>
+                </ul>
+
+                <img src="regret_vs_distribution.png" alt="Impact of Weight Distribution on Regret">
+                <p class="figure-caption">Figure 3: Impact of Weight Distribution on Regret</p>
+
+                <h3>4. Noise Resilience</h3>
+
+                <p>Even with noisy data, the algorithm maintains sublinear regret:</p>
+
+                <img src="regret_vs_noise.png" alt="Impact of Noise on Regret">
+                <p class="figure-caption">Figure 4: Algorithm maintains sublinear regret even under different noise levels</p>
+
+                <h3>5. Runtime Improvements</h3>
+
+                <p>Perhaps the most practical benefit: using learned predictors significantly reduces the Hungarian algorithm's runtime:</p>
+
+                <img src="runtime_comparison.png" alt="Runtime Comparison of Hungarian Algorithm">
+                <p class="figure-caption">Figure 5: Runtime comparison showing ~40% improvement with learned predictors</p>
+
+                <img src="runtime_scatter.png" alt="Per-Instance Runtime Comparison">
+                <p class="figure-caption">Figure 6: Per-instance runtime showing consistent improvements across different problem instances</p>
+
+                <div class="tip-box">
+                    <strong>Runtime Comparison Results:</strong>
+                    <ul>
+                        <li>Zero initialization: Baseline runtime</li>
+                        <li>Row-minimum heuristic: ~20% faster</li>
+                        <li><strong>Learned predictor: ~40% faster</strong></li>
+                    </ul>
+                </div>
+
+                <h2>Parameter Tuning: The ε-δ Trade-off</h2>
+
+                <p>The parameters ε and δ control the precision-confidence trade-off:</p>
+
+                <ul>
+                    <li><strong>ε</strong>: Controls the precision of the regret bound (smaller = tighter bounds)</li>
+                    <li><strong>δ</strong>: Controls the confidence level (smaller = higher confidence)</li>
+                </ul>
+
+                <p>The relationship between these parameters and the number of samples needed is:</p>
+
+                <p style="text-align: center; margin: 20px 0;">
+                    <code>T = O((Cn/ε)² × log(1/δ))</code>
+                </p>
+
+                <img src="epsilon_delta_heatmap.png" alt="Effect of Epsilon and Delta on Final Regret">
+                <p class="figure-caption">Figure 7: Heatmap showing the effect of ε and δ on final regret</p>
+
+                <h2>Practical Implementation Considerations</h2>
+
+                <h3>1. Initialization Strategies</h3>
+
+                <p>While our experiments used row-minimum initialization, other strategies include:</p>
+
+                <pre><code>def initialization_strategies(weight_matrix):
+    """Different ways to initialize dual variables."""
+    
+    # Row minimum (our choice)
+    row_min = np.min(weight_matrix, axis=1)
+    
+    # Column minimum
+    col_min = np.min(weight_matrix, axis=0)
+    
+    # Zero initialization
+    zero_init = np.zeros(weight_matrix.shape[0])
+    
+    # Random initialization
+    random_init = np.random.uniform(-1, 1, weight_matrix.shape[0])
+    
+    return {
+        'row_min': row_min,
+        'col_min': col_min,
+        'zero': zero_init,
+        'random': random_init
+    }</code></pre>
+
+                <h3>2. Handling Edge Cases</h3>
+
+                <pre><code>def robust_hungarian(weight_matrix, potentials):
+    """Hungarian algorithm with safeguards."""
+    
+    # Ensure numerical stability
+    weight_matrix = np.array(weight_matrix, dtype=np.float64)
+    potentials = np.array(potentials, dtype=np.float64)
+    
+    # Add small epsilon to avoid division by zero
+    eps = 1e-10
+    weight_matrix = weight_matrix + eps
+    
+    # Clip potentials to reasonable range
+    C = np.max(np.abs(weight_matrix))
+    potentials = np.clip(potentials, -C, C)
+    
+    try:
+        result = linear_sum_assignment(weight_matrix - potentials[:, None])
+        return result
+    except Exception as e:
+        print(f"Hungarian algorithm failed: {e}")
+        # Fallback to zero initialization
+        return linear_sum_assignment(weight_matrix)</code></pre>
+
+                <h2>Future Directions and Open Questions</h2>
+
+                <h3>1. Beyond Bipartite Matching</h3>
+
+                <p>Can we extend this approach to:</p>
+                <ul>
+                    <li>General graph matching?</li>
+                    <li>Multi-dimensional matching problems?</li>
+                    <li>Online matching scenarios?</li>
+                </ul>
+
+                <h3>2. Alternative Learning Methods</h3>
+
+                <p>Current approach uses online gradient descent, but what about:</p>
+                <ul>
+                    <li>Deep learning for predictor networks?</li>
+                    <li>Reinforcement learning for adaptive strategies?</li>
+                    <li>Meta-learning across problem families?</li>
+                </ul>
+
+                <h2>Conclusion: The Best of Both Worlds</h2>
+
+                <p>
+                    Learning-augmented algorithms represent a paradigm shift in algorithm design. By combining the theoretical guarantees of classical algorithms with the adaptability of machine learning, we achieve:
+                </p>
+
+                <ol>
+                    <li><strong>Consistency</strong>: Near-optimal performance with good predictions</li>
+                    <li><strong>Robustness</strong>: Worst-case guarantees even with poor predictions</li>
+                    <li><strong>Adaptability</strong>: Continuous improvement through online learning</li>
+                    <li><strong>Efficiency</strong>: Significant runtime reductions in practice</li>
+                </ol>
+
+                <p>
+                    The success of this approach for bipartite matching suggests a broader principle: many classical algorithms can benefit from learned predictions. As we generate more data and solve more instances of optimization problems, our algorithms can literally learn to do better.
+                </p>
+
+                <p>
+                    This isn't just about making algorithms faster—it's about creating algorithms that improve themselves, adapting to the specific patterns and structures in the problems they encounter. In a world where we solve millions of similar optimization problems daily, this adaptive capability transforms from a nice-to-have into a crucial competitive advantage.
+                </p>
+
+                <div class="example-box">
+                    <h4>References</h4>
+                    <ol>
+                        <li>Khodak, M., Balcan, M. F., Talwalkar, A., & Vassilvitskii, S. (2022). Learning predictions for algorithms with predictions. <em>Advances in Neural Information Processing Systems</em>, 35, 3542-3555.</li>
+                        <li>Chen, J. Y., Silwal, S., Vakilian, A., & Zhang, F. (2022). Faster Fundamental Graph Algorithms via Learned Predictions. <em>ICML</em>.</li>
+                        <li>Dinitz, M., Im, S., Lavastida, T., Moseley, B., & Vassilvitskii, S. (2021). Faster Matchings via Learned Duals. <em>NeurIPS</em>.</li>
+                        <li>Kuhn, H. W. (1955). The Hungarian Method for the Assignment Problem. <em>Naval Research Logistics Quarterly</em>.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="author-box">
+                <h3>About the Author</h3>
+                <p>Andisheh Ghasemi is a PhD student at Northeastern University researching theoretical computer science, with a focus on learning-augmented algorithms and combinatorial optimization.</p>
+                <div class="author-links">
+                    <a href="../index.html">Main Site</a>
+                    <a href="../writing.html">More Articles</a>
+                    <a href="../index.html#contact">Contact</a>
+                </div>
+            </div>
+        </article>
+
+        <nav class="navigation">
+            <a href="../writing.html" class="nav-link">
+                ← Back to Writing
+            </a>
+            <a href="correlation-clustering.html" class="nav-link">
+                Next: Correlation Clustering →
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            localStorage.setItem('themeSetManually', 'true');
+        }
+
+        // Load saved theme preference
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const wasSetManually = localStorage.getItem('themeSetManually');
+            
+            if (!wasSetManually) {
+                const hour = new Date().getHours();
+                const autoTheme = (hour >= 19 || hour < 7) ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', autoTheme);
+            } else {
+                document.documentElement.setAttribute('data-theme', savedTheme || 'light');
+            }
+        })();
+    </script>
+</body>
+</html>
