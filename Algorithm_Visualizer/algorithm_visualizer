@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Visualizer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .app {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            gap: 20px;
+            height: calc(100vh - 140px);
+        }
+
+        .sidebar, .visualization-area, .info-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h2, .info-panel h2 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .algorithm-category {
+            margin-bottom: 20px;
+        }
+
+        .category-title {
+            font-size: 0.85rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            padding-left: 5px;
+        }
+
+        .algorithm-list {
+            list-style: none;
+        }
+
+        .algorithm-item {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f7f7f7;
+            font-size: 14px;
+        }
+
+        .algorithm-item:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .algorithm-item.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .visualization-area {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .canvas-container {
+            width: 100%;
+            height: calc(100% - 80px);
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            position: relative;
+            background: #fafafa;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: #667eea;
+            color: white;
+        }
+
+        .btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .speed-control {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .speed-slider {
+            width: 100px;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .node {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .node:hover {
+            filter: brightness(1.2);
+        }
+
+        .edge {
+            stroke: #666;
+            stroke-width: 2;
+            fill: none;
+            transition: all 0.3s ease;
+        }
+
+        .edge-positive {
+            stroke: #48bb78;
+            stroke-width: 3;
+        }
+
+        .edge-negative {
+            stroke: #f56565;
+            stroke-width: 2;
+            stroke-dasharray: 5,5;
+        }
+
+        .edge-weight {
+            font-size: 12px;
+            fill: #333;
+            background: white;
+        }
+
+        .visited {
+            fill: #48bb78 !important;
+        }
+
+        .current {
+            fill: #ed8936 !important;
+            animation: pulse 1s infinite;
+        }
+
+        .shortest-path {
+            stroke: #48bb78 !important;
+            stroke-width: 4 !important;
+        }
+
+        /* Sorting specific styles */
+        .array-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 100%;
+            gap: 2px;
+            padding: 20px;
+        }
+
+        .array-bar {
+            flex: 1;
+            background: #667eea;
+            transition: all 0.3s ease;
+            min-width: 20px;
+            max-width: 50px;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .array-bar.comparing {
+            background: #fbbf24;
+        }
+
+        .array-bar.swapping {
+            background: #f56565;
+        }
+
+        .array-bar.sorted {
+            background: #48bb78;
+        }
+
+        .array-bar.pivot {
+            background: #ed8936;
+        }
+
+        .array-bar.left-partition {
+            background: #9f7aea;
+        }
+
+        .array-bar.right-partition {
+            background: #f687b3;
+        }
+
+        .array-bar.merging {
+            background: #4299e1;
+        }
+
+        /* Correlation Clustering specific */
+        .cluster-0 { fill: #667eea; }
+        .cluster-1 { fill: #48bb78; }
+        .cluster-2 { fill: #f687b3; }
+        .cluster-3 { fill: #fbbf24; }
+        .cluster-4 { fill: #ed8936; }
+        .cluster-none { fill: #e2e8f0; }
+        
+        .pivot-node {
+            stroke: #333;
+            stroke-width: 4;
+            animation: pulse 1s infinite;
+        }
+
+        /* K-means specific styles */
+        .kmeans-point {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .kmeans-centroid {
+            stroke: #333;
+            stroke-width: 2;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .complexity-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f7f7f7;
+            border-radius: 8px;
+        }
+
+        .complexity-info h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .complexity-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .pseudocode {
+            margin-top: 20px;
+            padding: 15px;
+            background: #2d3748;
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .pseudocode-line {
+            padding: 2px 0;
+            transition: all 0.3s ease;
+        }
+
+        .pseudocode-line.active {
+            background: #4a5568;
+            padding-left: 10px;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 8px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .input-controls {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f7f7f7;
+            border-radius: 8px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .input-row label {
+            font-size: 14px;
+            min-width: 100px;
+        }
+
+        .input-row input {
+            flex: 1;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .input-row .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        
+        .edge-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .edge-type-btn {
+            flex: 1;
+            padding: 6px;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .edge-type-btn.positive.active {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .edge-type-btn.negative.active {
+            background: #f56565;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useCallback } = React;
+
+        // Priority Queue implementation for algorithms
+        class PriorityQueue {
+            constructor() {
+                this.items = [];
+            }
+            
+            enqueue(element, priority) {
+                const queueElement = { element, priority };
+                let added = false;
+                
+                for (let i = 0; i < this.items.length; i++) {
+                    if (this.items[i].priority > queueElement.priority) {
+                        this.items.splice(i, 0, queueElement);
+                        added = true;
+                        break;
+                    }
+                }
+                
+                if (!added) {
+                    this.items.push(queueElement);
+                }
+            }
+            
+            dequeue() {
+                return this.items.shift();
+            }
+            
+            isEmpty() {
+                return this.items.length === 0;
+            }
+        }
+
+        // Graph data structure
+        class Graph {
+            constructor() {
+                this.nodes = [];
+                this.edges = [];
+                this.adjacencyList = {};
+            }
+
+            addNode(id, x, y) {
+                this.nodes.push({ id, x, y });
+                this.adjacencyList[id] = [];
+            }
+
+            addEdge(from, to, weight = 1) {
+                this.edges.push({ from, to, weight });
+                this.adjacencyList[from].push({ node: to, weight });
+                this.adjacencyList[to].push({ node: from, weight }); // Undirected
+            }
+
+            getNeighbors(nodeId) {
+                return this.adjacencyList[nodeId] || [];
+            }
+        }
+
+        // Signed Graph for correlation clustering
+        class SignedGraph {
+            constructor() {
+                this.nodes = [];
+                this.edges = [];
+                this.adjacencyList = {};
+            }
+
+            addNode(id, x, y) {
+                this.nodes.push({ id, x, y });
+                this.adjacencyList[id] = [];
+            }
+
+            addEdge(from, to, type = 'positive') {
+                this.edges.push({ from, to, type });
+                this.adjacencyList[from].push({ node: to, type });
+                this.adjacencyList[to].push({ node: from, type }); // Undirected
+            }
+
+            getNeighbors(nodeId) {
+                return this.adjacencyList[nodeId] || [];
+            }
+        }
+
+        // Dijkstra's Algorithm Implementation
+        function* dijkstra(graph, start, end) {
+            const distances = {};
+            const previous = {};
+            const visited = new Set();
+            const pq = new PriorityQueue();
+            
+            graph.nodes.forEach(node => {
+                distances[node.id] = node.id === start ? 0 : Infinity;
+                previous[node.id] = null;
+            });
+            
+            pq.enqueue(start, 0);
+            
+            while (!pq.isEmpty()) {
+                const { element: current } = pq.dequeue();
+                
+                if (visited.has(current)) continue;
+                visited.add(current);
+                
+                yield { type: 'visit', node: current, distances: {...distances} };
+                
+                if (current === end) {
+                    const path = [];
+                    let node = end;
+                    while (node !== null) {
+                        path.unshift(node);
+                        node = previous[node];
+                    }
+                    yield { type: 'path', path, distances: {...distances} };
+                    return;
+                }
+                
+                const neighbors = graph.getNeighbors(current);
+                for (const { node: neighbor, weight } of neighbors) {
+                    const alt = distances[current] + weight;
+                    
+                    if (alt < distances[neighbor]) {
+                        distances[neighbor] = alt;
+                        previous[neighbor] = current;
+                        pq.enqueue(neighbor, alt);
+                        yield { type: 'relax', from: current, to: neighbor, distance: alt };
+                    }
+                }
+            }
+        }
+
+        // Pivot Algorithm for Correlation Clustering
+        function* pivotCorrelationClustering(graph) {
+            const clusters = {};
+            const unclustered = new Set(graph.nodes.map(n => n.id));
+            let clusterIndex = 0;
+            
+            while (unclustered.size > 0) {
+                // Pick a random pivot from unclustered nodes
+                const pivotArray = Array.from(unclustered);
+                const pivotId = pivotArray[Math.floor(Math.random() * pivotArray.length)];
+                
+                yield { type: 'select-pivot', pivot: pivotId, clusters: {...clusters} };
+                
+                // Create new cluster with pivot
+                clusters[pivotId] = clusterIndex;
+                unclustered.delete(pivotId);
+                
+                // Add all positive neighbors to the same cluster
+                const neighbors = graph.getNeighbors(pivotId);
+                for (const { node, type } of neighbors) {
+                    if (type === 'positive' && unclustered.has(node)) {
+                        clusters[node] = clusterIndex;
+                        unclustered.delete(node);
+                        yield { type: 'add-to-cluster', node, cluster: clusterIndex, pivot: pivotId, clusters: {...clusters} };
+                    }
+                }
+                
+                yield { type: 'cluster-complete', cluster: clusterIndex, pivot: pivotId, clusters: {...clusters} };
+                clusterIndex++;
+            }
+            
+            yield { type: 'done', clusters: {...clusters} };
+        }
+
+        // Merge Sort Implementation
+        function* mergeSort(arr, start = 0, end = arr.length - 1, depth = 0) {
+            if (start >= end) return;
+            
+            const mid = Math.floor((start + end) / 2);
+            
+            yield { type: 'divide', start, mid, end, depth, array: [...arr] };
+            
+            // Sort left half
+            yield* mergeSort(arr, start, mid, depth + 1);
+            
+            // Sort right half
+            yield* mergeSort(arr, mid + 1, end, depth + 1);
+            
+            // Merge
+            yield* merge(arr, start, mid, end);
+        }
+
+        function* merge(arr, start, mid, end) {
+            const left = arr.slice(start, mid + 1);
+            const right = arr.slice(mid + 1, end + 1);
+            
+            let i = 0, j = 0, k = start;
+            
+            while (i < left.length && j < right.length) {
+                yield { type: 'compare', indices: [start + i, mid + 1 + j], array: [...arr] };
+                
+                if (left[i] <= right[j]) {
+                    arr[k] = left[i];
+                    i++;
+                } else {
+                    arr[k] = right[j];
+                    j++;
+                }
+                
+                yield { type: 'merge', index: k, value: arr[k], array: [...arr], merging: [start, end] };
+                k++;
+            }
+            
+            while (i < left.length) {
+                arr[k] = left[i];
+                yield { type: 'merge', index: k, value: arr[k], array: [...arr], merging: [start, end] };
+                i++;
+                k++;
+            }
+            
+            while (j < right.length) {
+                arr[k] = right[j];
+                yield { type: 'merge', index: k, value: arr[k], array: [...arr], merging: [start, end] };
+                j++;
+                k++;
+            }
+            
+            yield { type: 'merged', start, end, array: [...arr] };
+        }
+
+        // Quick Sort Implementation
+        function* quickSort(arr, low = 0, high = arr.length - 1) {
+            if (low < high) {
+                const pivotIndex = yield* partition(arr, low, high);
+                yield* quickSort(arr, low, pivotIndex - 1);
+                yield* quickSort(arr, pivotIndex + 1, high);
+            }
+            
+            if (low === 0 && high === arr.length - 1) {
+                yield { type: 'done', array: [...arr] };
+            }
+        }
+
+        function* partition(arr, low, high) {
+            const pivot = arr[high];
+            yield { type: 'select-pivot', pivot: high, array: [...arr], range: [low, high] };
+            
+            let i = low - 1;
+            
+            for (let j = low; j < high; j++) {
+                yield { type: 'compare', indices: [j, high], array: [...arr] };
+                
+                if (arr[j] < pivot) {
+                    i++;
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                    yield { type: 'swap', indices: [i, j], array: [...arr] };
+                }
+            }
+            
+            [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+            yield { type: 'pivot-placed', index: i + 1, array: [...arr] };
+            
+            return i + 1;
+        }
+
+        // K-means Clustering Algorithm
+        function* kMeans(points, k, maxIterations = 50) {
+            let centroids = [];
+            const shuffled = [...points].sort(() => Math.random() - 0.5);
+            for (let i = 0; i < k; i++) {
+                centroids.push({ ...shuffled[i] });
+            }
+            
+            yield { type: 'init', centroids: [...centroids], assignments: new Array(points.length).fill(-1) };
+            
+            for (let iteration = 0; iteration < maxIterations; iteration++) {
+                const assignments = [];
+                
+                for (let i = 0; i < points.length; i++) {
+                    let minDist = Infinity;
+                    let assignedCluster = 0;
+                    
+                    for (let j = 0; j < centroids.length; j++) {
+                        const dist = Math.sqrt(
+                            Math.pow(points[i].x - centroids[j].x, 2) + 
+                            Math.pow(points[i].y - centroids[j].y, 2)
+                        );
+                        
+                        if (dist < minDist) {
+                            minDist = dist;
+                            assignedCluster = j;
+                        }
+                    }
+                    
+                    assignments[i] = assignedCluster;
+                }
+                
+                yield { type: 'assign', centroids: [...centroids], assignments: [...assignments], iteration };
+                
+                const newCentroids = [];
+                let changed = false;
+                
+                for (let i = 0; i < k; i++) {
+                    const clusterPoints = points.filter((_, idx) => assignments[idx] === i);
+                    
+                    if (clusterPoints.length > 0) {
+                        const newX = clusterPoints.reduce((sum, p) => sum + p.x, 0) / clusterPoints.length;
+                        const newY = clusterPoints.reduce((sum, p) => sum + p.y, 0) / clusterPoints.length;
+                        
+                        if (Math.abs(newX - centroids[i].x) > 0.01 || Math.abs(newY - centroids[i].y) > 0.01) {
+                            changed = true;
+                        }
+                        
+                        newCentroids[i] = { x: newX, y: newY };
+                    } else {
+                        newCentroids[i] = centroids[i];
+                    }
+                }
+                
+                centroids = newCentroids;
+                yield { type: 'update-centroids', centroids: [...centroids], assignments: [...assignments], iteration };
+                
+                if (!changed) {
+                    yield { type: 'converged', centroids: [...centroids], assignments: [...assignments], iteration };
+                    break;
+                }
+            }
+        }
+
+        const AlgorithmVisualizer = () => {
+            const [selectedAlgorithm, setSelectedAlgorithm] = useState('dijkstra');
+            const [algorithmType, setAlgorithmType] = useState('graph');
+            
+            // Graph algorithm state
+            const [graph, setGraph] = useState(null);
+            const [signedGraph, setSignedGraph] = useState(null);
+            const [mode, setMode] = useState('add-node');
+            const [selectedNodes, setSelectedNodes] = useState([]);
+            const [startNode, setStartNode] = useState(null);
+            const [endNode, setEndNode] = useState(null);
+            const [edgeType, setEdgeType] = useState('positive');
+            
+            // Sorting state
+            const [array, setArray] = useState([]);
+            const [sortingVisualState, setSortingVisualState] = useState({
+                comparing: [],
+                swapping: [],
+                sorted: [],
+                pivot: -1,
+                merging: [],
+                range: []
+            });
+            
+            // Clustering state
+            const [pivotClusters, setPivotClusters] = useState({});
+            const [currentPivot, setCurrentPivot] = useState(null);
+            const [points, setPoints] = useState([]);
+            const [numClusters, setNumClusters] = useState(3);
+            const [kmeansState, setKmeansState] = useState({
+                centroids: [],
+                assignments: [],
+                iteration: 0
+            });
+            
+            // Common state
+            const [isRunning, setIsRunning] = useState(false);
+            const [isPaused, setIsPaused] = useState(false);
+            const [speed, setSpeed] = useState(500);
+            const [currentStep, setCurrentStep] = useState(0);
+            const [visualState, setVisualState] = useState({
+                visitedNodes: new Set(),
+                currentNode: null,
+                shortestPath: [],
+                distances: {}
+            });
+            const [stats, setStats] = useState({
+                nodesVisited: 0,
+                edgesRelaxed: 0,
+                comparisons: 0,
+                swaps: 0,
+                iterations: 0,
+                clusters: 0
+            });
+            
+            const svgRef = useRef(null);
+            const algorithmGenerator = useRef(null);
+            const animationTimeout = useRef(null);
+
+            const algorithms = {
+                graph: [
+                    { id: 'dijkstra', name: "Dijkstra's Algorithm" },
+                    { id: 'astar', name: 'A* Algorithm' },
+                    { id: 'bellman-ford', name: 'Bellman-Ford' }
+                ],
+                sorting: [
+                    { id: 'mergesort', name: 'Merge Sort' },
+                    { id: 'quicksort', name: 'Quick Sort' }
+                ],
+                clustering: [
+                    { id: 'pivot', name: 'Pivot (Correlation)' },
+                    { id: 'kmeans', name: 'K-Means Clustering' }
+                ]
+            };
+
+            const algorithmInfo = {
+                dijkstra: {
+                    complexity: {
+                        time: 'O((V + E) log V)',
+                        space: 'O(V)'
+                    },
+                    pseudocode: [
+                        'function Dijkstra(Graph, source):',
+                        '  distance[source] ← 0',
+                        '  for each vertex v in Graph:',
+                        '    if v ≠ source:',
+                        '      distance[v] ← INFINITY',
+                        '    add v to Q',
+                        '',
+                        '  while Q is not empty:',
+                        '    u ← vertex in Q with min distance[u]',
+                        '    remove u from Q',
+                        '',
+                        '    for each neighbor v of u:',
+                        '      alt ← distance[u] + weight(u, v)',
+                        '      if alt < distance[v]:',
+                        '        distance[v] ← alt',
+                        '        previous[v] ← u'
+                    ]
+                },
+                pivot: {
+                    complexity: {
+                        time: 'O(V + E)',
+                        space: 'O(V)'
+                    },
+                    pseudocode: [
+                        'function PivotClustering(G=(V,E)):',
+                        '  C ← ∅  // clusters',
+                        '  U ← V  // unclustered vertices',
+                        '  ',
+                        '  while U ≠ ∅:',
+                        '    v ← random vertex from U',
+                        '    C_v ← {v}  // new cluster',
+                        '    ',
+                        '    for each u in U:',
+                        '      if (v,u) is positive edge:',
+                        '        C_v ← C_v ∪ {u}',
+                        '        U ← U \\ {u}',
+                        '    ',
+                        '    C ← C ∪ {C_v}',
+                        '  return C'
+                    ]
+                },
+                mergesort: {
+                    complexity: {
+                        time: 'O(n log n)',
+                        space: 'O(n)'
+                    },
+                    pseudocode: [
+                        'function MergeSort(arr):',
+                        '  if length(arr) ≤ 1:',
+                        '    return arr',
+                        '  ',
+                        '  mid ← length(arr) / 2',
+                        '  left ← MergeSort(arr[0...mid])',
+                        '  right ← MergeSort(arr[mid...end])',
+                        '  ',
+                        '  return Merge(left, right)',
+                        '',
+                        'function Merge(left, right):',
+                        '  result ← []',
+                        '  while left and right not empty:',
+                        '    if left[0] ≤ right[0]:',
+                        '      append left[0] to result',
+                        '    else:',
+                        '      append right[0] to result'
+                    ]
+                },
+                quicksort: {
+                    complexity: {
+                        time: 'O(n log n) avg, O(n²) worst',
+                        space: 'O(log n)'
+                    },
+                    pseudocode: [
+                        'function QuickSort(arr, low, high):',
+                        '  if low < high:',
+                        '    pi ← Partition(arr, low, high)',
+                        '    QuickSort(arr, low, pi - 1)',
+                        '    QuickSort(arr, pi + 1, high)',
+                        '',
+                        'function Partition(arr, low, high):',
+                        '  pivot ← arr[high]',
+                        '  i ← low - 1',
+                        '  ',
+                        '  for j from low to high - 1:',
+                        '    if arr[j] < pivot:',
+                        '      i ← i + 1',
+                        '      swap arr[i] with arr[j]',
+                        '  ',
+                        '  swap arr[i + 1] with arr[high]',
+                        '  return i + 1'
+                    ]
+                },
+                kmeans: {
+                    complexity: {
+                        time: 'O(n * k * i * d)',
+                        space: 'O(n + k)'
+                    },
+                    pseudocode: [
+                        'function KMeans(points, k):',
+                        '  centroids ← randomly select k points',
+                        '  ',
+                        '  repeat until convergence:',
+                        '    // Assignment step',
+                        '    for each point p:',
+                        '      assign p to nearest centroid',
+                        '    ',
+                        '    // Update step',
+                        '    for each cluster c:',
+                        '      centroid[c] ← mean of points in c',
+                        '  ',
+                        '  return clusters'
+                    ]
+                }
+            };
+
+            // Initialize based on algorithm type
+            useEffect(() => {
+                const algType = selectedAlgorithm === 'dijkstra' || selectedAlgorithm === 'astar' || selectedAlgorithm === 'bellman-ford' ? 'graph' :
+                               selectedAlgorithm === 'mergesort' || selectedAlgorithm === 'quicksort' ? 'sorting' :
+                               selectedAlgorithm === 'pivot' || selectedAlgorithm === 'kmeans' ? 'clustering' : 'graph';
+                setAlgorithmType(algType);
+                
+                if (algType === 'graph' && !graph) {
+                    initializeGraph();
+                } else if (algType === 'sorting' && array.length === 0) {
+                    initializeArray();
+                } else if (algType === 'clustering') {
+                    if (selectedAlgorithm === 'pivot' && !signedGraph) {
+                        initializeSignedGraph();
+                    } else if (selectedAlgorithm === 'kmeans' && points.length === 0) {
+                        initializePoints();
+                    }
+                }
+            }, [selectedAlgorithm]);
+
+            const initializeGraph = () => {
+                const sampleGraph = new Graph();
+                
+                sampleGraph.addNode('A', 100, 150);
+                sampleGraph.addNode('B', 250, 100);
+                sampleGraph.addNode('C', 250, 200);
+                sampleGraph.addNode('D', 400, 150);
+                sampleGraph.addNode('E', 350, 50);
+                sampleGraph.addNode('F', 500, 100);
+                
+                sampleGraph.addEdge('A', 'B', 4);
+                sampleGraph.addEdge('A', 'C', 2);
+                sampleGraph.addEdge('B', 'C', 1);
+                sampleGraph.addEdge('B', 'D', 5);
+                sampleGraph.addEdge('B', 'E', 3);
+                sampleGraph.addEdge('C', 'D', 8);
+                sampleGraph.addEdge('D', 'F', 2);
+                sampleGraph.addEdge('E', 'F', 4);
+                
+                setGraph(sampleGraph);
+                setStartNode('A');
+                setEndNode('F');
+            };
+
+            const initializeSignedGraph = () => {
+                const sg = new SignedGraph();
+                
+                // Create a sample signed graph for correlation clustering
+                sg.addNode('A', 150, 150);
+                sg.addNode('B', 250, 100);
+                sg.addNode('C', 250, 200);
+                sg.addNode('D', 100, 250);
+                sg.addNode('E', 350, 150);
+                sg.addNode('F', 450, 100);
+                sg.addNode('G', 450, 200);
+                sg.addNode('H', 350, 250);
+                
+                // Cluster 1: A, B, C
+                sg.addEdge('A', 'B', 'positive');
+                sg.addEdge('B', 'C', 'positive');
+                sg.addEdge('A', 'C', 'positive');
+                
+                // Cluster 2: E, F, G
+                sg.addEdge('E', 'F', 'positive');
+                sg.addEdge('F', 'G', 'positive');
+                sg.addEdge('E', 'G', 'positive');
+                
+                // Negative edges between clusters
+                sg.addEdge('A', 'E', 'negative');
+                sg.addEdge('B', 'F', 'negative');
+                sg.addEdge('C', 'G', 'negative');
+                sg.addEdge('D', 'H', 'negative');
+                
+                // D and H are outliers with mixed edges
+                sg.addEdge('D', 'A', 'positive');
+                sg.addEdge('D', 'C', 'negative');
+                sg.addEdge('H', 'E', 'positive');
+                sg.addEdge('H', 'G', 'negative');
+                
+                setSignedGraph(sg);
+                setPivotClusters({});
+            };
+
+            const initializeArray = () => {
+                const newArray = Array.from({ length: 20 }, () => Math.floor(Math.random() * 100) + 1);
+                setArray(newArray);
+            };
+
+            const initializePoints = () => {
+                const newPoints = Array.from({ length: 100 }, () => ({
+                    x: Math.random() * 550 + 25,
+                    y: Math.random() * 350 + 25
+                }));
+                setPoints(newPoints);
+            };
+
+            const generateRandomArray = () => {
+                initializeArray();
+                resetVisualization();
+            };
+
+            const generateRandomPoints = () => {
+                initializePoints();
+                setKmeansState({ centroids: [], assignments: [], iteration: 0 });
+            };
+
+            const handleNodeClick = (nodeId) => {
+                if (algorithmType === 'graph') {
+                    if (mode === 'add-edge') {
+                        setSelectedNodes(prev => {
+                            const newSelected = [...prev, nodeId];
+                            if (newSelected.length === 2) {
+                                const weight = Math.floor(Math.random() * 9) + 1;
+                                const newGraph = Object.assign(Object.create(Object.getPrototypeOf(graph)), graph);
+                                newGraph.addEdge(newSelected[0], newSelected[1], weight);
+                                setGraph(newGraph);
+                                return [];
+                            }
+                            return newSelected;
+                        });
+                    } else if (mode === 'run') {
+                        if (!startNode) {
+                            setStartNode(nodeId);
+                        } else if (!endNode && nodeId !== startNode) {
+                            setEndNode(nodeId);
+                        }
+                    }
+                } else if (selectedAlgorithm === 'pivot' && mode === 'add-edge') {
+                    setSelectedNodes(prev => {
+                        const newSelected = [...prev, nodeId];
+                        if (newSelected.length === 2) {
+                            const newGraph = Object.assign(Object.create(Object.getPrototypeOf(signedGraph)), signedGraph);
+                            newGraph.addEdge(newSelected[0], newSelected[1], edgeType);
+                            setSignedGraph(newGraph);
+                            return [];
+                        }
+                        return newSelected;
+                    });
+                }
+            };
+
+            const handleCanvasClick = (e) => {
+                if (algorithmType === 'graph' && mode === 'add-node') {
+                    const rect = svgRef.current.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const nodeId = String.fromCharCode(65 + (graph?.nodes.length || 0));
+                    const newGraph = graph ? Object.assign(Object.create(Object.getPrototypeOf(graph)), graph) : new Graph();
+                    newGraph.addNode(nodeId, x, y);
+                    setGraph(newGraph);
+                } else if (selectedAlgorithm === 'pivot' && mode === 'add-node') {
+                    const rect = svgRef.current.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const nodeId = String.fromCharCode(65 + (signedGraph?.nodes.length || 0));
+                    const newGraph = signedGraph ? Object.assign(Object.create(Object.getPrototypeOf(signedGraph)), signedGraph) : new SignedGraph();
+                    newGraph.addNode(nodeId, x, y);
+                    setSignedGraph(newGraph);
+                } else if (selectedAlgorithm === 'kmeans') {
+                    const rect = svgRef.current.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    setPoints(prev => [...prev, { x, y }]);
+                }
+            };
+
+            const runAlgorithm = () => {
+                if (algorithmType === 'graph') {
+                    if (!graph || !startNode || !endNode) return;
+                    
+                    setIsRunning(true);
+                    setIsPaused(false);
+                    setVisualState({
+                        visitedNodes: new Set(),
+                        currentNode: null,
+                        shortestPath: [],
+                        distances: {}
+                    });
+                    setStats({ nodesVisited: 0, edgesRelaxed: 0, comparisons: 0, swaps: 0, iterations: 0, clusters: 0 });
+                    
+                    algorithmGenerator.current = dijkstra(graph, startNode, endNode);
+                    executeNextStep();
+                    
+                } else if (algorithmType === 'sorting') {
+                    if (array.length === 0) return;
+                    
+                    setIsRunning(true);
+                    setIsPaused(false);
+                    setSortingVisualState({
+                        comparing: [],
+                        swapping: [],
+                        sorted: [],
+                        pivot: -1,
+                        merging: [],
+                        range: []
+                    });
+                    setStats({ nodesVisited: 0, edgesRelaxed: 0, comparisons: 0, swaps: 0, iterations: 0, clusters: 0 });
+                    
+                    if (selectedAlgorithm === 'mergesort') {
+                        const arrCopy = [...array];
+                        algorithmGenerator.current = mergeSort(arrCopy);
+                    } else if (selectedAlgorithm === 'quicksort') {
+                        const arrCopy = [...array];
+                        algorithmGenerator.current = quickSort(arrCopy);
+                    }
+                    executeNextStep();
+                    
+                } else if (selectedAlgorithm === 'pivot') {
+                    if (!signedGraph) return;
+                    
+                    setIsRunning(true);
+                    setIsPaused(false);
+                    setPivotClusters({});
+                    setCurrentPivot(null);
+                    setStats({ nodesVisited: 0, edgesRelaxed: 0, comparisons: 0, swaps: 0, iterations: 0, clusters: 0 });
+                    
+                    algorithmGenerator.current = pivotCorrelationClustering(signedGraph);
+                    executeNextStep();
+                    
+                } else if (selectedAlgorithm === 'kmeans') {
+                    if (points.length < numClusters) return;
+                    
+                    setIsRunning(true);
+                    setIsPaused(false);
+                    setKmeansState({ centroids: [], assignments: [], iteration: 0 });
+                    setStats({ nodesVisited: 0, edgesRelaxed: 0, comparisons: 0, swaps: 0, iterations: 0, clusters: 0 });
+                    
+                    algorithmGenerator.current = kMeans(points, numClusters);
+                    executeNextStep();
+                }
+            };
+
+            const executeNextStep = () => {
+                if (!algorithmGenerator.current || isPaused) return;
+                
+                const { value, done } = algorithmGenerator.current.next();
+                
+                if (done) {
+                    setIsRunning(false);
+                    return;
+                }
+                
+                if (algorithmType === 'graph') {
+                    if (value.type === 'visit') {
+                        setVisualState(prev => ({
+                            ...prev,
+                            visitedNodes: new Set([...prev.visitedNodes, value.node]),
+                            currentNode: value.node,
+                            distances: value.distances
+                        }));
+                        setStats(prev => ({ ...prev, nodesVisited: prev.nodesVisited + 1 }));
+                    } else if (value.type === 'relax') {
+                        setStats(prev => ({ ...prev, edgesRelaxed: prev.edgesRelaxed + 1 }));
+                    } else if (value.type === 'path') {
+                        setVisualState(prev => ({
+                            ...prev,
+                            shortestPath: value.path,
+                            currentNode: null
+                        }));
+                        setIsRunning(false);
+                        return;
+                    }
+                } else if (algorithmType === 'sorting') {
+                    if (value.type === 'compare') {
+                        setSortingVisualState(prev => ({
+                            ...prev,
+                            comparing: value.indices
+                        }));
+                        setStats(prev => ({ ...prev, comparisons: prev.comparisons + 1 }));
+                    } else if (value.type === 'swap') {
+                        setArray(value.array);
+                        setSortingVisualState(prev => ({
+                            ...prev,
+                            swapping: value.indices
+                        }));
+                        setStats(prev => ({ ...prev, swaps: prev.swaps + 1 }));
+                    } else if (value.type === 'select-pivot') {
+                        setSortingVisualState(prev => ({
+                            ...prev,
+                            pivot: value.pivot,
+                            range: value.range || []
+                        }));
+                    } else if (value.type === 'merge' || value.type === 'merging') {
+                        setArray(value.array);
+                        setSortingVisualState(prev => ({
+                            ...prev,
+                            merging: value.merging || [value.index]
+                        }));
+                    } else if (value.type === 'merged' || value.type === 'pivot-placed') {
+                        setArray(value.array);
+                        setSortingVisualState(prev => ({
+                            ...prev,
+                            sorted: [...prev.sorted, ...(value.type === 'merged' ? 
+                                Array.from({length: value.end - value.start + 1}, (_, i) => value.start + i) : 
+                                [value.index])]
+                        }));
+                    } else if (value.type === 'done') {
+                        setArray(value.array);
+                        setSortingVisualState(prev => ({
+                            ...prev,
+                            sorted: Array.from({length: array.length}, (_, i) => i),
+                            comparing: [],
+                            swapping: [],
+                            pivot: -1
+                        }));
+                        setIsRunning(false);
+                        return;
+                    }
+                } else if (selectedAlgorithm === 'pivot') {
+                    if (value.type === 'select-pivot') {
+                        setCurrentPivot(value.pivot);
+                        setPivotClusters(value.clusters);
+                    } else if (value.type === 'add-to-cluster') {
+                        setPivotClusters(value.clusters);
+                    } else if (value.type === 'cluster-complete') {
+                        setPivotClusters(value.clusters);
+                        setCurrentPivot(null);
+                        setStats(prev => ({ ...prev, clusters: value.cluster + 1 }));
+                    } else if (value.type === 'done') {
+                        setPivotClusters(value.clusters);
+                        setCurrentPivot(null);
+                        setIsRunning(false);
+                        return;
+                    }
+                } else if (selectedAlgorithm === 'kmeans') {
+                    if (value.type === 'init' || value.type === 'assign' || value.type === 'update-centroids') {
+                        setKmeansState({
+                            centroids: value.centroids,
+                            assignments: value.assignments,
+                            iteration: value.iteration || 0
+                        });
+                        setStats(prev => ({ ...prev, iterations: value.iteration || 0 }));
+                    } else if (value.type === 'converged') {
+                        setKmeansState({
+                            centroids: value.centroids,
+                            assignments: value.assignments,
+                            iteration: value.iteration
+                        });
+                        setIsRunning(false);
+                        return;
+                    }
+                }
+                
+                setCurrentStep(prev => prev + 1);
+                animationTimeout.current = setTimeout(executeNextStep, speed);
+            };
+
+            const pauseAlgorithm = () => {
+                setIsPaused(true);
+                clearTimeout(animationTimeout.current);
+            };
+
+            const resumeAlgorithm = () => {
+                setIsPaused(false);
+                executeNextStep();
+            };
+
+            const resetVisualization = () => {
+                setIsRunning(false);
+                setIsPaused(false);
+                setVisualState({
+                    visitedNodes: new Set(),
+                    currentNode: null,
+                    shortestPath: [],
+                    distances: {}
+                });
+                setSortingVisualState({
+                    comparing: [],
+                    swapping: [],
+                    sorted: [],
+                    pivot: -1,
+                    merging: [],
+                    range: []
+                });
+                setPivotClusters({});
+                setCurrentPivot(null);
+                setKmeansState({ centroids: [], assignments: [], iteration: 0 });
+                setStats({ nodesVisited: 0, edgesRelaxed: 0, comparisons: 0, swaps: 0, iterations: 0, clusters: 0 });
+                setCurrentStep(0);
+                clearTimeout(animationTimeout.current);
+                algorithmGenerator.current = null;
+            };
+
+            const clearGraph = () => {
+                if (selectedAlgorithm === 'pivot') {
+                    setSignedGraph(new SignedGraph());
+                    setPivotClusters({});
+                } else {
+                    setGraph(new Graph());
+                }
+                resetVisualization();
+                setStartNode(null);
+                setEndNode(null);
+            };
+
+            const renderVisualization = () => {
+                if (algorithmType === 'graph') {
+                    return (
+                        <>
+                            <div className="mode-selector">
+                                <button 
+                                    className={`mode-btn ${mode === 'add-node' ? 'active' : ''}`}
+                                    onClick={() => setMode('add-node')}
+                                    disabled={isRunning}
+                                >
+                                    Add Nodes
+                                </button>
+                                <button 
+                                    className={`mode-btn ${mode === 'add-edge' ? 'active' : ''}`}
+                                    onClick={() => setMode('add-edge')}
+                                    disabled={isRunning}
+                                >
+                                    Add Edges
+                                </button>
+                                <button 
+                                    className={`mode-btn ${mode === 'run' ? 'active' : ''}`}
+                                    onClick={() => setMode('run')}
+                                    disabled={isRunning}
+                                >
+                                    Select Start/End
+                                </button>
+                            </div>
+                            
+                            <div className="canvas-container" onClick={handleCanvasClick}>
+                                <svg ref={svgRef}>
+                                    {graph?.edges.map((edge, i) => {
+                                        const fromNode = graph.nodes.find(n => n.id === edge.from);
+                                        const toNode = graph.nodes.find(n => n.id === edge.to);
+                                        const isInPath = visualState.shortestPath.length > 0 && 
+                                            visualState.shortestPath.includes(edge.from) && 
+                                            visualState.shortestPath.includes(edge.to);
+                                        
+                                        return (
+                                            <g key={i}>
+                                                <line
+                                                    x1={fromNode.x}
+                                                    y1={fromNode.y}
+                                                    x2={toNode.x}
+                                                    y2={toNode.y}
+                                                    className={`edge ${isInPath ? 'shortest-path' : ''}`}
+                                                />
+                                                <text
+                                                    x={(fromNode.x + toNode.x) / 2}
+                                                    y={(fromNode.y + toNode.y) / 2 - 5}
+                                                    className="edge-weight"
+                                                    textAnchor="middle"
+                                                >
+                                                    {edge.weight}
+                                                </text>
+                                            </g>
+                                        );
+                                    })}
+                                    
+                                    {graph?.nodes.map(node => (
+                                        <g key={node.id} onClick={() => handleNodeClick(node.id)}>
+                                            <circle
+                                                cx={node.x}
+                                                cy={node.y}
+                                                r="20"
+                                                fill={
+                                                    node.id === startNode ? '#9f7aea' :
+                                                    node.id === endNode ? '#f687b3' :
+                                                    visualState.currentNode === node.id ? '#ed8936' :
+                                                    visualState.visitedNodes.has(node.id) ? '#48bb78' :
+                                                    selectedNodes.includes(node.id) ? '#4299e1' :
+                                                    '#e2e8f0'
+                                                }
+                                                className="node"
+                                                stroke="#2d3748"
+                                                strokeWidth="2"
+                                            />
+                                            <text
+                                                x={node.x}
+                                                y={node.y + 5}
+                                                textAnchor="middle"
+                                                fill={visualState.visitedNodes.has(node.id) || node.id === startNode || node.id === endNode ? 'white' : '#2d3748'}
+                                                fontWeight="bold"
+                                                fontSize="14"
+                                            >
+                                                {node.id}
+                                            </text>
+                                            {visualState.distances[node.id] !== undefined && visualState.distances[node.id] !== Infinity && (
+                                                <text
+                                                    x={node.x}
+                                                    y={node.y - 30}
+                                                    textAnchor="middle"
+                                                    fill="#667eea"
+                                                    fontSize="12"
+                                                    fontWeight="bold"
+                                                >
+                                                    d={visualState.distances[node.id]}
+                                                </text>
+                                            )}
+                                        </g>
+                                    ))}
+                                </svg>
+                            </div>
+                        </>
+                    );
+                } else if (algorithmType === 'sorting') {
+                    const maxVal = Math.max(...array);
+                    return (
+                        <>
+                            <div className="input-controls">
+                                <div className="input-row">
+                                    <label>Array Size:</label>
+                                    <input 
+                                        type="number" 
+                                        min="5" 
+                                        max="50"
+                                        value={array.length}
+                                        onChange={(e) => {
+                                            const size = Math.min(50, Math.max(5, parseInt(e.target.value) || 20));
+                                            setArray(Array.from({ length: size }, () => Math.floor(Math.random() * 100) + 1));
+                                            resetVisualization();
+                                        }}
+                                        disabled={isRunning}
+                                    />
+                                    <button className="btn btn-small" onClick={generateRandomArray} disabled={isRunning}>
+                                        Randomize
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div className="canvas-container">
+                                <div className="array-container">
+                                    {array.map((value, index) => {
+                                        let className = 'array-bar';
+                                        
+                                        if (sortingVisualState.sorted.includes(index)) {
+                                            className += ' sorted';
+                                        } else if (sortingVisualState.pivot === index) {
+                                            className += ' pivot';
+                                        } else if (sortingVisualState.comparing.includes(index)) {
+                                            className += ' comparing';
+                                        } else if (sortingVisualState.swapping.includes(index)) {
+                                            className += ' swapping';
+                                        } else if (sortingVisualState.merging.includes(index)) {
+                                            className += ' merging';
+                                        } else if (sortingVisualState.range.length === 2) {
+                                            if (index >= sortingVisualState.range[0] && index < sortingVisualState.pivot) {
+                                                className += ' left-partition';
+                                            } else if (index > sortingVisualState.pivot && index <= sortingVisualState.range[1]) {
+                                                className += ' right-partition';
+                                            }
+                                        }
+                                        
+                                        const height = (value / maxVal) * 300;
+                                        
+                                        return (
+                                            <div
+                                                key={index}
+                                                className={className}
+                                                style={{ height: `${height}px` }}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </>
+                    );
+                } else if (selectedAlgorithm === 'pivot') {
+                    return (
+                        <>
+                            <div className="mode-selector">
+                                <button 
+                                    className={`mode-btn ${mode === 'add-node' ? 'active' : ''}`}
+                                    onClick={() => setMode('add-node')}
+                                    disabled={isRunning}
+                                >
+                                    Add Nodes
+                                </button>
+                                <button 
+                                    className={`mode-btn ${mode === 'add-edge' ? 'active' : ''}`}
+                                    onClick={() => setMode('add-edge')}
+                                    disabled={isRunning}
+                                >
+                                    Add Edges
+                                </button>
+                            </div>
+                            
+                            {mode === 'add-edge' && (
+                                <div className="edge-type-selector">
+                                    <button 
+                                        className={`edge-type-btn positive ${edgeType === 'positive' ? 'active' : ''}`}
+                                        onClick={() => setEdgeType('positive')}
+                                    >
+                                        + Positive (Similar)
+                                    </button>
+                                    <button 
+                                        className={`edge-type-btn negative ${edgeType === 'negative' ? 'active' : ''}`}
+                                        onClick={() => setEdgeType('negative')}
+                                    >
+                                        − Negative (Dissimilar)
+                                    </button>
+                                </div>
+                            )}
+                            
+                            <div className="canvas-container" onClick={handleCanvasClick}>
+                                <svg ref={svgRef}>
+                                    {signedGraph?.edges.map((edge, i) => {
+                                        const fromNode = signedGraph.nodes.find(n => n.id === edge.from);
+                                        const toNode = signedGraph.nodes.find(n => n.id === edge.to);
+                                        
+                                        return (
+                                            <g key={i}>
+                                                <line
+                                                    x1={fromNode.x}
+                                                    y1={fromNode.y}
+                                                    x2={toNode.x}
+                                                    y2={toNode.y}
+                                                    className={`edge ${edge.type === 'positive' ? 'edge-positive' : 'edge-negative'}`}
+                                                />
+                                            </g>
+                                        );
+                                    })}
+                                    
+                                    {signedGraph?.nodes.map(node => {
+                                        const clusterId = pivotClusters[node.id];
+                                        const isPivot = node.id === currentPivot;
+                                        
+                                        return (
+                                            <g key={node.id} onClick={() => handleNodeClick(node.id)}>
+                                                <circle
+                                                    cx={node.x}
+                                                    cy={node.y}
+                                                    r="20"
+                                                    className={`node ${clusterId !== undefined ? `cluster-${clusterId}` : 'cluster-none'} ${isPivot ? 'pivot-node' : ''}`}
+                                                    stroke="#2d3748"
+                                                    strokeWidth="2"
+                                                />
+                                                <text
+                                                    x={node.x}
+                                                    y={node.y + 5}
+                                                    textAnchor="middle"
+                                                    fill={clusterId !== undefined ? 'white' : '#2d3748'}
+                                                    fontWeight="bold"
+                                                    fontSize="14"
+                                                >
+                                                    {node.id}
+                                                </text>
+                                                {clusterId !== undefined && (
+                                                    <text
+                                                        x={node.x}
+                                                        y={node.y - 30}
+                                                        textAnchor="middle"
+                                                        fill="#667eea"
+                                                        fontSize="11"
+                                                        fontWeight="bold"
+                                                    >
+                                                        C{clusterId + 1}
+                                                    </text>
+                                                )}
+                                            </g>
+                                        );
+                                    })}
+                                </svg>
+                            </div>
+                        </>
+                    );
+                } else if (selectedAlgorithm === 'kmeans') {
+                    return (
+                        <>
+                            <div className="input-controls">
+                                <div className="input-row">
+                                    <label>Clusters (k):</label>
+                                    <input 
+                                        type="number" 
+                                        min="2" 
+                                        max="5"
+                                        value={numClusters}
+                                        onChange={(e) => setNumClusters(Math.min(5, Math.max(2, parseInt(e.target.value) || 2)))}
+                                        disabled={isRunning}
+                                    />
+                                    <button className="btn btn-small" onClick={generateRandomPoints} disabled={isRunning}>
+                                        Random Points
+                                    </button>
+                                    <button className="btn btn-small" onClick={() => setPoints([])} disabled={isRunning}>
+                                        Clear
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div className="canvas-container" onClick={handleCanvasClick}>
+                                <svg ref={svgRef}>
+                                    {points.map((point, i) => (
+                                        <circle
+                                            key={i}
+                                            cx={point.x}
+                                            cy={point.y}
+                                            r="5"
+                                            className={`kmeans-point cluster-${kmeansState.assignments[i] !== undefined ? kmeansState.assignments[i] : 'none'}`}
+                                            opacity="0.7"
+                                        />
+                                    ))}
+                                    
+                                    {kmeansState.centroids.map((centroid, i) => (
+                                        <g key={`centroid-${i}`}>
+                                            <rect
+                                                x={centroid.x - 8}
+                                                y={centroid.y - 8}
+                                                width="16"
+                                                height="16"
+                                                className={`kmeans-centroid cluster-${i}`}
+                                                fill="none"
+                                                strokeWidth="2"
+                                            />
+                                            <text
+                                                x={centroid.x}
+                                                y={centroid.y + 4}
+                                                textAnchor="middle"
+                                                fill="white"
+                                                fontSize="10"
+                                                fontWeight="bold"
+                                            >
+                                                C{i + 1}
+                                            </text>
+                                        </g>
+                                    ))}
+                                </svg>
+                            </div>
+                        </>
+                    );
+                }
+            };
+
+            return (
+                <div className="app">
+                    <div className="header">
+                        <h1>🎯 Algorithm Visualizer</h1>
+                        <p style={{ opacity: 0.9 }}>Interactive visualization of algorithms</p>
+                    </div>
+                    
+                    <div className="main-container">
+                        <div className="sidebar">
+                            <h2>Algorithms</h2>
+                            
+                            <div className="algorithm-category">
+                                <div className="category-title">Graph Algorithms</div>
+                                <ul className="algorithm-list">
+                                    {algorithms.graph.map(algo => (
+                                        <li 
+                                            key={algo.id}
+                                            className={`algorithm-item ${selectedAlgorithm === algo.id ? 'active' : ''}`}
+                                            onClick={() => setSelectedAlgorithm(algo.id)}
+                                        >
+                                            {algo.name}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            
+                            <div className="algorithm-category">
+                                <div className="category-title">Sorting</div>
+                                <ul className="algorithm-list">
+                                    {algorithms.sorting.map(algo => (
+                                        <li 
+                                            key={algo.id}
+                                            className={`algorithm-item ${selectedAlgorithm === algo.id ? 'active' : ''}`}
+                                            onClick={() => setSelectedAlgorithm(algo.id)}
+                                        >
+                                            {algo.name}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            
+                            <div className="algorithm-category">
+                                <div className="category-title">Clustering</div>
+                                <ul className="algorithm-list">
+                                    {algorithms.clustering.map(algo => (
+                                        <li 
+                                            key={algo.id}
+                                            className={`algorithm-item ${selectedAlgorithm === algo.id ? 'active' : ''}`}
+                                            onClick={() => setSelectedAlgorithm(algo.id)}
+                                        >
+                                            {algo.name}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div className="visualization-area">
+                            {renderVisualization()}
+                            
+                            <div className="controls">
+                                {!isRunning && (
+                                    <>
+                                        <button className="btn" onClick={runAlgorithm}>
+                                            ▶ Run Algorithm
+                                        </button>
+                                        {(algorithmType === 'graph' || selectedAlgorithm === 'pivot') && (
+                                            <button className="btn" onClick={clearGraph}>
+                                                Clear Graph
+                                            </button>
+                                        )}
+                                    </>
+                                )}
+                                {isRunning && !isPaused && (
+                                    <button className="btn" onClick={pauseAlgorithm}>
+                                        ⏸ Pause
+                                    </button>
+                                )}
+                                {isRunning && isPaused && (
+                                    <button className="btn" onClick={resumeAlgorithm}>
+                                        ▶ Resume
+                                    </button>
+                                )}
+                                {isRunning && (
+                                    <button className="btn" onClick={resetVisualization}>
+                                        ⏹ Stop
+                                    </button>
+                                )}
+                                
+                                <div className="speed-control">
+                                    <span style={{ fontSize: '14px' }}>Speed:</span>
+                                    <input
+                                        type="range"
+                                        className="speed-slider"
+                                        min="100"
+                                        max="2000"
+                                        step="100"
+                                        value={2100 - speed}
+                                        onChange={(e) => setSpeed(2100 - parseInt(e.target.value))}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="info-panel">
+                            <h2>Algorithm Details</h2>
+                            
+                            {algorithmType === 'graph' && startNode && endNode && (
+                                <div style={{ marginBottom: '15px', padding: '10px', background: '#f0f0f0', borderRadius: '6px' }}>
+                                    <div style={{ fontSize: '14px', marginBottom: '5px' }}>
+                                        <strong>Start:</strong> {startNode}
+                                    </div>
+                                    <div style={{ fontSize: '14px' }}>
+                                        <strong>End:</strong> {endNode}
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {selectedAlgorithm === 'pivot' && (
+                                <div style={{ marginBottom: '15px', padding: '10px', background: '#f0f0f0', borderRadius: '6px' }}>
+                                    <div style={{ fontSize: '14px', marginBottom: '5px' }}>
+                                        <strong>Nodes:</strong> {signedGraph?.nodes.length || 0}
+                                    </div>
+                                    <div style={{ fontSize: '14px', marginBottom: '5px' }}>
+                                        <strong>Positive Edges:</strong> {signedGraph?.edges.filter(e => e.type === 'positive').length || 0}
+                                    </div>
+                                    <div style={{ fontSize: '14px' }}>
+                                        <strong>Negative Edges:</strong> {signedGraph?.edges.filter(e => e.type === 'negative').length || 0}
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {selectedAlgorithm === 'kmeans' && (
+                                <div style={{ marginBottom: '15px', padding: '10px', background: '#f0f0f0', borderRadius: '6px' }}>
+                                    <div style={{ fontSize: '14px', marginBottom: '5px' }}>
+                                        <strong>Points:</strong> {points.length}
+                                    </div>
+                                    <div style={{ fontSize: '14px' }}>
+                                        <strong>Iteration:</strong> {kmeansState.iteration}
+                                    </div>
+                                </div>
+                            )}
+                            
+                            <div className="stats">
+                                {algorithmType === 'graph' && (
+                                    <>
+                                        <div className="stat-item">
+                                            <div className="stat-label">Nodes Visited</div>
+                                            <div className="stat-value">{stats.nodesVisited}</div>
+                                        </div>
+                                        <div className="stat-item">
+                                            <div className="stat-label">Edges Relaxed</div>
+                                            <div className="stat-value">{stats.edgesRelaxed}</div>
+                                        </div>
+                                    </>
+                                )}
+                                {algorithmType === 'sorting' && (
+                                    <>
+                                        <div className="stat-item">
+                                            <div className="stat-label">Comparisons</div>
+                                            <div className="stat-value">{stats.comparisons}</div>
+                                        </div>
+                                        <div className="stat-item">
+                                            <div className="stat-label">Swaps</div>
+                                            <div className="stat-value">{stats.swaps}</div>
+                                        </div>
+                                    </>
+                                )}
+                                {selectedAlgorithm === 'pivot' && (
+                                    <>
+                                        <div className="stat-item">
+                                            <div className="stat-label">Clusters</div>
+                                            <div className="stat-value">{stats.clusters}</div>
+                                        </div>
+                                        <div className="stat-item">
+                                            <div className="stat-label">Current Pivot</div>
+                                            <div className="stat-value">{currentPivot || '-'}</div>
+                                        </div>
+                                    </>
+                                )}
+                                {selectedAlgorithm === 'kmeans' && (
+                                    <>
+                                        <div className="stat-item">
+                                            <div className="stat-label">Iterations</div>
+                                            <div className="stat-value">{stats.iterations}</div>
+                                        </div>
+                                        <div className="stat-item">
+                                            <div className="stat-label">Clusters</div>
+                                            <div className="stat-value">{numClusters}</div>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                            
+                            <div className="complexity-info">
+                                <h3>Complexity Analysis</h3>
+                                {algorithmInfo[selectedAlgorithm] && (
+                                    <>
+                                        <div className="complexity-item">
+                                            <span>Time:</span>
+                                            <strong>{algorithmInfo[selectedAlgorithm].complexity.time}</strong>
+                                        </div>
+                                        <div className="complexity-item">
+                                            <span>Space:</span>
+                                            <strong>{algorithmInfo[selectedAlgorithm].complexity.space}</strong>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                            
+                            <div className="pseudocode">
+                                {algorithmInfo[selectedAlgorithm]?.pseudocode.map((line, i) => (
+                                    <div 
+                                        key={i} 
+                                        className={`pseudocode-line ${currentStep > 0 && i === Math.min(currentStep % algorithmInfo[selectedAlgorithm].pseudocode.length, 7) ? 'active' : ''}`}
+                                    >
+                                        {line || '\u00A0'}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<AlgorithmVisualizer />, document.getElementById('root'));
+    </script>
+</body>
+</html>
