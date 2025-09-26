@@ -385,6 +385,12 @@
             border: 1px solid #e91e6330;
         }
 
+        .category-project {
+            background: #f59e0b20;
+            color: #f59e0b;
+            border: 1px solid #f59e0b30;
+        }
+
         .article-card h3 {
             color: var(--text-dark);
             margin-bottom: 15px;
@@ -423,6 +429,27 @@
         .read-more:hover {
             gap: 10px;
             color: var(--primary-color);
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border: 1px solid var(--accent-color);
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+
+        .project-link:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
 
         .coming-soon {
@@ -500,8 +527,8 @@
     <div class="container">
         <header>
             <div class="header-content">
-                <h1>Writing</h1>
-                <p class="subtitle">Technical Articles and Personal Reflections</p>
+                <h1>Writing & Projects</h1>
+                <p class="subtitle">Technical Articles, Projects, and Personal Reflections</p>
                 <a href="index.html" class="back-link">← Back to main site</a>
             </div>
         </header>
@@ -510,7 +537,7 @@
             <ul>
                 <li><a href="index.html">About</a></li>
                 <li><a href="writing.html" class="active">Blog</a></li>
-                <li><a href="index.html#research">Research</a></li>
+                <li><a href="index.html#projects">Projects</a></li>
                 <li><a href="index.html#publications">Publications</a></li>
                 <li><a href="index.html#contact">Contact</a></li>
             </ul>
@@ -519,18 +546,35 @@
         <div class="content">
             <div class="intro">
                 <h2>Welcome to my writing space</h2>
-                <p>A collection of technical articles, research insights, and personal reflections from my journey in computer science and academia.</p>
+                <p>A collection of technical articles, research insights, personal reflections, and interactive projects from my journey in computer science and academia.</p>
             </div>
 
             <div class="filter-buttons">
                 <button class="filter-btn active" onclick="filterArticles('all')">All</button>
+                <button class="filter-btn" onclick="filterArticles('project')">Projects</button>
                 <button class="filter-btn" onclick="filterArticles('computer-science')">Computer Science</button>
                 <button class="filter-btn" onclick="filterArticles('research')">Research</button>
                 <button class="filter-btn" onclick="filterArticles('personal')">Personal</button>
             </div>
 
             <div class="articles-grid">
-                
+                <!-- Algorithm Visualizer Project -->
+                <article class="article-card" data-category="project">
+                    <div class="article-meta">
+                        <span class="article-date">December 2024</span>
+                        <span class="article-category category-project">Project</span>
+                    </div>
+                    <h3>🎯 Interactive Algorithm Visualizer</h3>
+                    <p class="article-excerpt">
+                        An interactive web application for visualizing fundamental computer science algorithms. Watch sorting algorithms race against each other, explore graph traversal techniques like DFS and BFS, understand clustering with K-means and Pivot algorithms, and see search algorithms in action. Built with React and TypeScript, featuring real-time animations and synchronized code highlighting to help students and developers understand algorithm behavior step-by-step.
+                    </p>
+                    <p class="article-excerpt">
+                        <strong>Features:</strong> 6 sorting algorithms with race mode, 5 graph algorithms including Dijkstra and Kruskal, multiple clustering visualizations, 6 search algorithms with complexity analysis, and interactive graph building tools.
+                    </p>
+                    <a href="https://yourusername.github.io/algorithm-visualizer" class="project-link" target="_blank">
+                        🚀 Launch Project
+                    </a>
+                </article>
 
                 <!-- Probability Puzzles Article -->
                 <article class="article-card" data-category="computer-science">
@@ -544,6 +588,7 @@
                     </p>
                     <a href="articles/math-objects-humans.html" class="read-more">Read more →</a>
                 </article>
+                
                 <!-- RLS Awareness Article -->
                 <article class="article-card" data-category="personal">
                     <div class="article-meta">
@@ -556,6 +601,7 @@
                     </p>
                     <a href="articles/RLS.html" class="read-more">Read more →</a>
                 </article>
+                
                 <!-- Correlation Clustering Article -->
                 <article class="article-card" data-category="computer-science">
                     <div class="article-meta">
@@ -568,6 +614,7 @@
                     </p>
                     <a href="articles/correlation-clustering-intro.html" class="read-more">Read more →</a>
                 </article>
+                
                 <!-- Learning-Augmented Algorithms Article -->
                 <article class="article-card" data-category="computer-science">
                     <div class="article-meta">
@@ -580,9 +627,10 @@
                     </p>
                     <a href="articles/learning-augmented-algorithms.html" class="read-more">Read more →</a>
                 </article>
+                
                 <!-- Coming Soon -->
                 <div class="coming-soon">
-                    <h3>More articles coming soon...</h3>
+                    <h3>More articles and projects coming soon...</h3>
                 </div>
             </div>
         </div>
