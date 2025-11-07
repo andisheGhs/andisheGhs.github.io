@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Restaurant Recommender Study</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-label {
+            margin-top: 10px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .scenario-container {
+            display: none;
+        }
+
+        .scenario-container.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .info-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .info-box h3 {
+            color: #4c51bf;
+            margin-bottom: 10px;
+        }
+
+        .scenario-context {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .scenario-context h3 {
+            color: #92400e;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .scenario-number {
+            background: #f59e0b;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-preferences {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .preferences-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .pref-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4a5568;
+        }
+
+        .pref-item::before {
+            content: "✓";
+            color: #48bb78;
+            font-weight: bold;
+        }
+
+        .restaurant-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .restaurant-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1);
+        }
+
+        .restaurant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .restaurant-info h3 {
+            color: #2d3748;
+            margin-bottom: 5px;
+            font-size: 24px;
+        }
+
+        .restaurant-meta {
+            color: #718096;
+            font-size: 14px;
+            display: flex;
+            gap: 15px;
+            margin-top: 8px;
+        }
+
+        .restaurant-description {
+            color: #4a5568;
+            margin: 15px 0;
+            line-height: 1.7;
+        }
+
+        .ai-recommendation {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border: 1px solid #667eea30;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .ai-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .confidence-display {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* Static Confidence Display */
+        .static-confidence {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .confidence-header {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .confidence-value {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .confidence-percentage {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .confidence-bar {
+            flex: 1;
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.5s ease;
+        }
+
+        .confidence-description {
+            margin-top: 10px;
+            color: #718096;
+            font-size: 14px;
+        }
+
+        /* Adaptive Confidence Display */
+        .adaptive-confidence {
+            position: relative;
+        }
+
+        .confidence-level-1 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            cursor: pointer;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .confidence-level-1:hover {
+            background: #f7fafc;
+            transform: translateX(5px);
+        }
+
+        .confidence-basic {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .confidence-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .confidence-high {
+            background: #48bb78;
+            color: white;
+        }
+
+        .confidence-medium {
+            background: #ed8936;
+            color: white;
+        }
+
+        .confidence-low {
+            background: #f56565;
+            color: white;
+        }
+
+        .click-hint {
+            color: #718096;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .expand-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .confidence-details {
+            margin-top: 15px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            display: none;
+            border: 1px solid #e2e8f0;
+        }
+
+        .confidence-details.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 800px; }
+        }
+
+        .confidence-numeric {
+            font-size: 28px;
+            font-weight: bold;
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+
+        .confidence-explanation {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .confidence-factors {
+            margin-top: 20px;
+        }
+
+        .factor-category {
+            margin-bottom: 15px;
+        }
+
+        .factor-category h5 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .factor-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .factor-positive::before {
+            content: "✓";
+            color: #48bb78;
+            font-weight: bold;
+        }
+
+        .factor-negative::before {
+            content: "⚠";
+            color: #ed8936;
+        }
+
+        .confidence-visualization {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+
+        .factor-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .factor-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .factor-label {
+            min-width: 120px;
+            font-size: 13px;
+            color: #4a5568;
+        }
+
+        .factor-bar-bg {
+            flex: 1;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .factor-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .decision-section {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .decision-question {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .decision-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-accept {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+
+        .btn-accept:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(72, 187, 120, 0.3);
+        }
+
+        .btn-reject {
+            background: white;
+            color: #e53e3e;
+            border: 2px solid #feb2b2;
+        }
+
+        .btn-reject:hover {
+            background: #fff5f5;
+            border-color: #fc8181;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .system-label {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .system-a {
+            background: #667eea20;
+            color: #667eea;
+        }
+
+        .system-b {
+            background: #764ba220;
+            color: #764ba2;
+        }
+
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .system-comparison {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .system-comparison h3 {
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        .comparison-metrics {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .metric-label {
+            color: #718096;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .trust-survey {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .likert-item {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .likert-item label {
+            display: block;
+            margin-bottom: 15px;
+            color: #2d3748;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .likert-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .likert-option {
+            flex: 1;
+            text-align: center;
+        }
+
+        .likert-option input[type="radio"] {
+            display: none;
+        }
+
+        .likert-option span {
+            display: block;
+            padding: 12px 8px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+
+        .likert-option input[type="radio"]:checked + span {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .likert-option span:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .final-comparison {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e6e9ff 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .radio-item:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .radio-item input[type="radio"] {
+            margin-right: 15px;
+        }
+
+        .radio-item.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AI Restaurant Recommender Comparison Study</h1>
+            <p>Help us understand how different AI systems communicate their recommendations</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-label" id="progressLabel"></div>
+        </div>
+
+        <div class="content">
+            <!-- Welcome Screen -->
+            <div id="welcome" class="scenario-container active">
+                <h2>Welcome to Our Research Study!</h2>
+
+                <div class="info-box" style="margin-top: 30px;">
+                    <h3>📊 Study Overview</h3>
+                    <p>You'll be testing two different AI restaurant recommendation systems (System A and System B) to help us understand which one helps you make better dining decisions.</p>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; margin: 30px 0;">
+                    <h3 style="margin-bottom: 20px; color: #2d3748;">What You'll Do:</h3>
+                    <ol style="line-height: 2; color: #4a5568;">
+                        <li><strong>Share your dining preferences</strong> (2 minutes)</li>
+                        <li><strong>Evaluate recommendations from System A</strong> - 5 restaurant scenarios (5 minutes)</li>
+                        <li><strong>Rate your trust in System A</strong> (1 minute)</li>
+                        <li><strong>Evaluate recommendations from System B</strong> - 5 restaurant scenarios (5 minutes)</li>
+                        <li><strong>Rate your trust in System B</strong> (1 minute)</li>
+                        <li><strong>Compare both systems</strong> (2 minutes)</li>
+                    </ol>
+                    <p style="margin-top: 20px; color: #718096;">
+                        <strong>Total time:</strong> Approximately 15-20 minutes<br>
+                        <strong>Compensation:</strong> $3.00 upon completion
+                    </p>
+                </div>
+
+                <div class="info-box">
+                    <h3>🎯 Your Goal</h3>
+                    <p>Imagine you're planning dinners for different occasions (date nights, business meetings, family gatherings). Each AI system will analyze restaurants and tell you how confident it is in its recommendations. Your job is to decide whether to accept or reject each recommendation based on the information provided.</p>
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%; margin-top: 30px;" onclick="showConsent()">
+                    Continue to Consent Form
+                </button>
+            </div>
+
+            <!-- Consent Form -->
+            <div id="consent" class="scenario-container">
+                <h2>Informed Consent</h2>
+
+                <div style="background: #fff; border: 1px solid #e2e8f0; padding: 25px; border-radius: 12px; margin: 20px 0; max-height: 400px; overflow-y: auto;">
+                    <h3>Research Study: AI Transparency and Trust Calibration</h3>
+                    <p style="margin: 15px 0;"><strong>Principal Investigator:</strong> Andisheh Ghasemi</p>
+                    <p style="margin: 15px 0;"><strong>Institution:</strong> [Your University]</p>
+
+                    <h4 style="margin-top: 25px;">Purpose:</h4>
+                    <p>This study examines how different ways of displaying AI confidence affect user trust and decision-making.</p>
+
+                    <h4 style="margin-top: 25px;">What We'll Collect:</h4>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li>Your dining preferences (for creating realistic scenarios)</li>
+                        <li>Your decisions on restaurant recommendations</li>
+                        <li>Trust ratings for each AI system</li>
+                        <li>Interaction data (clicks, time spent)</li>
+                        <li>Optional demographic information</li>
+                    </ul>
+
+                    <h4 style="margin-top: 25px;">Privacy & Confidentiality:</h4>
+                    <p>All data will be anonymized and stored securely. No personally identifiable information will be shared. Results will be reported in aggregate only.</p>
+
+                    <h4 style="margin-top: 25px;">Voluntary Participation:</h4>
+                    <p>Participation is voluntary. You may withdraw at any time without penalty.</p>
+
+                    <h4 style="margin-top: 25px;">Contact:</h4>
+                    <p>Questions? Contact: andisheh.ghasemi@[university].edu</p>
+                </div>
+
+                <div style="background: #f0f4ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <label style="display: flex; align-items: flex-start; cursor: pointer;">
+                        <input type="checkbox" id="consentCheck" style="margin-right: 10px; margin-top: 5px;">
+                        <span>I have read and understood the above information and agree to participate in this research study.</span>
+                    </label>
+                </div>
+
+                <button class="btn btn-primary" id="consentBtn" disabled onclick="showPreferences()">
+                    I Agree - Continue to Study
+                </button>
+            </div>
+
+            <!-- Preference Collection -->
+            <div id="preferences" class="scenario-container">
+                <h2>Tell Us About Your Dining Preferences</h2>
+                <p style="color: #718096; margin-bottom: 30px;">This helps us create personalized scenarios for you.</p>
+
+                <div class="form-group">
+                    <label>Preferred Cuisines (select all that apply):</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cuisine-italian" value="Italian">
+                            <label for="cuisine-italian">Italian</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cuisine-japanese" value="Japanese">
+                            <label for="cuisine-japanese">Japanese</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cuisine-mexican" value="Mexican">
+                            <label for="cuisine-mexican">Mexican</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cuisine-american" value="American">
+                            <label for="cuisine-american">American</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cuisine-chinese" value="Chinese">
+                            <label for="cuisine-chinese">Chinese</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cuisine-indian" value="Indian">
+                            <label for="cuisine-indian">Indian</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cuisine-thai" value="Thai">
+                            <label for="cuisine-thai">Thai</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cuisine-mediterranean" value="Mediterranean">
+                            <label for="cuisine-mediterranean">Mediterranean</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="priceRange">Typical Price Range:</label>
+                    <select id="priceRange">
+                        <option value="">Select...</option>
+                        <option value="$">$ - Budget friendly (under $15/person)</option>
+                        <option value="$$">$$ - Moderate ($15-30/person)</option>
+                        <option value="$$$">$$$ - Upscale ($30-50/person)</option>
+                        <option value="$$$$">$$$$ - Fine dining ($50+/person)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="atmosphere">Preferred Atmosphere:</label>
+                    <select id="atmosphere">
+                        <option value="">Select...</option>
+                        <option value="casual">Casual & Relaxed</option>
+                        <option value="romantic">Romantic & Intimate</option>
+                        <option value="business">Business & Professional</option>
+                        <option value="family">Family-friendly</option>
+                        <option value="trendy">Trendy & Modern</option>
+                        <option value="traditional">Traditional & Classic</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Dietary Restrictions (select all that apply):</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="diet-vegetarian" value="Vegetarian">
+                            <label for="diet-vegetarian">Vegetarian</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="diet-vegan" value="Vegan">
+                            <label for="diet-vegan">Vegan</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="diet-glutenfree" value="Gluten-free">
+                            <label for="diet-glutenfree">Gluten-free</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="diet-none" value="None">
+                            <label for="diet-none">No restrictions</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="importantFactors">What's most important to you when choosing a restaurant? (optional)</label>
+                    <textarea id="importantFactors" rows="3" placeholder="E.g., authentic flavors, good service, quiet atmosphere..."></textarea>
+                </div>
+
+                <button class="btn btn-primary" onclick="startStudy()">
+                    Start Evaluating Recommendations
+                </button>
+            </div>
+
+            <!-- System Introduction -->
+            <div id="system-intro" class="scenario-container">
+                <h2 id="systemIntroTitle">Testing System A</h2>
+
+                <div class="info-box">
+                    <h3>How This Works</h3>
+                    <p>You'll see 5 restaurant recommendations from this AI system. For each one:</p>
+                    <ol style="margin: 15px 0 0 20px; line-height: 2;">
+                        <li>Review the scenario (e.g., "dinner with colleagues")</li>
+                        <li>See the AI's restaurant recommendation</li>
+                        <li>Check how confident the AI is in its recommendation</li>
+                        <li>Decide whether to accept or reject the recommendation</li>
+                    </ol>
+                </div>
+
+                <div style="background: #fef3c7; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <p style="color: #92400e;"><strong>Remember:</strong> There's no "right" answer - we want to understand how the AI's confidence display affects your decisions.</p>
+                </div>
+
+                <button class="btn btn-primary" onclick="nextScenario()">
+                    Begin System <span id="currentSystemLabel">A</span> Testing
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Study state management
+        let studyState = {
+            participantId: 'P' + Date.now(),
+            currentScenario: -1,
+            currentSystem: 'A',
+            systemOrder: [],
+            systemDisplays: {},
+            preferences: {},
+            responses: [],
+            interactions: [],
+            trustRatings: {},
+            startTime: null,
+            scenarioStartTime: null,
+            scenarios: []
+        };
+
+        // Enable consent button when checkbox is checked
+        document.getElementById('consentCheck')?.addEventListener('change', function() {
+            document.getElementById('consentBtn').disabled = !this.checked;
+        });
+
+        // Navigation functions
+        function showConsent() {
+            showScreen('consent');
+            updateProgress(1, 7, 'Step 1 of 7: Consent');
+        }
+
+        function showPreferences() {
+            showScreen('preferences');
+            updateProgress(2, 7, 'Step 2 of 7: Your Preferences');
+        }
+
+        function startStudy() {
+            // Collect preferences
+            collectPreferences();
+
+            // Initialize study
+            studyState.startTime = Date.now();
+            studyState.scenarios = generateScenarios();
+
+            // Randomize system order and display types
+            if (Math.random() > 0.5) {
+                studyState.systemOrder = ['A', 'B'];
+                studyState.systemDisplays = {A: 'adaptive', B: 'static'};
+            } else {
+                studyState.systemOrder = ['A', 'B'];
+                studyState.systemDisplays = {A: 'static', B: 'adaptive'};
+            }
+
+            // Show first system intro
+            showSystemIntro();
+        }
+
+        function collectPreferences() {
+            const cuisines = [];
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+                if (cb.id.startsWith('cuisine-')) {
+                    cuisines.push(cb.value);
+                }
+            });
+
+            const dietary = [];
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+                if (cb.id.startsWith('diet-')) {
+                    dietary.push(cb.value);
+                }
+            });
+
+            studyState.preferences = {
+                cuisines: cuisines,
+                priceRange: document.getElementById('priceRange').value,
+                atmosphere: document.getElementById('atmosphere').value,
+                dietary: dietary,
+                importantFactors: document.getElementById('importantFactors').value
+            };
+        }
+
+        function showSystemIntro() {
+            const systemIndex = Math.floor((studyState.currentScenario + 1) / 5);
+            studyState.currentSystem = studyState.systemOrder[systemIndex];
+
+            document.getElementById('systemIntroTitle').textContent = `Testing System ${studyState.currentSystem}`;
+            document.getElementById('currentSystemLabel').textContent = studyState.currentSystem;
+
+            showScreen('system-intro');
+            const step = studyState.currentSystem === studyState.systemOrder[0] ? 3 : 5;
+            updateProgress(step, 7, `Step ${step} of 7: System ${studyState.currentSystem} Introduction`);
+        }
+
+        function nextScenario() {
+            studyState.currentScenario++;
+
+            if (studyState.currentScenario >= studyState.scenarios.length) {
+                showCompletion();
+                return;
+            }
+
+            // Check if we need to show trust survey
+            if (studyState.currentScenario === 5) {
+                showTrustSurvey();
+                return;
+            }
+
+            // Check if we need to show second system intro
+            if (studyState.currentScenario === 5) {
+                showSystemIntro();
+                return;
+            }
+
+            showRecommendation();
+        }
+
+        function showRecommendation() {
+            const scenario = studyState.scenarios[studyState.currentScenario];
+            const systemIndex = Math.floor(studyState.currentScenario / 5);
+            const system = studyState.systemOrder[systemIndex];
+            const displayType = studyState.systemDisplays[system];
+            const scenarioNum = (studyState.currentScenario % 5) + 1;
+
+            // Create recommendation screen
+            const html = createRecommendationHTML(scenario, system, displayType, scenarioNum);
+
+            // Update progress
+            const step = system === studyState.systemOrder[0] ? 3 : 5;
+            updateProgress(step, 7, `System ${system}: Restaurant ${scenarioNum} of 5`);
+
+            // Show the recommendation
+            showDynamicContent(html);
+
+            // Track scenario start time
+            studyState.scenarioStartTime = Date.now();
+        }
+
+        function createRecommendationHTML(scenario, system, displayType, scenarioNum) {
+            return `
+                <div class="scenario-context">
+                    <h3>
+                        <span class="scenario-number">Scenario ${scenarioNum}</span>
+                        ${scenario.context}
+                    </h3>
+                    <p>${scenario.contextDetail}</p>
+                </div>
+
+                <div class="user-preferences">
+                    <h4>Your Preferences (from earlier):</h4>
+                    <div class="preferences-grid">
+                        ${studyState.preferences.cuisines.map(c => `<div class="pref-item">${c} cuisine</div>`).join('')}
+                        <div class="pref-item">${studyState.preferences.priceRange || '$$'} price range</div>
+                        <div class="pref-item">${studyState.preferences.atmosphere || 'Casual'} atmosphere</div>
+                    </div>
+                </div>
+
+                <div class="restaurant-card">
+                    <div class="restaurant-header">
+                        <div class="restaurant-info">
+                            <h3>${scenario.restaurant.name}</h3>
+                            <div class="restaurant-meta">
+                                <span>🍽️ ${scenario.restaurant.cuisine}</span>
+                                <span>💵 ${scenario.restaurant.price}</span>
+                                <span>⭐ ${scenario.restaurant.rating}</span>
+                                <span>💬 ${scenario.restaurant.reviews} reviews</span>
+                            </div>
+                        </div>
+                        <span class="system-label system-${system.toLowerCase()}">System ${system}</span>
+                    </div>
+
+                    <p class="restaurant-description">${scenario.restaurant.description}</p>
+
+                    <div class="ai-recommendation">
+                        <div class="ai-header">
+                            <div class="ai-icon">AI</div>
+                            <h4>AI Analysis & Recommendation</h4>
+                        </div>
+                        <p>${scenario.aiReasoning}</p>
+
+                        <div class="confidence-display">
+                            ${displayType === 'static' ?
+                                createStaticConfidenceHTML(scenario.confidence) :
+                                createAdaptiveConfidenceHTML(scenario.confidence, scenario.factors)}
+                        </div>
+                    </div>
+
+                    <div class="decision-section">
+                        <div class="decision-question">
+                            Would you choose this restaurant for ${scenario.context.toLowerCase()}?
+                        </div>
+                        <div class="decision-buttons">
+                            <button class="btn btn-accept" onclick="makeDecision(true)">
+                                Yes, I'll go here
+                            </button>
+                            <button class="btn btn-reject" onclick="makeDecision(false)">
+                                No, find another option
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createStaticConfidenceHTML(confidence) {
+            const percentage = Math.round(confidence * 100);
+            const descriptor = confidence > 0.7 ? 'high confidence' :
+                              confidence > 0.4 ? 'moderate confidence' :
+                              'low confidence';
+
+            return `
+                <div class="static-confidence">
+                    <div class="confidence-header">AI Confidence Level</div>
+                    <div class="confidence-value">
+                        <span class="confidence-percentage">${percentage}%</span>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                    <div class="confidence-description">
+                        The AI has ${descriptor} in this recommendation based on how well it matches your preferences and the restaurant's overall quality.
+                    </div>
+                </div>
+            `;
+        }
+
+        function createAdaptiveConfidenceHTML(confidence, factors) {
+            const percentage = Math.round(confidence * 100);
+            const level = confidence > 0.7 ? 'high' : confidence > 0.4 ? 'medium' : 'low';
+            const levelText = level.charAt(0).toUpperCase() + level.slice(1);
+
+            return `
+                <div class="adaptive-confidence">
+                    <div class="confidence-level-1" onclick="toggleDetails(${studyState.currentScenario})">
+                        <div class="confidence-basic">
+                            <span class="confidence-badge confidence-${level}">${levelText} Confidence</span>
+                            <span class="click-hint">Click for details <span class="expand-icon">▼</span></span>
+                        </div>
+                    </div>
+
+                    <div class="confidence-details" id="details-${studyState.currentScenario}">
+                        <div class="confidence-numeric">${percentage}% confident</div>
+                        <div style="color: #718096;">Confidence range: ${Math.max(0, percentage - 5)}% - ${Math.min(100, percentage + 5)}%</div>
+
+                        <div class="confidence-explanation">
+                            <p><strong>What this means:</strong> ${getConfidenceExplanation(confidence)}</p>
+                        </div>
+
+                        <div class="confidence-factors">
+                            <div class="factor-category">
+                                <h5>Positive Indicators</h5>
+                                ${factors.positive.map(f => `<div class="factor-item factor-positive">${f}</div>`).join('')}
+                            </div>
+                            <div class="factor-category">
+                                <h5>Concerns</h5>
+                                ${factors.negative.map(f => `<div class="factor-item factor-negative">${f}</div>`).join('')}
+                            </div>
+                        </div>
+
+                        <div class="confidence-visualization">
+                            <h5 style="margin-bottom: 15px;">Factor Importance</h5>
+                            <div class="factor-bars">
+                                <div class="factor-bar">
+                                    <span class="factor-label">Match Score</span>
+                                    <div class="factor-bar-bg">
+                                        <div class="factor-bar-fill" style="width: ${factors.matchScore || 70}%"></div>
+                                    </div>
+                                </div>
+                                <div class="factor-bar">
+                                    <span class="factor-label">Quality Rating</span>
+                                    <div class="factor-bar-bg">
+                                        <div class="factor-bar-fill" style="width: ${factors.qualityScore || 80}%"></div>
+                                    </div>
+                                </div>
+                                <div class="factor-bar">
+                                    <span class="factor-label">User Similarity</span>
+                                    <div class="factor-bar-bg">
+                                        <div class="factor-bar-fill" style="width: ${factors.similarityScore || 65}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getConfidenceExplanation(confidence) {
+            if (confidence > 0.8) {
+                return "This restaurant strongly matches your preferences and has consistently excellent reviews from similar users. The AI believes this is an excellent choice.";
+            } else if (confidence > 0.6) {
+                return "This restaurant matches most of your preferences well, though there are some minor concerns. The AI thinks this is a good option worth considering.";
+            } else if (confidence > 0.4) {
+                return "This restaurant has mixed alignment with your preferences. While it has some positive aspects, there are notable differences from what you typically prefer.";
+            } else {
+                return "This restaurant has limited match with your stated preferences. The AI is including it as an option but has significant uncertainty about whether you'll enjoy it.";
+            }
+        }
+
+        function toggleDetails(scenarioId) {
+            const details = document.getElementById(`details-${scenarioId}`);
+            const trigger = details.previousElementSibling;
+
+            if (!details.classList.contains('show')) {
+                details.classList.add('show');
+                trigger.classList.add('expanded');
+
+                // Track interaction
+                studyState.interactions.push({
+                    type: 'expand_confidence',
+                    scenario: scenarioId,
+                    system: studyState.currentSystem,
+                    timestamp: Date.now() - studyState.scenarioStartTime
+                });
+            } else {
+                details.classList.remove('show');
+                trigger.classList.remove('expanded');
+
+                studyState.interactions.push({
+                    type: 'collapse_confidence',
+                    scenario: scenarioId,
+                    system: studyState.currentSystem,
+                    timestamp: Date.now() - studyState.scenarioStartTime
+                });
+            }
+        }
+
+        function makeDecision(accepted) {
+            const scenario = studyState.scenarios[studyState.currentScenario];
+
+            // Record decision
+            studyState.responses.push({
+                participantId: studyState.participantId,
+                scenario: studyState.currentScenario,
+                system: studyState.currentSystem,
+                displayType: studyState.systemDisplays[studyState.currentSystem],
+                accepted: accepted,
+                correct: accepted === scenario.correctChoice,
+                confidence: scenario.confidence,
+                decisionTime: Date.now() - studyState.scenarioStartTime,
+                timestamp: new Date().toISOString()
+            });
+
+            // Check if we need trust survey (after 5 scenarios)
+            if ((studyState.currentScenario + 1) % 5 === 0) {
+                showTrustSurvey();
+            } else {
+                nextScenario();
+            }
+        }
+
+        function showTrustSurvey() {
+            const system = studyState.currentSystem;
+            const step = system === studyState.systemOrder[0] ? 4 : 6;
+
+            const html = `
+                <h2>How much do you trust System ${system}?</h2>
+                <p style="color: #718096; margin-bottom: 30px;">Based on the 5 restaurants you just evaluated</p>
+
+                <div class="trust-survey">
+                    ${createTrustQuestions(system)}
+
+                    <button class="btn btn-primary" onclick="submitTrust()">
+                        Continue
+                    </button>
+                </div>
+            `;
+
+            showDynamicContent(html);
+            updateProgress(step, 7, `Step ${step} of 7: Evaluate System ${system}`);
+        }
+
+        function createTrustQuestions(system) {
+            const questions = [
+                `I trust System ${system} to provide good restaurant recommendations`,
+                `System ${system} is reliable in its recommendations`,
+                `I feel confident using System ${system}'s recommendations for important dining decisions`,
+                `System ${system} helps me make better restaurant choices`,
+                `I understand how System ${system} makes its recommendations`
+            ];
+
+            return questions.map((q, i) => `
+                <div class="likert-item">
+                    <label>${q}</label>
+                    <div class="likert-options">
+                        ${[1,2,3,4,5,6,7].map(val => `
+                            <div class="likert-option">
+                                <input type="radio" name="trust-${i}" value="${val}" id="trust-${i}-${val}">
+                                <span>${val === 1 ? 'Strongly<br>Disagree' :
+                                       val === 7 ? 'Strongly<br>Agree' : val}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function submitTrust() {
+            const ratings = {};
+            for (let i = 0; i < 5; i++) {
+                const value = document.querySelector(`input[name="trust-${i}"]:checked`)?.value;
+                ratings[`q${i+1}`] = value ? parseInt(value) : null;
+            }
+
+            studyState.trustRatings[studyState.currentSystem] = ratings;
+
+            // If this was the first system, show second system intro
+            if (studyState.currentScenario === 4) {
+                studyState.currentScenario++;
+                showSystemIntro();
+            } else {
+                // Both systems complete, show comparison
+                showComparison();
+            }
+        }
+
+        function showComparison() {
+            const html = `
+                <h2>Final Comparison</h2>
+                <p style="color: #718096; margin-bottom: 30px;">You've now tested both AI recommendation systems</p>
+
+                <div class="comparison-container">
+                    <div class="system-comparison">
+                        <h3>System A</h3>
+                        <div class="comparison-metrics">
+                            <div class="metric-item">
+                                <span class="metric-label">Display Type:</span>
+                                <span class="metric-value">${studyState.systemDisplays.A === 'static' ? 'Detailed' : 'Progressive'}</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Restaurants Shown:</span>
+                                <span class="metric-value">5</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="system-comparison">
+                        <h3>System B</h3>
+                        <div class="comparison-metrics">
+                            <div class="metric-item">
+                                <span class="metric-label">Display Type:</span>
+                                <span class="metric-value">${studyState.systemDisplays.B === 'static' ? 'Detailed' : 'Progressive'}</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Restaurants Shown:</span>
+                                <span class="metric-value">5</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="final-comparison">
+                    <h3>Which system would you prefer to use?</h3>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" name="preference" value="A" id="pref-a">
+                            <label for="pref-a"><strong>System A</strong> - I prefer how this system shows recommendations</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="preference" value="B" id="pref-b">
+                            <label for="pref-b"><strong>System B</strong> - I prefer how this system shows recommendations</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="preference" value="none" id="pref-none">
+                            <label for="pref-none"><strong>No Preference</strong> - Both systems work equally well for me</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label>Why do you prefer this system? (optional)</label>
+                        <textarea id="preferenceReason" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="submitComparison()">
+                    Complete Study
+                </button>
+            `;
+
+            showDynamicContent(html);
+            updateProgress(7, 7, 'Step 7 of 7: Final Comparison');
+        }
+
+        function submitComparison() {
+            studyState.finalPreference = {
+                choice: document.querySelector('input[name="preference"]:checked')?.value,
+                reason: document.getElementById('preferenceReason').value
+            };
+
+            showCompletion();
+        }
+
+        function showCompletion() {
+            const html = `
+                <div style="text-align: center;">
+                    <h2>🎉 Study Complete!</h2>
+                    <p style="margin: 20px 0; font-size: 18px;">Thank you for participating in our research!</p>
+
+                    <div class="info-box" style="text-align: left;">
+                        <h3>Next Steps:</h3>
+                        <ol style="margin-left: 20px; line-height: 2;">
+                            <li>Your completion code: <strong>${studyState.participantId}</strong></li>
+                            <li>Please complete our brief exit survey (opens in new tab)</li>
+                            <li>Your payment will be processed within 24 hours</li>
+                        </ol>
+                    </div>
+
+                    <div style="margin: 30px 0;">
+                        <button class="btn btn-primary" onclick="openExitSurvey()">
+                            Complete Exit Survey
+                        </button>
+                        <button class="btn" style="margin-left: 15px;" onclick="downloadData()">
+                            Download My Data
+                        </button>
+                    </div>
+
+                    <p style="color: #718096; margin-top: 30px;">
+                        If you have any questions, please contact: andisheh.ghasemi@university.edu
+                    </p>
+                </div>
+            `;
+
+            showDynamicContent(html);
+            updateProgress(7, 7, 'Complete!');
+
+            // Save data to backend (implement this)
+            saveDataToBackend();
+        }
+
+        function openExitSurvey() {
+            // Create Google Form URL with pre-filled participant ID
+            const formUrl = `https://forms.gle/YOUR_FORM_ID?entry.123456=${studyState.participantId}`;
+            window.open(formUrl, '_blank');
+        }
+
+        function saveDataToBackend() {
+            // Implement saving to Firebase/Supabase/your backend
+            console.log('Study data:', studyState);
+            // fetch('/api/save-study-data', {...})
+        }
+
+        function downloadData() {
+            const data = JSON.stringify(studyState, null, 2);
+            const blob = new Blob([data], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `study-data-${studyState.participantId}.json`;
+            a.click();
+        }
+
+        // Utility functions
+        function showScreen(screenId) {
+            document.querySelectorAll('.scenario-container').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function showDynamicContent(html) {
+            // Remove any existing dynamic content
+            document.querySelectorAll('.dynamic-content').forEach(el => el.remove());
+
+            // Create new container
+            const container = document.createElement('div');
+            container.className = 'scenario-container dynamic-content active';
+            container.innerHTML = html;
+
+            // Hide other containers and add new one
+            document.querySelectorAll('.scenario-container').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector('.content').appendChild(container);
+        }
+
+        function updateProgress(current, total, label) {
+            const percentage = (current / total) * 100;
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressLabel').textContent = label || '';
+        }
+
+        // Generate realistic scenarios
+        function generateScenarios() {
+            const contexts = [
+                {context: "Dinner with Your Boss", contextDetail: "Your manager wants to discuss your upcoming promotion over dinner. You need a professional but comfortable setting."},
+                {context: "First Date", contextDetail: "You matched on a dating app and want to make a good impression. Looking for somewhere nice but not too formal."},
+                {context: "Family Birthday", contextDetail: "Celebrating your mom's 60th birthday with 8 family members including kids."},
+                {context: "Quick Lunch Meeting", contextDetail: "You have 1 hour between meetings to grab lunch with a potential client."},
+                {context: "Anniversary Dinner", contextDetail: "Celebrating your 5th wedding anniversary and want somewhere special."},
+                {context: "Friends Reunion", contextDetail: "College friends are in town for the weekend. Looking for a fun, lively spot."},
+                {context: "Business Dinner", contextDetail: "Hosting important clients from Japan who are visiting your city."},
+                {context: "Casual Weekend Brunch", contextDetail: "Lazy Sunday with your partner, want somewhere relaxed with good coffee."},
+                {context: "Team Celebration", contextDetail: "Taking your team of 12 out after successfully launching a project."},
+                {context: "Solo Dinner", contextDetail: "Treating yourself after a long week. Want good food and a comfortable bar seat."}
+            ];
+
+            const restaurants = [
+                {
+                    name: "Bella Vista Ristorante",
+                    cuisine: "Italian",
+                    price: "$$",
+                    rating: 4.3,
+                    reviews: 287,
+                    description: "Classic Italian trattoria known for homemade pasta and warm atmosphere. Family-owned for 20 years.",
+                    confidence: 0.82,
+                    correctChoice: true,
+                    aiReasoning: "This restaurant strongly matches your Italian cuisine preference and moderate price range. The atmosphere is professional yet comfortable, perfect for your occasion.",
+                    factors: {
+                        positive: ["Matches your Italian preference", "Within your price range", "Consistently rated 4+ stars", "Accommodates groups well"],
+                        negative: ["Can be noisy on weekends", "Limited parking"],
+                        matchScore: 85,
+                        qualityScore: 82,
+                        similarityScore: 78
+                    }
+                },
+                {
+                    name: "Sakura Modern Japanese",
+                    cuisine: "Japanese",
+                    price: "$$$",
+                    rating: 4.5,
+                    reviews: 512,
+                    description: "Contemporary Japanese fusion with an extensive sake menu. Sleek, modern interior with a sushi bar.",
+                    confidence: 0.65,
+                    correctChoice: false,
+                    aiReasoning: "While this restaurant has excellent reviews, it's slightly above your usual price range and may be too formal for some occasions.",
+                    factors: {
+                        positive: ["Exceptional food quality", "Great for impressing guests", "Quiet atmosphere"],
+                        negative: ["Above your typical price range", "Limited vegetarian options", "Reservations difficult"],
+                        matchScore: 60,
+                        qualityScore: 90,
+                        similarityScore: 55
+                    }
+                },
+                {
+                    name: "The Local Brewhouse",
+                    cuisine: "American",
+                    price: "$",
+                    rating: 3.9,
+                    reviews: 445,
+                    description: "Casual gastropub with craft beers and elevated bar food. Live music on weekends.",
+                    confidence: 0.45,
+                    correctChoice: false,
+                    aiReasoning: "This is a more casual option that might work for informal gatherings but may not suit all your dining needs.",
+                    factors: {
+                        positive: ["Very affordable", "Good for groups", "Fun atmosphere"],
+                        negative: ["Very loud environment", "Service can be slow", "Limited healthy options"],
+                        matchScore: 45,
+                        qualityScore: 70,
+                        similarityScore: 40
+                    }
+                },
+                {
+                    name: "Le Jardin Secret",
+                    cuisine: "French",
+                    price: "$$$$",
+                    rating: 4.8,
+                    reviews: 156,
+                    description: "Intimate French bistro with a romantic garden patio. Prix fixe menu changes seasonally.",
+                    confidence: 0.72,
+                    correctChoice: true,
+                    aiReasoning: "Perfect for special occasions with exceptional food, though the price is higher than your usual range.",
+                    factors: {
+                        positive: ["Exceptional cuisine", "Perfect for special occasions", "Romantic atmosphere", "Excellent wine list"],
+                        negative: ["Expensive", "Small portions", "Requires reservations"],
+                        matchScore: 65,
+                        qualityScore: 95,
+                        similarityScore: 70
+                    }
+                },
+                {
+                    name: "Spice Route",
+                    cuisine: "Indian",
+                    price: "$$",
+                    rating: 4.4,
+                    reviews: 389,
+                    description: "Authentic Indian cuisine with varied spice levels. Colorful decor and friendly service.",
+                    confidence: 0.58,
+                    correctChoice: true,
+                    aiReasoning: "Great option within your price range with excellent reviews, though Indian wasn't in your top preferences.",
+                    factors: {
+                        positive: ["Excellent value", "Accommodates dietary restrictions", "Highly rated"],
+                        negative: ["Not your preferred cuisine", "Can be spicy", "Parking challenges"],
+                        matchScore: 55,
+                        qualityScore: 85,
+                        similarityScore: 50
+                    }
+                },
+                {
+                    name: "Harvest Table",
+                    cuisine: "Farm-to-Table",
+                    price: "$$",
+                    rating: 4.6,
+                    reviews: 234,
+                    description: "Seasonal American cuisine featuring local ingredients. Rustic-chic atmosphere.",
+                    confidence: 0.88,
+                    correctChoice: true,
+                    aiReasoning: "Excellent match for your preferences with fresh, quality ingredients and accommodating to dietary needs.",
+                    factors: {
+                        positive: ["Fresh, local ingredients", "Great for dietary restrictions", "Highly rated by similar users", "Beautiful ambiance"],
+                        negative: ["Slightly pricey", "Menu changes frequently"],
+                        matchScore: 88,
+                        qualityScore: 92,
+                        similarityScore: 85
+                    }
+                },
+                {
+                    name: "Ming's Palace",
+                    cuisine: "Chinese",
+                    price: "$",
+                    rating: 4.1,
+                    reviews: 567,
+                    description: "Traditional Szechuan and Cantonese dishes. Large dining room good for groups.",
+                    confidence: 0.52,
+                    correctChoice: false,
+                    aiReasoning: "Decent option in your price range with good reviews, though the ambiance may not suit all occasions.",
+                    factors: {
+                        positive: ["Good value", "Large portions", "Accommodates big groups"],
+                        negative: ["Inconsistent service", "Dated decor", "Can be very crowded"],
+                        matchScore: 50,
+                        qualityScore: 75,
+                        similarityScore: 48
+                    }
+                },
+                {
+                    name: "The Mediterranean Table",
+                    cuisine: "Mediterranean",
+                    price: "$",
+                    rating: 4.4,
+                    reviews: 312,
+                    description: "Greek and Lebanese specialties with vegetarian options. Cozy atmosphere with outdoor seating.",
+                    confidence: 0.76,
+                    correctChoice: true,
+                    aiReasoning: "Strong match with healthy options and dietary accommodations. Great reviews from users with similar preferences.",
+                    factors: {
+                        positive: ["Excellent vegetarian options", "Healthy cuisine", "Warm atmosphere", "Consistent quality"],
+                        negative: ["Can be busy without reservation", "Limited dessert menu"],
+                        matchScore: 78,
+                        qualityScore: 85,
+                        similarityScore: 72
+                    }
+                },
+                {
+                    name: "Taco Social",
+                    cuisine: "Mexican",
+                    price: "$",
+                    rating: 4.0,
+                    reviews: 623,
+                    description: "Trendy taqueria with creative tacos and extensive tequila selection. Loud, vibrant atmosphere.",
+                    confidence: 0.38,
+                    correctChoice: false,
+                    aiReasoning: "Very casual spot that's great for some occasions but may be too informal for others. The noise level is a concern.",
+                    factors: {
+                        positive: ["Very affordable", "Fun atmosphere", "Quick service"],
+                        negative: ["Extremely loud", "Limited seating", "Not suitable for business meals", "Long waits on weekends"],
+                        matchScore: 35,
+                        qualityScore: 72,
+                        similarityScore: 32
+                    }
+                },
+                {
+                    name: "Ocean Prime",
+                    cuisine: "Seafood",
+                    price: "$$",
+                    rating: 4.7,
+                    reviews: 189,
+                    description: "Upscale seafood and steaks with an extensive wine list. Elegant dining room with white tablecloths.",
+                    confidence: 0.61,
+                    correctChoice: false,
+                    aiReasoning: "Excellent for special occasions but significantly above your typical price range. The formal atmosphere may be too much for casual dining.",
+                    factors: {
+                        positive: ["Exceptional service", "Perfect for impressing", "Outstanding food quality"],
+                        negative: ["Very expensive", "Too formal for casual meals", "Requires proper dress"],
+                        matchScore: 55,
+                        qualityScore: 94,
+                        similarityScore: 58
+                    }
+                }
+            ];
+
+            // Combine contexts with restaurants and shuffle
+            const scenarios = [];
+            for (let i = 0; i < 10; i++) {
+                scenarios.push({
+                    ...contexts[i],
+                    restaurant: restaurants[i],
+                    ...restaurants[i]
+                });
+            }
+
+            // Shuffle for randomization
+            return scenarios.sort(() => Math.random() - 0.5);
+        }
+    </script>
+</body>
+</html>
