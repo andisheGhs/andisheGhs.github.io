@@ -922,6 +922,7 @@
         // Study state management
         let studyState = {
             participantId: 'P' + Date.now(),
+            prolificId: null,
             currentScenario: -1,
             currentSystem: 'A',
             systemOrder: [],
@@ -934,6 +935,14 @@
             scenarioStartTime: null,
             scenarios: []
         };
+
+        // Capture Prolific ID from URL if present
+        const urlParams = new URLSearchParams(window.location.search);
+        const prolificPid = urlParams.get('PROLIFIC_PID');
+        if (prolificPid) {
+            studyState.prolificId = prolificPid;
+            studyState.participantId = prolificPid; // Use Prolific ID as participant ID
+        }
 
         // Enable consent button when checkbox is checked
         document.getElementById('consentCheck')?.addEventListener('change', function() {
@@ -1406,23 +1415,38 @@
         }
 
         function showCompletion() {
+            // Generate completion code
+            const completionCode = 'TRUST' + Math.random().toString(36).substring(2, 8).toUpperCase();
+
             const html = `
                 <div style="text-align: center;">
                     <h2>🎉 Study Complete!</h2>
                     <p style="margin: 20px 0; font-size: 18px;">Thank you for participating in our research!</p>
 
                     <div class="info-box" style="text-align: left;">
+                        <h3>Your Completion Code:</h3>
+                        <div style="background: #fff; padding: 20px; border-radius: 8px; margin: 15px 0;">
+                            <h1 style="font-family: monospace; color: #667eea; letter-spacing: 2px;">
+                                ${completionCode}
+                            </h1>
+                            <p style="color: #718096; margin-top: 10px;">
+                                Please copy this code and return to Prolific to paste it
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="text-align: left; margin-top: 20px;">
                         <h3>Next Steps:</h3>
                         <ol style="margin-left: 20px; line-height: 2;">
-                            <li>Your completion code: <strong>${studyState.participantId}</strong></li>
+                            <li>Copy the completion code above</li>
+                            <li>Return to Prolific and submit the code</li>
                             <li>Please complete our brief exit survey (opens in new tab)</li>
-                            <li>Your payment will be processed within 24 hours</li>
                         </ol>
                     </div>
 
                     <div style="margin: 30px 0;">
                         <button class="btn btn-primary" onclick="openExitSurvey()">
-                            Complete Exit Survey
+                            Complete Exit Survey (Optional but Helpful!)
                         </button>
                         <button class="btn" style="margin-left: 15px;" onclick="downloadData()">
                             Download My Data
@@ -1430,7 +1454,7 @@
                     </div>
 
                     <p style="color: #718096; margin-top: 30px;">
-                        If you have any questions, please contact: andisheh.ghasemi@university.edu
+                        If you have any questions, please contact: andisheh.ghasemi@northeastern.edu
                     </p>
                 </div>
             `;
@@ -1438,21 +1462,74 @@
             showDynamicContent(html);
             updateProgress(7, 7, 'Complete!');
 
-            // Save data to backend (implement this)
+            // Save completion code with data
+            studyState.completionCode = completionCode;
+            studyState.completedAt = new Date().toISOString();
+
+            // Save data to backend
             saveDataToBackend();
         }
 
         function openExitSurvey() {
             // Create Google Form URL with pre-filled participant ID
-            const formUrl = `https://forms.gle/YOUR_FORM_ID?entry.123456=${studyState.participantId}`;
+            // Replace YOUR_FORM_ID with your actual form ID
+            // Replace entry.XXXXXX with your actual entry ID for participant ID field
+            const formUrl = `https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform?usp=pp_url&entry.XXXXXX=${studyState.participantId}`;
             window.open(formUrl, '_blank');
         }
 
         function saveDataToBackend() {
-            // Implement saving to Firebase/Supabase/your backend
-            console.log('Study data:', studyState);
-            // fetch('/api/save-study-data', {...})
+
+            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8xVLtb0TzxmiZZHOMk4a4C37C-tMJHJVzBxfje4-nf5vDSoNLDw1glAH4pcFLHdiD/exec';
+
+            console.log('Saving data for participant:', studyState.participantId);
+
+            // Prepare the data
+            const dataToSave = {
+                participantId: studyState.participantId,
+                prolificId: studyState.prolificId || 'none',
+                completionCode: studyState.completionCode || 'none',
+                systemA_display: studyState.systemDisplays.A,
+                systemB_display: studyState.systemDisplays.B,
+                preference: studyState.finalPreference?.choice || 'none',
+                preferenceReason: studyState.finalPreference?.reason || 'none',
+                trustA_q1: studyState.trustRatings.A?.q1 || '',
+                trustA_q2: studyState.trustRatings.A?.q2 || '',
+                trustA_q3: studyState.trustRatings.A?.q3 || '',
+                trustA_q4: studyState.trustRatings.A?.q4 || '',
+                trustA_q5: studyState.trustRatings.A?.q5 || '',
+                trustB_q1: studyState.trustRatings.B?.q1 || '',
+                trustB_q2: studyState.trustRatings.B?.q2 || '',
+                trustB_q3: studyState.trustRatings.B?.q3 || '',
+                trustB_q4: studyState.trustRatings.B?.q4 || '',
+                trustB_q5: studyState.trustRatings.B?.q5 || '',
+                completionTime: Date.now() - studyState.startTime,
+                responses: JSON.stringify(studyState.responses),
+                interactions: JSON.stringify(studyState.interactions)
+            };
+
+            // Send to Google Sheets
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'text/plain',
+                },
+                body: JSON.stringify(dataToSave)
+            })
+            .then(() => {
+                console.log('Data saved successfully!');
+                // Also save locally as backup
+                localStorage.setItem(`study_${studyState.participantId}`, JSON.stringify(studyState));
+            })
+            .catch(error => {
+                console.error('Error saving data:', error);
+                alert('There was an issue saving your data. Please contact the researcher with your completion code: ' + studyState.completionCode);
+                // Save locally as backup
+                localStorage.setItem(`study_backup_${studyState.participantId}`, JSON.stringify(studyState));
+            });
         }
+
 
         function downloadData() {
             const data = JSON.stringify(studyState, null, 2);
