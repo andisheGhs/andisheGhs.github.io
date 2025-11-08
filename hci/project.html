@@ -928,7 +928,6 @@
         // Study state management
         let studyState = {
             participantId: 'P' + Date.now(),
-            prolificId: null,
             currentScenario: -1,
             currentSystem: 'A',
             systemOrder: [],
@@ -1451,33 +1450,21 @@
         }
 
         function showCompletion() {
-            // Generate completion code
-            const completionCode = 'TRUST' + Math.random().toString(36).substring(2, 8).toUpperCase();
-
             const html = `
                 <div style="text-align: center;">
                     <h2>🎉 Study Complete!</h2>
                     <p style="margin: 20px 0; font-size: 18px;">Thank you for participating in our research!</p>
 
                     <div class="info-box" style="text-align: left;">
-                        <h3>Your Completion Code:</h3>
+                        <h3>Study Reference Code:</h3>
                         <div style="background: #fff; padding: 20px; border-radius: 8px; margin: 15px 0;">
                             <h1 style="font-family: monospace; color: #667eea; letter-spacing: 2px;">
-                                ${completionCode}
+                                ${studyState.participantId}
                             </h1>
                             <p style="color: #718096; margin-top: 10px;">
-                                Please copy this code and return to Prolific to paste it
+                                Your responses have been saved with this reference code
                             </p>
                         </div>
-                    </div>
-
-                    <div class="info-box" style="text-align: left; margin-top: 20px;">
-                        <h3>Next Steps:</h3>
-                        <ol style="margin-left: 20px; line-height: 2;">
-                            <li>Copy the completion code above</li>
-                            <li>Return to Prolific and submit the code</li>
-                            <li>Please complete our brief exit survey (opens in new tab)</li>
-                        </ol>
                     </div>
 
                     <div style="margin: 30px 0;">
@@ -1490,7 +1477,8 @@
                     </div>
 
                     <p style="color: #718096; margin-top: 30px;">
-                        If you have any questions, please contact: andisheh.ghasemi@northeastern.edu
+                        Thank you for helping with our research!<br>
+                        Questions? Contact: ghasemi.e@northeastern.edu
                     </p>
                 </div>
             `;
@@ -1498,11 +1486,8 @@
             showDynamicContent(html);
             updateProgress(7, 7, 'Complete!');
 
-            // Save completion code with data
-            studyState.completionCode = completionCode;
+            // Save data
             studyState.completedAt = new Date().toISOString();
-
-            // Save data to backend
             saveDataToBackend();
         }
 
@@ -1523,8 +1508,7 @@
             // Prepare the data
             const dataToSave = {
                 participantId: studyState.participantId,
-                prolificId: studyState.prolificId || 'none',
-                completionCode: studyState.completionCode || 'none',
+                completionCode: 'N/A',  // or remove entirely
                 systemA_display: studyState.systemDisplays.A,
                 systemB_display: studyState.systemDisplays.B,
                 preference: studyState.finalPreference?.choice || 'none',
