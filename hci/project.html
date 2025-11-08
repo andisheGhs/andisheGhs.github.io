@@ -658,6 +658,13 @@
             transform: scale(1.05);
         }
 
+        .likert-option:has(input[type="radio"]:checked) span {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+            border-color: #667eea !important;
+            transform: scale(1.05) !important;
+        }
+
         .likert-option span:hover {
             border-color: #667eea;
             transform: translateY(-2px);
@@ -757,7 +764,7 @@
                 <div style="background: #fff; border: 1px solid #e2e8f0; padding: 25px; border-radius: 12px; margin: 20px 0; max-height: 400px; overflow-y: auto;">
                     <h3>Research Study: AI Transparency and Trust Calibration</h3>
                     <p style="margin: 15px 0;"><strong>Principal Investigator:</strong> Andisheh Ghasemi</p>
-                    <p style="margin: 15px 0;"><strong>Institution:</strong> [Your University]</p>
+                    <p style="margin: 15px 0;"><strong>Institution:</strong> Northeastern University</p>
 
                     <h4 style="margin-top: 25px;">Purpose:</h4>
                     <p>This study examines how different ways of displaying AI confidence affect user trust and decision-making.</p>
@@ -778,7 +785,7 @@
                     <p>Participation is voluntary. You may withdraw at any time without penalty.</p>
 
                     <h4 style="margin-top: 25px;">Contact:</h4>
-                    <p>Questions? Contact: andisheh.ghasemi@[university].edu</p>
+                    <p>Questions? Contact: ghasemi.e@northeastern.edu</p>
                 </div>
 
                 <div style="background: #f0f4ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
@@ -1474,7 +1481,7 @@
             // Create Google Form URL with pre-filled participant ID
             // Replace YOUR_FORM_ID with your actual form ID
             // Replace entry.XXXXXX with your actual entry ID for participant ID field
-            const formUrl = `https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform?usp=pp_url&entry.XXXXXX=${studyState.participantId}`;
+            const formUrl = `https://docs.google.com/forms/d/e/1FAIpQLScGwVeIqoSi70Ndx7lJttXzRXs_nlRFUFbAHKzWn6p0_69VsQ/viewform?usp=pp_url&entry.1549810394=${studyState.participantId}`;
             window.open(formUrl, '_blank');
         }
 
