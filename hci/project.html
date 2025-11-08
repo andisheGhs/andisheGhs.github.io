@@ -1299,6 +1299,36 @@
             `;
 
             showDynamicContent(html);
+
+            // FIX: Make the trust survey options clickable
+            setTimeout(() => {
+                document.querySelectorAll('.likert-option').forEach(option => {
+                    const span = option.querySelector('span');
+                    const radio = option.querySelector('input[type="radio"]');
+
+                    if (span && radio) {
+                        span.style.cursor = 'pointer';
+                        span.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            radio.checked = true;
+
+                            // Update visual state for all options in this question
+                            const questionContainer = option.parentElement;
+                            questionContainer.querySelectorAll('.likert-option span').forEach(s => {
+                                s.style.background = 'white';
+                                s.style.color = 'initial';
+                                s.style.borderColor = '#e2e8f0';
+                            });
+
+                            // Style the selected option
+                            this.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                            this.style.color = 'white';
+                            this.style.borderColor = '#667eea';
+                        });
+                    }
+                });
+            }, 100);
+
             updateProgress(step, 7, `Step ${step} of 7: Evaluate System ${system}`);
         }
 
