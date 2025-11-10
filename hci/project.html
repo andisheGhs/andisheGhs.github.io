@@ -751,6 +751,14 @@
                     <p>Imagine you're planning dinners for different occasions (date nights, business meetings, family gatherings). Each AI system will analyze restaurants and tell you how confident it is in its recommendations. Your job is to decide whether to accept or reject each recommendation based on the information provided.</p>
                 </div>
 
+
+                <div class="info-box" style="background: #fff3cd; border-color: #ffc107;">
+                    <h3>⚠️ Important: What We're Testing</h3>
+                    <p><strong>We are NOT testing the AI's ability to recommend restaurants.</strong></p>
+                    <p>All recommendations are pre-selected. We're testing <strong>HOW the AI shows its confidence</strong> - the visual presentation and information display.</p>
+                    <p>Please evaluate how helpful the <strong>confidence display format</strong> is for making decisions, not whether you agree with the recommendations.</p>
+                </div>
+
                 <button class="btn btn-primary" style="width: 100%; margin-top: 30px;" onclick="showConsent()">
                     Continue to Consent Form
                 </button>
@@ -1011,6 +1019,8 @@
         }
 
         function showSystemIntro() {
+
+
             const systemIndex = Math.floor((studyState.currentScenario + 1) / 5);
             studyState.currentSystem = studyState.systemOrder[systemIndex];
 
@@ -1332,11 +1342,11 @@
 
         function createTrustQuestions(system) {
             const questions = [
-                `I trust System ${system} to provide good restaurant recommendations`,
-                `System ${system} is reliable in its recommendations`,
-                `I feel confident using System ${system}'s recommendations for important dining decisions`,
-                `System ${system} helps me make better restaurant choices`,
-                `I understand how System ${system} makes its recommendations`
+                `System ${system}'s CONFIDENCE DISPLAY helped me make better decisions`,
+                `The WAY System ${system} SHOWS CONFIDENCE is clear and useful`,
+                `I trust System ${system}'s WAY OF COMMUNICATING uncertainty`,
+                `System ${system}'s CONFIDENCE FORMAT helps me know when to trust it`,
+                `I understand what System ${system}'s CONFIDENCE DISPLAY is telling me`
             ];
 
             return questions.map((q, i) => `
@@ -1409,21 +1419,25 @@
                 </div>
 
                 <div class="final-comparison">
-                    <h3>Which system would you prefer to use?</h3>
+
+                    <h3>Which confidence display format do you prefer?</h3>
+                    <p style="color: #6c757d;">Remember: Both systems showed the same restaurants - only the confidence display was different</p>
                     <div class="radio-group">
                         <div class="radio-item">
                             <input type="radio" name="preference" value="A" id="pref-a">
-                            <label for="pref-a"><strong>System A</strong> - I prefer how this system shows recommendations</label>
+                            <label for="pref-a"><strong>System A</strong> - I prefer how this system DISPLAYS confidence</label>
                         </div>
                         <div class="radio-item">
                             <input type="radio" name="preference" value="B" id="pref-b">
-                            <label for="pref-b"><strong>System B</strong> - I prefer how this system shows recommendations</label>
+                            <label for="pref-b"><strong>System B</strong> - I prefer how this system DISPLAYS confidence</label>
                         </div>
                         <div class="radio-item">
                             <input type="radio" name="preference" value="none" id="pref-none">
                             <label for="pref-none"><strong>No Preference</strong> - Both systems work equally well for me</label>
                         </div>
                     </div>
+
+
 
                     <div class="form-group" style="margin-top: 20px;">
                         <label>Why do you prefer this system? (optional)</label>
