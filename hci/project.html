@@ -1509,13 +1509,13 @@
             // Create Google Form URL with pre-filled participant ID
             // Replace YOUR_FORM_ID with your actual form ID
             // Replace entry.XXXXXX with your actual entry ID for participant ID field
-            const formUrl = `https://docs.google.com/forms/d/e/1FAIpQLScGwVeIqoSi70Ndx7lJttXzRXs_nlRFUFbAHKzWn6p0_69VsQ/viewform?usp=pp_url&entry.1549810394=${studyState.participantId}`;
+            const formUrl = `https://docs.google.com/forms/d/e/1FAIpQLSeLhnXUtb6DMIiWJskZuzvwOCpP0RLdsmu_Ao-RLB1jbn_T6g/viewform?usp=pp_url&entry.1928433323=${studyState.participantId}`;
             window.open(formUrl, '_blank');
         }
 
         function saveDataToBackend() {
 
-            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8xVLtb0TzxmiZZHOMk4a4C37C-tMJHJVzBxfje4-nf5vDSoNLDw1glAH4pcFLHdiD/exec';
+            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvACMADmGJoL3rmwZ6js3hCHOjEqxVbQAVQxdfEOURXsPJuJI4SoRwC213df0sAYE9/exec';
 
             console.log('Saving data for participant:', studyState.participantId);
 
