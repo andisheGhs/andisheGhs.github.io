@@ -11,11 +11,12 @@
             box-sizing: border-box;
         }
 
+        /* Light Mode (Professional) */
         :root {
             --primary-color: #1a365d;
             --accent-color: #2563eb;
-            --text-dark: #1e293b;
-            --text-light: #64748b;
+            --text-dark: #0f172a;
+            --text-light: #475569;
             --bg-light: #f8fafc;
             --bg-white: #ffffff;
             --border-color: #e2e8f0;
@@ -28,6 +29,7 @@
             --transition-speed: 0.3s;
         }
 
+        /* Dark Mode */
         [data-theme="dark"] {
             --primary-color: #93c5fd;
             --accent-color: #60a5fa;
@@ -37,6 +39,8 @@
             --bg-white: #0f172a;
             --border-color: #334155;
             --hover-bg: #334155;
+            --gradient-start: #0f172a;
+            --gradient-end: #1e293b;
             --header-gradient-start: #1e293b;
             --header-gradient-end: #334155;
             --card-shadow: rgba(0, 0, 0, 0.3);
@@ -45,26 +49,62 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             color: var(--text-dark);
-            line-height: 1.6;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            line-height: 1.8;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
             min-height: 100vh;
             padding: 20px;
-            transition: background var(--transition-speed);
+            transition: all var(--transition-speed) ease;
         }
 
-        [data-theme="dark"] body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 1000;
+            background: var(--bg-white);
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 4px 6px var(--card-shadow);
         }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px var(--card-shadow);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            display: block;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .theme-toggle .sun-icon {
+            display: none;
+            color: var(--accent-color);
+        }
+
+        .theme-toggle .moon-icon {
+            display: block;
+            color: var(--accent-color);
+        }
+
+        [data-theme="dark"] .theme-toggle .sun-icon { display: block; }
+        [data-theme="dark"] .theme-toggle .moon-icon { display: none; }
 
         .container {
-            max-width: 900px;
+            max-width: 800px;
             margin: 0 auto;
             background: var(--bg-white);
             border-radius: 20px;
             box-shadow: 0 20px 60px var(--card-shadow);
             overflow: hidden;
             animation: fadeInUp 0.6s ease-out;
-            transition: background var(--transition-speed), box-shadow var(--transition-speed);
+            transition: all var(--transition-speed) ease;
         }
 
         @keyframes fadeInUp {
@@ -75,343 +115,369 @@
         header {
             background: linear-gradient(135deg, var(--header-gradient-start) 0%, var(--header-gradient-end) 100%);
             color: white;
-            padding: 40px 50px;
+            padding: 30px 40px;
             position: relative;
             overflow: hidden;
+            transition: all var(--transition-speed) ease;
+        }
+
+        [data-theme="dark"] header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
         }
 
         header::before {
             content: '';
             position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 300px;
-            height: 300px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 50%;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
         }
 
-        .header-content {
+        .header-content { position: relative; }
+
+        .breadcrumb {
             display: flex;
-            justify-content: space-between;
+            gap: 10px;
             align-items: center;
-            position: relative;
-            z-index: 1;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            opacity: 0.9;
         }
 
-        .site-name {
-            font-size: 1.4rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .site-name a {
-            color: white;
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
+            transition: color 0.3s ease;
         }
 
-        nav {
-            display: flex;
-            gap: 25px;
-            align-items: center;
+        .breadcrumb a:hover { color: white; }
+
+        .article-content {
+            padding: 50px;
+            transition: all var(--transition-speed) ease;
         }
-
-        nav a {
-            color: rgba(255,255,255,0.85);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        nav a:hover { color: white; }
-
-        .theme-toggle {
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 6px 14px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: background 0.2s;
-        }
-
-        .theme-toggle:hover { background: rgba(255,255,255,0.25); }
 
         .article-header {
-            padding: 50px 60px 30px;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
             border-bottom: 1px solid var(--border-color);
-            transition: border-color var(--transition-speed);
         }
 
-        .article-header h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--text-dark);
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.2em;
             line-height: 1.3;
             margin-bottom: 20px;
-            letter-spacing: -0.5px;
         }
 
         .article-meta {
             display: flex;
-            gap: 15px;
-            align-items: center;
+            gap: 20px;
             flex-wrap: wrap;
-        }
-
-        .article-date {
+            align-items: center;
             color: var(--text-light);
-            font-size: 0.9rem;
+            font-size: 0.95em;
         }
 
         .article-category {
-            background: #dbeafe;
-            color: #1e40af;
-            padding: 3px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
             font-weight: 600;
-        }
-
-        [data-theme="dark"] .article-category {
-            background: #1e3a8a;
-            color: #93c5fd;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: #667eea20;
+            color: #667eea;
+            border: 1px solid #667eea30;
         }
 
         .reading-time {
-            color: var(--text-light);
-            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .article-body {
-            padding: 40px 60px 60px;
-            max-width: 100%;
-        }
-
-        .article-body p {
-            font-size: 1.05rem;
-            line-height: 1.85;
+            font-size: 1.05em;
             color: var(--text-dark);
-            margin-bottom: 1.6em;
-            transition: color var(--transition-speed);
         }
 
         .article-body h2 {
-            font-size: 1.45rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin: 2.5em 0 0.8em;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--border-color);
-            transition: color var(--transition-speed), border-color var(--transition-speed);
+            color: var(--primary-color);
+            font-size: 1.6em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
         }
+
+        .article-body p {
+            margin-bottom: 20px;
+            text-align: justify;
+            font-weight: 500;
+        }
+
+        .article-body strong { color: var(--primary-color); }
 
         .article-body hr {
             border: none;
             border-top: 1px solid var(--border-color);
-            margin: 2.5em 0;
+            margin: 40px 0;
         }
 
-        .article-body em {
+        .article-body blockquote {
+            border-left: 4px solid var(--accent-color);
+            padding: 20px;
+            margin: 30px 0;
+            font-style: italic;
             color: var(--text-light);
-            font-size: 0.95rem;
-            line-height: 1.75;
-            display: block;
-            padding: 20px 25px;
             background: var(--bg-light);
-            border-radius: 10px;
-            border-left: 3px solid var(--accent-color);
-            margin-top: 1em;
-            transition: background var(--transition-speed);
+            border-radius: 8px;
         }
 
-        .back-link {
-            display: inline-flex;
+        .author-box {
+            background: var(--bg-light);
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .author-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .author-box p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .author-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .author-links a {
+            padding: 8px 20px;
+            background: var(--bg-white);
+            color: var(--accent-color);
+            text-decoration: none;
+            border-radius: 20px;
+            border: 1px solid var(--accent-color);
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .author-links a:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px 50px;
+            background: var(--bg-light);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .nav-link {
+            color: var(--accent-color);
+            text-decoration: none;
+            display: flex;
             align-items: center;
             gap: 8px;
-            color: var(--accent-color);
-            text-decoration: none;
-            font-size: 0.9rem;
+            transition: all 0.3s ease;
             font-weight: 500;
-            margin: 30px 60px;
-            transition: gap 0.2s;
         }
 
-        .back-link:hover { gap: 12px; }
-
-        footer {
-            background: var(--bg-light);
-            padding: 30px 50px;
-            text-align: center;
-            border-top: 1px solid var(--border-color);
-            transition: background var(--transition-speed), border-color var(--transition-speed);
+        .nav-link:hover {
+            gap: 12px;
+            color: var(--primary-color);
         }
 
-        footer p {
-            color: var(--text-light);
-            font-size: 0.85rem;
+        @media (max-width: 768px) {
+            .theme-toggle { top: 20px; right: 20px; }
+            .article-content { padding: 30px; }
+            h1 { font-size: 1.8em; }
+            .article-body { font-size: 1em; }
+            .navigation { padding: 20px 30px; flex-direction: column; gap: 15px; }
         }
 
-        footer a {
-            color: var(--accent-color);
-            text-decoration: none;
-        }
-
-        @media (max-width: 680px) {
-            header { padding: 25px 20px; }
-            .article-header { padding: 30px 25px 20px; }
-            .article-header h1 { font-size: 1.6rem; }
-            .article-body { padding: 25px 25px 40px; }
-            .back-link { margin: 20px 25px; }
-            nav { gap: 12px; }
-            nav a { font-size: 0.8rem; }
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .article-content { padding: 20px; }
         }
     </style>
 </head>
 <body>
+
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+        <svg class="sun-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+        </svg>
+        <svg class="moon-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+        </svg>
+    </button>
+
     <div class="container">
         <header>
             <div class="header-content">
-                <div class="site-name"><a href="../index.html">Andisheh Ghasemi</a></div>
-                <nav>
-                    <a href="../index.html">About</a>
-                    <a href="../writing.html">Blog</a>
-                    <a href="../index.html#projects">Projects</a>
-                    <a href="../index.html#contact">Contact</a>
-                    <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
-                </nav>
+                <div class="breadcrumb">
+                    <a href="../index.html">Home</a>
+                    <span>→</span>
+                    <a href="../writing.html">Writing</a>
+                    <span>→</span>
+                    <span>Article</span>
+                </div>
             </div>
         </header>
 
-        <a href="../writing.html" class="back-link">← Back to Writing</a>
-
-        <div class="article-header">
-            <h1>The New Definition of Work: What Happens When Machines Do the Job?</h1>
-            <div class="article-meta">
-                <span class="article-date">February 21, 2026</span>
-                <span class="article-category">Personal</span>
-                <span class="reading-time">📖 12 min read</span>
+        <article class="article-content">
+            <div class="article-header">
+                <h1>The New Definition of Work: What Happens When Machines Do the Job?</h1>
+                <div class="article-meta">
+                    <span class="article-date">February 21, 2026</span>
+                    <span class="article-category">Personal</span>
+                    <span class="reading-time">📖 12 min read</span>
+                </div>
             </div>
-        </div>
 
-        <div class="article-body">
+            <div class="article-body">
 
-            <p>For most of human history, work meant effort applied to produce something of value — plowing a field, forging iron, typing a report, writing code. The social contract was relatively simple: you traded your time and skills for money, and money bought your place in society. Work was not merely economic. It was identity. It was dignity. It was how you explained yourself at dinner parties and how you filled the hours between waking and sleeping.</p>
+                <p>For most of human history, work meant effort applied to produce something of value — plowing a field, forging iron, typing a report, writing code. The social contract was relatively simple: you traded your time and skills for money, and money bought your place in society. Work was not merely economic. It was identity. It was dignity. It was how you explained yourself at dinner parties and how you filled the hours between waking and sleeping.</p>
 
-            <p>That contract is being renegotiated — not by governments or labor unions, but by algorithms.</p>
+                <p>That contract is being renegotiated — not by governments or labor unions, but by algorithms.</p>
 
-            <hr>
+                <hr>
 
-            <h2>The Shape of the Disruption</h2>
+                <h2>The Shape of the Disruption</h2>
 
-            <p>Artificial intelligence is not arriving as a single, dramatic event. There will be no day when the machines collectively clock in and humans collectively clock out. Instead, the disruption is already unfolding in layers, quietly and unevenly, hitting some industries first while others feel untouched — for now.</p>
+                <p>Artificial intelligence is not arriving as a single, dramatic event. There will be no day when the machines collectively clock in and humans collectively clock out. Instead, the disruption is already unfolding in layers, quietly and unevenly, hitting some industries first while others feel untouched — for now.</p>
 
-            <p>Radiologists are watching AI match or outperform them in reading scans. Paralegals are seeing AI draft documents in seconds that once took hours. Graphic designers, copywriters, financial analysts, customer service agents, programmers — all are discovering that the tools they use have become capable of doing portions of their jobs, or in some cases, most of it. Even jobs that seemed to require distinctly human judgment, creativity, or emotional intelligence are proving more automatable than expected.</p>
+                <p>Radiologists are watching AI match or outperform them in reading scans. Paralegals are seeing AI draft documents in seconds that once took hours. Graphic designers, copywriters, financial analysts, customer service agents, programmers — all are discovering that the tools they use have become capable of doing portions of their jobs, or in some cases, most of it. Even jobs that seemed to require distinctly human judgment, creativity, or emotional intelligence are proving more automatable than expected.</p>
 
-            <p>The previous waves of automation — looms replacing weavers, robots replacing assembly-line workers — displaced physical labor and routine manual tasks. AI is different because it ascends the cognitive ladder. It does not just replace the hands; it competes with the mind. And that distinction matters enormously.</p>
+                <p>The previous waves of automation — looms replacing weavers, robots replacing assembly-line workers — displaced physical labor and routine manual tasks. AI is different because it ascends the cognitive ladder. It does not just replace the hands; it competes with the mind. And that distinction matters enormously.</p>
 
-            <hr>
+                <hr>
 
-            <h2>When Work Loses Its Economic Necessity</h2>
+                <h2>When Work Loses Its Economic Necessity</h2>
 
-            <p>The standard reassurance about technological displacement has always been the same: new technology creates new jobs. The cotton gin eliminated hand-picking but created textile factories. The internet eliminated travel agencies but created app developers. History, we are told, rhymes.</p>
+                <p>The standard reassurance about technological displacement has always been the same: new technology creates new jobs. The cotton gin eliminated hand-picking but created textile factories. The internet eliminated travel agencies but created app developers. History, we are told, rhymes.</p>
 
-            <p>But there is a growing concern among economists that this time the rhyme may not hold, or at least not hold fast enough. When AI can perform cognitive tasks across a wide spectrum simultaneously — not just replace one kind of worker but compress entire professional hierarchies — the reabsorption of displaced labor into new roles may lag badly behind the disruption. And if labor is no longer reliably the primary input in economic value creation, the very logic that makes wages the main mechanism of distributing that value starts to break down.</p>
+                <p>But there is a growing concern among economists that this time the rhyme may not hold, or at least not hold fast enough. When AI can perform cognitive tasks across a wide spectrum simultaneously — not just replace one kind of worker but compress entire professional hierarchies — the reabsorption of displaced labor into new roles may lag badly behind the disruption. And if labor is no longer reliably the primary input in economic value creation, the very logic that makes wages the main mechanism of distributing that value starts to break down.</p>
 
-            <p>This raises a question that sounds abstract but is becoming urgent: what is work for?</p>
+                <p>This raises a question that sounds abstract but is becoming urgent: what is work for?</p>
 
-            <p>If work is primarily instrumental — a means to income, and income a means to survival and participation in society — then its decline demands we find other means. If work is intrinsically valuable — a source of purpose, structure, community, and self-worth — then its decline demands something even harder to manufacture: meaning.</p>
+                <p>If work is primarily instrumental — a means to income, and income a means to survival and participation in society — then its decline demands we find other means. If work is intrinsically valuable — a source of purpose, structure, community, and self-worth — then its decline demands something even harder to manufacture: meaning.</p>
 
-            <hr>
+                <hr>
 
-            <h2>The Emerging New Definition</h2>
+                <h2>The Emerging New Definition</h2>
 
-            <p>A new definition of work is quietly forming at the edges of the old one. It has several features worth examining.</p>
+                <p><strong>Work as curation and direction.</strong> As AI becomes capable of generating outputs — text, images, code, analysis — the human role increasingly becomes one of judgment: deciding what to ask for, evaluating what is produced, and refining in the direction of something better. This is not lesser work, but it is different work. It requires taste, context, ethics, and accountability in ways that current AI cannot replicate reliably. The curator, the editor, the director — these roles become more central even as the raw labor of production is automated away.</p>
 
-            <p><strong>Work as curation and direction.</strong> As AI becomes capable of generating outputs — text, images, code, analysis — the human role increasingly becomes one of judgment: deciding what to ask for, evaluating what is produced, and refining in the direction of something better. This is not lesser work, but it is different work. It requires taste, context, ethics, and accountability in ways that current AI cannot replicate reliably. The curator, the editor, the director — these roles become more central even as the raw labor of production is automated away.</p>
+                <p><strong>Work as relationship.</strong> There is a category of human activity that AI can simulate but not truly replace: genuine human connection. Teaching, caregiving, therapy, mentorship, community leadership — work whose value lies partly in the fact that it is done by a human being who is present, accountable, and emotionally invested. As economic necessity around labor loosens, work in this category may be revalued rather than devalued.</p>
 
-            <p><strong>Work as relationship.</strong> There is a category of human activity that AI can simulate but not truly replace: genuine human connection. Teaching, caregiving, therapy, mentorship, community leadership — work whose value lies partly in the fact that it is done by a human being who is present, accountable, and emotionally invested. As economic necessity around labor loosens, work in this category may be revalued rather than devalued.</p>
+                <p><strong>Work as contribution.</strong> Perhaps the most radical reframing is one in which work decouples from employment entirely. Open-source software development, volunteer organizations, community journalism, artistic creation — these are productive activities that generate real social value but often produce no paycheck. In a world where AI handles much of the formally remunerated work, the boundaries between work, hobby, volunteering, and civic participation may begin to collapse into a broader category of contribution.</p>
 
-            <p><strong>Work as contribution.</strong> Perhaps the most radical reframing is one in which work decouples from employment entirely. Open-source software development, volunteer organizations, community journalism, artistic creation — these are productive activities that generate real social value but often produce no paycheck. In a world where AI handles much of the formally remunerated work, the boundaries between work, hobby, volunteering, and civic participation may begin to collapse into a broader category of contribution.</p>
+                <p><strong>Work as craft.</strong> The mass production of goods did not eliminate the desire for handmade, artisan products — it elevated them. Something similar may happen with cognitive and creative labor. In a world flooded with AI-generated content, the demonstrably human — the work that bears the unmistakable marks of individual effort, struggle, and intention — may become more rather than less valued.</p>
 
-            <p><strong>Work as craft.</strong> The mass production of goods did not eliminate the desire for handmade, artisan products — it elevated them. Something similar may happen with cognitive and creative labor. In a world flooded with AI-generated content, the demonstrably human — the work that bears the unmistakable marks of individual effort, struggle, and intention — may become more rather than less valued.</p>
+                <hr>
 
-            <hr>
+                <h2>The Politics of a Redefined Work</h2>
 
-            <h2>The Politics of a Redefined Work</h2>
+                <p>In 1932, Bertrand Russell made a deceptively simple argument in his essay <em>In Praise of Idleness</em>. He observed that when new technology made production more efficient, there were essentially two choices: society could distribute the gains broadly, giving everyone more leisure, or it could keep the same number of people working the same long hours while concentrating the surplus at the top. He noted, with dry precision, that modern societies had consistently chosen the latter. Nearly a century later, with technology incomparably more powerful, the same choice is before us again — and the same forces are pushing in the same direction.</p>
 
-            <p>In 1932, Bertrand Russell made a deceptively simple argument in his essay <em style="all:unset; font-style:italic;">In Praise of Idleness</em>. He observed that when new technology made production more efficient, there were essentially two choices: society could distribute the gains broadly, giving everyone more leisure, or it could keep the same number of people working the same long hours while concentrating the surplus at the top. He noted, with dry precision, that modern societies had consistently chosen the latter. Nearly a century later, with technology incomparably more powerful, the same choice is before us again — and the same forces are pushing in the same direction.</p>
+                <p>The critical political question about AI is not which jobs it will replace. It is who owns the machines.</p>
 
-            <p>The critical political question about AI is not which jobs it will replace. It is who owns the machines.</p>
+                <p>When a factory replaces ten workers with a robot, the value those ten workers used to produce does not disappear. It is redirected — upward, to the shareholders who own the robot. The workers are told this is the price of progress. And in a narrow sense it is: the goods become cheaper, and consumers benefit. But the worker who is displaced does not simply become a cheaper consumer. He becomes, in Russell's terms, a man whose contribution to the world has been rendered unnecessary — and who is offered nothing in exchange for that loss except the instruction to find new work, which may not exist, or to accept that his idleness is his own failure.</p>
 
-            <p>When a factory replaces ten workers with a robot, the value those ten workers used to produce does not disappear. It is redirected — upward, to the shareholders who own the robot. The workers are told this is the price of progress. And in a narrow sense it is: the goods become cheaper, and consumers benefit. But the worker who is displaced does not simply become a cheaper consumer. He becomes, in Russell's terms, a man whose contribution to the world has been rendered unnecessary — and who is offered nothing in exchange for that loss except the instruction to find new work, which may not exist, or to accept that his idleness is his own failure.</p>
+                <p>AI is poised to perform this trick at a scale that makes the factory robot look modest. The companies building and deploying AI are among the most highly capitalized in human history. The productivity gains they are generating are real and enormous. But the structure of ownership ensures that those gains flow overwhelmingly to a small number of people: investors, founders, and a thin layer of highly skilled workers whose expertise remains scarce enough to command a premium. Everyone else — the paralegal, the graphic designer, the analyst, the driver — is handed a pink slip and the advice to reskill.</p>
 
-            <p>AI is poised to perform this trick at a scale that makes the factory robot look modest. The companies building and deploying AI are among the most highly capitalized in human history. The productivity gains they are generating are real and enormous. But the structure of ownership ensures that those gains flow overwhelmingly to a small number of people: investors, founders, and a thin layer of highly skilled workers whose expertise remains scarce enough to command a premium. Everyone else — the paralegal, the graphic designer, the analyst, the driver — is handed a pink slip and the advice to reskill.</p>
+                <p>Russell's insight was that the worship of work for its own sake has always served the powerful more than the workers. If people believe that labor is inherently virtuous and idleness is shameful, they will accept wages below what the productivity of their labor actually warrants. They will compete against each other out of fear. They will not ask why, if a machine can now do the work of ten people, those ten people are still expected to work full hours for diminishing pay rather than simply working less. The moral glorification of work is, among other things, a remarkably effective mechanism of control.</p>
 
-            <p>Russell's insight was that the worship of work for its own sake has always served the powerful more than the workers. If people believe that labor is inherently virtuous and idleness is shameful, they will accept wages below what the productivity of their labor actually warrants. They will compete against each other out of fear. They will not ask why, if a machine can now do the work of ten people, those ten people are still expected to work full hours for diminishing pay rather than simply working less. The moral glorification of work is, among other things, a remarkably effective mechanism of control.</p>
+                <p>AI stress-tests this mechanism to its breaking point. When the machine does not merely assist human labor but replaces it wholesale, the old justification — that hard work is rewarded — loses its empirical foundation. You cannot bootstrap your way out of structural redundancy. The self-made narrative, already strained by decades of rising inequality, may become simply unsustainable when the primary cause of your unemployment is an algorithm owned by a handful of corporations.</p>
 
-            <p>AI stress-tests this mechanism to its breaking point. When the machine does not merely assist human labor but replaces it wholesale, the old justification — that hard work is rewarded — loses its empirical foundation. You cannot bootstrap your way out of structural redundancy. The self-made narrative, already strained by decades of rising inequality, may become simply unsustainable when the primary cause of your unemployment is an algorithm owned by a handful of corporations.</p>
+                <p>The political consequence is not simply that people will be angry, though they will be. It is that the ideological scaffolding that has made extreme inequality politically tolerable — the belief that the system is meritocratic, that effort is rewarded, that the gap between rich and poor reflects something real about relative contribution — will collapse. And when ideological scaffolding collapses, what replaces it is unpredictable.</p>
 
-            <p>The political consequence is not simply that people will be angry, though they will be. It is that the ideological scaffolding that has made extreme inequality politically tolerable — the belief that the system is meritocratic, that effort is rewarded, that the gap between rich and poor reflects something real about relative contribution — will collapse. And when ideological scaffolding collapses, what replaces it is unpredictable.</p>
+                <p>Russell imagined a different possibility. If machines can produce what we need with less human labor, we could simply choose to work less. A four-hour day. A three-day week. A life in which the time freed by technology is returned to the people whose labor originally built the civilization that made the technology possible. Not as charity. Not as welfare. As the natural dividend of collective human progress.</p>
 
-            <p>Russell imagined a different possibility. If machines can produce what we need with less human labor, we could simply choose to work less. A four-hour day. A three-day week. A life in which the time freed by technology is returned to the people whose labor originally built the civilization that made the technology possible. Not as charity. Not as welfare. As the natural dividend of collective human progress.</p>
+                <p>That this seems utopian, or even faintly absurd, tells us something important about the ideology we inhabit. We have been so thoroughly persuaded that the purpose of productivity is the accumulation of capital — rather than the liberation of time — that the straightforward arithmetic of "machines do more work, humans do less" barely registers as a policy option. Instead, the dominant response to automation has been to demand that displaced workers find new work as quickly as possible, to keep the labor market fluid, to avoid at all costs the impression that anyone is getting something for nothing.</p>
 
-            <p>That this seems utopian, or even faintly absurd, tells us something important about the ideology we inhabit. We have been so thoroughly persuaded that the purpose of productivity is the accumulation of capital — rather than the liberation of time — that the straightforward arithmetic of "machines do more work, humans do less" barely registers as a policy option. Instead, the dominant response to automation has been to demand that displaced workers find new work as quickly as possible, to keep the labor market fluid, to avoid at all costs the impression that anyone is getting something for nothing.</p>
+                <p>The men in power — and they remain, overwhelmingly, men — understand perfectly well what is at stake. The same CEOs who speak publicly about AI's potential to free humans from drudgery are simultaneously deploying that AI to reduce headcount and increase margins. The same politicians who warn about AI's risks to employment will accept the lobbying money of AI companies without discomfort. The incentive structure is not mysterious: those who own the technology benefit from its deployment regardless of what happens to everyone else, and they have every reason to ensure that the political system continues to reflect that reality.</p>
 
-            <p>The men in power — and they remain, overwhelmingly, men — understand perfectly well what is at stake. The same CEOs who speak publicly about AI's potential to free humans from drudgery are simultaneously deploying that AI to reduce headcount and increase margins. The same politicians who warn about AI's risks to employment will accept the lobbying money of AI companies without discomfort. The incentive structure is not mysterious: those who own the technology benefit from its deployment regardless of what happens to everyone else, and they have every reason to ensure that the political system continues to reflect that reality.</p>
+                <p>None of this is inevitable. Technology is not fate. A society that chose to could tax the productivity gains of AI and return them as reduced working hours, universal income, or expanded public goods. It could regulate the deployment of AI in ways that prioritize human welfare over shareholder returns. It could decide that leisure — the freedom to think, to create, to raise children, to engage in civic life, to simply rest — is not a luxury or a failure but the entire point.</p>
 
-            <p>None of this is inevitable. Technology is not fate. A society that chose to could tax the productivity gains of AI and return them as reduced working hours, universal income, or expanded public goods. It could regulate the deployment of AI in ways that prioritize human welfare over shareholder returns. It could decide that leisure — the freedom to think, to create, to raise children, to engage in civic life, to simply rest — is not a luxury or a failure but the entire point.</p>
+                <p>Russell believed that a world of less work and more leisure was not a threat to human flourishing but its prerequisite. That most of what we recognize as civilization — philosophy, art, science, democratic participation — was produced not by exhausted laborers but by people with time to think. The coming of AI does not make this vision less relevant. It makes it, for the first time in history, genuinely achievable. The only question is whether the people who control the technology will allow it.</p>
 
-            <p>Russell believed that a world of less work and more leisure was not a threat to human flourishing but its prerequisite. That most of what we recognize as civilization — philosophy, art, science, democratic participation — was produced not by exhausted laborers but by people with time to think. The coming of AI does not make this vision less relevant. It makes it, for the first time in history, genuinely achievable. The only question is whether the people who control the technology will allow it.</p>
+                <hr>
 
-            <hr>
+                <h2>What We Choose to Preserve</h2>
 
-            <h2>What We Choose to Preserve</h2>
+                <p>The deepest political and cultural question is not economic but philosophical: what aspects of work do we want to preserve even when we no longer have to do them?</p>
 
-            <p>The deepest political and cultural question is not economic but philosophical: what aspects of work do we want to preserve even when we no longer have to do them?</p>
+                <p>Societies will have to make choices — not always consciously or collectively, but choices nonetheless — about which kinds of human effort they wish to honor and sustain. If AI can write competent journalism, do we still fund human journalists? If AI can compose technically flawless music, do we still value the human composer? If AI can diagnose illness more accurately than a doctor, do we still want a human in the room?</p>
 
-            <p>Societies will have to make choices — not always consciously or collectively, but choices nonetheless — about which kinds of human effort they wish to honor and sustain. If AI can write competent journalism, do we still fund human journalists? If AI can compose technically flawless music, do we still value the human composer? If AI can diagnose illness more accurately than a doctor, do we still want a human in the room?</p>
+                <p>Most people, if asked directly, say yes — they want the human. But they also want the cheaper flight and the faster diagnosis and the instant customer service. The contradiction between these preferences will play out across markets, regulations, cultural norms, and eventually ballot boxes.</p>
 
-            <p>Most people, if asked directly, say yes — they want the human. But they also want the cheaper flight and the faster diagnosis and the instant customer service. The contradiction between these preferences will play out across markets, regulations, cultural norms, and eventually ballot boxes.</p>
+                <p>The new definition of work is not yet written. It is being written now, in the choices we make about what to automate and what to protect, in the policies we enact and the ones we fail to enact, in the stories we tell about what makes a life meaningful.</p>
 
-            <p>The new definition of work is not yet written. It is being written now, in the choices we make about what to automate and what to protect, in the policies we enact and the ones we fail to enact, in the stories we tell about what makes a life meaningful.</p>
+                <p>Work has always been, at its core, a story humans tell about their place in the world. The machines are forcing us to tell a new one. The question is whether we tell it deliberately, or simply let it be written for us.</p>
 
-            <p>Work has always been, at its core, a story humans tell about their place in the world. The machines are forcing us to tell a new one. The question is whether we tell it deliberately, or simply let it be written for us.</p>
+                <hr>
 
-            <hr>
+                <blockquote>
+                    A closing note worth making: this article was written by an AI. Which means that somewhere in the argument above — about displaced workers, the ownership of machines, and whether technology liberates or merely enriches — a human being sat down, had a thought, and asked a machine to help them express it. Whether that counts as work, collaboration, authorship, or something we don't have a word for yet is, perhaps, exactly the question this article was trying to ask.
+                </blockquote>
 
-            <em>A closing note worth making: this article was written by an AI. Which means that somewhere in the argument above — about displaced workers, the ownership of machines, and whether technology liberates or merely enriches — a human being sat down, had a thought, and asked a machine to help them express it. Whether that counts as work, collaboration, authorship, or something we don't have a word for yet is, perhaps, exactly the question this article was trying to ask.</em>
+            </div>
 
-        </div>
+            <div class="author-box">
+                <h3>About the Author</h3>
+                <p>Andisheh Ghasemi is a PhD student at Northeastern University researching theoretical computer science.</p>
+                <div class="author-links">
+                    <a href="../index.html">Main Site</a>
+                    <a href="../writing.html">More Articles</a>
+                    <a href="../index.html#contact">Contact</a>
+                </div>
+            </div>
+        </article>
 
-        <footer>
-            <p>© 2026 <a href="../index.html">Andisheh Ghasemi</a> · <a href="../writing.html">Back to Writing</a></p>
-        </footer>
+        <nav class="navigation">
+            <a href="../writing.html" class="nav-link">← Back to Writing</a>
+            <a href="math-objects-humans.html" class="nav-link">Probability & Surprising Stories →</a>
+        </nav>
     </div>
 
     <script>
         function toggleTheme() {
-            const html = document.documentElement;
-            const btn = document.querySelector('.theme-toggle');
-            if (html.getAttribute('data-theme') === 'dark') {
-                html.removeAttribute('data-theme');
-                btn.textContent = '🌙 Dark';
-                localStorage.setItem('theme', 'light');
-            } else {
-                html.setAttribute('data-theme', 'dark');
-                btn.textContent = '☀️ Light';
-                localStorage.setItem('theme', 'dark');
-            }
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            localStorage.setItem('themeSetManually', 'true');
         }
 
-        // Load saved theme
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            document.querySelector('.theme-toggle').textContent = '☀️ Light';
-        }
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const wasSetManually = localStorage.getItem('themeSetManually');
+            if (!wasSetManually) {
+                const hour = new Date().getHours();
+                const autoTheme = (hour >= 19 || hour < 7) ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', autoTheme);
+            } else {
+                document.documentElement.setAttribute('data-theme', savedTheme || 'light');
+            }
+        })();
     </script>
 </body>
 </html>
