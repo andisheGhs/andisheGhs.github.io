@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Correlation Clustering — Paper Index</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:         #ffffff;
+            --surface:    #f7f7f8;
+            --border:     #e2e2e6;
+            --text:       #111112;
+            --muted:      #6b6b78;
+            --link:       #1a56db;
+            --header-bg:  #0f172a;
+            --header-text:#f8fafc;
+
+            --tag-offline-bg:   #e0edff; --tag-offline-t:  #1a4db5;
+            --tag-stream-bg:    #fef3c7; --tag-stream-t:   #92400e;
+            --tag-online-bg:    #d1fae5; --tag-online-t:   #065f46;
+            --tag-parallel-bg:  #fce7f3; --tag-parallel-t: #9d174d;
+            --tag-la-bg:        #ecfeff; --tag-la-t:       #155e75;
+            --tag-lb-bg:        #fff1f2; --tag-lb-t:       #9f1239;
+            --tag-lp-bg:        #ede9fe; --tag-lp-t:       #5b21b6;
+            --tag-pivot-bg:     #f0fdf4; --tag-pivot-t:    #14532d;
+        }
+
+        [data-theme="dark"] {
+            --bg:         #0f172a;
+            --surface:    #1e293b;
+            --border:     #334155;
+            --text:       #f1f5f9;
+            --muted:      #94a3b8;
+            --link:       #60a5fa;
+            --header-bg:  #020617;
+            --header-text:#f8fafc;
+
+            --tag-offline-bg:   #1e3a6e; --tag-offline-t:  #93c5fd;
+            --tag-stream-bg:    #451a03; --tag-stream-t:   #fcd34d;
+            --tag-online-bg:    #022c22; --tag-online-t:   #6ee7b7;
+            --tag-parallel-bg:  #500724; --tag-parallel-t: #f9a8d4;
+            --tag-la-bg:        #083344; --tag-la-t:       #67e8f9;
+            --tag-lb-bg:        #4c0519; --tag-lb-t:       #fca5a5;
+            --tag-lp-bg:        #2e1065; --tag-lp-t:       #c4b5fd;
+            --tag-pivot-bg:     #052e16; --tag-pivot-t:    #86efac;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .site-header { background: var(--header-bg); color: var(--header-text); padding: 0 2rem; }
+        .site-header nav {
+            max-width: 1160px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between; height: 54px;
+        }
+        .home-link { font-weight: 600; font-size: 0.95rem; color: var(--header-text); text-decoration: none; opacity: 0.85; }
+        .home-link:hover { opacity: 1; }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-links a { color: var(--header-text); text-decoration: none; font-size: 0.875rem; opacity: 0.7; transition: opacity 0.15s; }
+        .nav-links a:hover, .nav-links a.active { opacity: 1; }
+        .theme-btn {
+            background: none; border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 6px; color: var(--header-text); padding: 4px 10px;
+            cursor: pointer; font-size: 0.8rem; opacity: 0.75; transition: opacity 0.15s;
+        }
+        .theme-btn:hover { opacity: 1; }
+
+        .breadcrumb { max-width: 1160px; margin: 1.4rem auto 0; padding: 0 2rem; font-size: 0.79rem; color: var(--muted); }
+        .breadcrumb a { color: var(--muted); text-decoration: none; }
+        .breadcrumb a:hover { color: var(--link); }
+        .breadcrumb span { margin: 0 0.35rem; }
+
+        .hero { max-width: 1160px; margin: 1.1rem auto 1.8rem; padding: 0 2rem; }
+        .hero h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
+        .hero p { margin-top: 0.55rem; color: var(--muted); font-size: 0.92rem; max-width: 680px; line-height: 1.75; }
+
+        .legend { max-width: 1160px; margin: 0 auto 1.2rem; padding: 0 2rem; display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; }
+        .legend .l { font-size: 0.73rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-right: 0.15rem; }
+
+        .controls { max-width: 1160px; margin: 0 auto 0.9rem; padding: 0 2rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+        .controls .lbl { font-size: 0.75rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        .filter-btn {
+            border: 1px solid var(--border); background: var(--bg); color: var(--text);
+            border-radius: 20px; padding: 4px 13px; font-size: 0.79rem; cursor: pointer; transition: all 0.15s;
+        }
+        .filter-btn:hover { background: var(--surface); }
+        .filter-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+        .search-wrap { margin-left: auto; }
+        #search {
+            border: 1px solid var(--border); background: var(--surface); color: var(--text);
+            border-radius: 6px; padding: 5px 12px; font-size: 0.84rem; width: 210px; outline: none; transition: border-color 0.15s;
+        }
+        #search:focus { border-color: var(--link); }
+        #search::placeholder { color: var(--muted); }
+
+        .stats { max-width: 1160px; margin: 0 auto 0.75rem; padding: 0 2rem; font-size: 0.8rem; color: var(--muted); }
+
+        .table-wrap { max-width: 1160px; margin: 0 auto 3.5rem; padding: 0 2rem; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.855rem; }
+        thead th {
+            text-align: left; padding: 9px 10px;
+            font-size: 0.73rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+            color: var(--muted); border-bottom: 2px solid var(--border); cursor: pointer; user-select: none; white-space: nowrap;
+        }
+        thead th:hover { color: var(--text); }
+        thead th .si { opacity: 0.35; margin-left: 3px; font-size: 0.62rem; }
+        thead th.sorted .si { opacity: 1; }
+
+        tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+        tbody tr:hover { background: var(--surface); }
+        tbody tr.hidden { display: none; }
+        td { padding: 11px 10px; vertical-align: top; }
+
+        .paper-title a { color: var(--text); text-decoration: none; font-weight: 500; line-height: 1.4; }
+        .paper-title a:hover { color: var(--link); text-decoration: underline; }
+        .paper-authors { margin-top: 3px; font-size: 0.77rem; color: var(--muted); }
+
+        .tag {
+            display: inline-block; border-radius: 4px; padding: 2px 7px;
+            font-size: 0.7rem; font-weight: 600; letter-spacing: 0.02em; white-space: nowrap; margin: 2px 2px 2px 0;
+        }
+        .tag-offline  { background: var(--tag-offline-bg);  color: var(--tag-offline-t);  }
+        .tag-stream   { background: var(--tag-stream-bg);   color: var(--tag-stream-t);   }
+        .tag-online   { background: var(--tag-online-bg);   color: var(--tag-online-t);   }
+        .tag-parallel { background: var(--tag-parallel-bg); color: var(--tag-parallel-t); }
+        .tag-la       { background: var(--tag-la-bg);       color: var(--tag-la-t);       }
+        .tag-lb       { background: var(--tag-lb-bg);       color: var(--tag-lb-t);       }
+        .tag-lp       { background: var(--tag-lp-bg);       color: var(--tag-lp-t);       }
+        .tag-pivot    { background: var(--tag-pivot-bg);    color: var(--tag-pivot-t);    }
+
+        .badges { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; }
+        .badge {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+            font-size: 0.75rem; background: var(--surface); border: 1px solid var(--border);
+            border-radius: 4px; padding: 2px 7px; color: var(--text); white-space: nowrap;
+        }
+        .note { font-size: 0.77rem; color: var(--muted); line-height: 1.5; margin-top: 3px; }
+        .year { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 0.82rem; white-space: nowrap; }
+
+        #no-results { display: none; text-align: center; padding: 3rem 2rem; color: var(--muted); font-size: 0.9rem; }
+
+        footer { border-top: 1px solid var(--border); padding: 1.4rem 2rem; text-align: center; font-size: 0.79rem; color: var(--muted); }
+        footer a { color: var(--muted); }
+
+        @media (max-width: 720px) {
+            .hero h1 { font-size: 1.35rem; }
+            td, thead th { padding: 8px 6px; }
+            #search { width: 140px; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <nav>
+        <a href="/" class="home-link">Andisheh Ghasemi</a>
+        <div class="nav-links">
+            <a href="/index.html#research">Research</a>
+            <a href="/writing.html">Writing</a>
+            <a href="#" class="active">CC Papers</a>
+            <button class="theme-btn" onclick="toggleTheme()" id="theme-btn">Dark</button>
+        </div>
+    </nav>
+</header>
+
+<div class="breadcrumb">
+    <a href="/">Home</a><span>›</span><a href="/index.html#research">Research</a><span>›</span>Correlation Clustering Papers
+</div>
+
+<div class="hero">
+    <h1>Correlation Clustering — Paper Index</h1>
+    <p>A structured reference of algorithmic results on correlation clustering, organized by year and annotated with approximation ratio, computational model, and technique. Use the filters to browse by setting.</p>
+</div>
+
+<div class="legend">
+    <span class="l">Setting:</span>
+    <span class="tag tag-offline">Offline</span>
+    <span class="tag tag-stream">Streaming</span>
+    <span class="tag tag-online">Online</span>
+    <span class="tag tag-parallel">Parallel / MPC</span>
+    <span class="tag tag-la">Learning-Augmented</span>
+    <span class="tag tag-lb">Lower Bound</span>
+    &nbsp;
+    <span class="l">Technique:</span>
+    <span class="tag tag-lp">LP-based</span>
+    <span class="tag tag-pivot">Pivot-based</span>
+</div>
+
+<div class="controls">
+    <span class="lbl">Filter</span>
+    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('offline',this)">Offline</button>
+    <button class="filter-btn" onclick="setFilter('stream',this)">Streaming</button>
+    <button class="filter-btn" onclick="setFilter('online',this)">Online</button>
+    <button class="filter-btn" onclick="setFilter('parallel',this)">Parallel</button>
+    <button class="filter-btn" onclick="setFilter('la',this)">Learning-Aug.</button>
+    <button class="filter-btn" onclick="setFilter('lb',this)">Lower Bounds</button>
+    <div class="search-wrap">
+        <input type="text" id="search" placeholder="Search title, author…" oninput="doSearch()">
+    </div>
+</div>
+
+<div class="stats" id="stats"></div>
+
+<div class="table-wrap">
+<table id="tbl">
+<thead>
+<tr>
+    <th onclick="sortCol(0)">Year<span class="si">↕</span></th>
+    <th onclick="sortCol(1)">Paper<span class="si">↕</span></th>
+    <th>Setting</th>
+    <th onclick="sortCol(3)">Approx / Result<span class="si">↕</span></th>
+    <th>Technique</th>
+    <th>Notes</th>
+</tr>
+</thead>
+<tbody id="tbody">
+
+<tr data-tags="offline" data-text="demaine 2006 logn arbitrary weights general weighted graphs">
+    <td class="year">2006</td>
+    <td>
+        <div class="paper-title"><a href="https://erikdemaine.org/papers/Clustering_TCS/paper.pdf" target="_blank">Correlation Clustering in General Weighted Graphs</a></div>
+        <div class="paper-authors">Demaine et al.</div>
+    </td>
+    <td><span class="tag tag-offline">Offline</span></td>
+    <td><div class="badges"><span class="badge">O(log n)</span></div></td>
+    <td>—</td>
+    <td class="note">Arbitrary edge weights; general (non-complete) graphs.</td>
+</tr>
+
+<tr data-tags="offline stream pivot" data-text="ailon charikar newman 2008 3 pivot aggregating inconsistent information ranking clustering insertion only random order">
+    <td class="year">2008</td>
+    <td>
+        <div class="paper-title"><a href="http://dimacs.rutgers.edu/~alantha/papers2/aggregating_journal.pdf" target="_blank">Aggregating Inconsistent Information: Ranking and Clustering</a></div>
+        <div class="paper-authors">Ailon, Charikar, Newman</div>
+    </td>
+    <td><span class="tag tag-offline">Offline</span> <span class="tag tag-stream">Streaming</span></td>
+    <td><div class="badges"><span class="badge">3</span></div></td>
+    <td><span class="tag tag-pivot">Pivot</span></td>
+    <td class="note">The Pivot algorithm — the baseline for all subsequent work. Extends to insertion-only streams in random-order arrival.</td>
+</tr>
+
+<tr data-tags="online lb" data-text="mathieu 2010 online omega n lower bound online correlation clustering">
+    <td class="year">2010</td>
+    <td>
+        <div class="paper-title"><a href="https://arxiv.org/pdf/1001.0920" target="_blank">Online Correlation Clustering</a></div>
+        <div class="paper-authors">Mathieu et al.</div>
+    </td>
+    <td><span class="tag tag-online">Online</span> <span class="tag tag-lb">Lower Bound</span></td>
+    <td><div class="badges"><span class="badge">Ω(n) lower bound</span></div></td>
+    <td>—</td>
+    <td class="note">No sublinear competitive ratio is achievable online: upon arrival, it is unknown whether an edge is part of a clique or a bridge between two cliques.</td>
+</tr>
+
+<tr data-tags="offline lp pivot" data-text="chawla makarychev schramm yaroslavtsev 2015 2.06 lp rounding near optimal complete k-partite pivot">
+    <td class="year">2015</td>
+    <td>
+        <div class="paper-title"><a href="https://arxiv.org/pdf/1412.0681" target="_blank">Near Optimal LP Rounding Algorithm for Correlation Clustering on Complete and Complete k-partite Graphs</a></div>
+        <div class="paper-authors">Chawla, Makarychev, Schramm, Yaroslavtsev</div>
+    </td>
+    <td><span class="tag tag-offline">Offline</span></td>
+    <td><div class="badges"><span class="badge">2.06</span></div></td>
+    <td><span class="tag tag-lp">LP</span> <span class="tag tag-pivot">Pivot</span></td>
+    <td class="note">LP rounded via pivot-based approach. All edges have ±1 weights. Best known poly-time result for over a decade.</td>
+</tr>
+
+<tr data-tags="parallel" data-text="cohen-addad 2021 o(1) constant parallel rounds linear time MPC">
+    <td class="year">2021</td>
+    <td>
+        <div class="paper-title"><a href="https://arxiv.org/pdf/2106.08448" target="_blank">Correlation Clustering in Constant Many Parallel Rounds</a></div>
+        <div class="paper-authors">Cohen-Addad et al.</div>
+    </td>
+    <td><span class="tag tag-parallel">Parallel / MPC</span></td>
+    <td><div class="badges"><span class="badge">O(1)</span></div></td>
+    <td>—</td>
+    <td class="note">Linear time; constant approximation in O(1) parallel rounds.</td>
+</tr>
+
+<tr data-tags="online pivot" data-text="lattanzi 2021 constant semi-online recourse robust online correlation clustering neurips pivot">
+    <td class="year">2021</td>
+    <td>
+        <div class="paper-title"><a href="https://proceedings.neurips.cc/paper_files/paper/2021/file/250dd56814ad7c50971ee4020519c6f5-Paper.pdf" target="_blank">Robust Online Correlation Clustering</a></div>
+        <div class="paper-authors">Lattanzi et al.</div>
+    </td>
+    <td><span class="tag tag-online">Online</span></td>
+    <td><div class="badges"><span class="badge">Constant</span></div></td>
+    <td><span class="tag tag-pivot">Pivot</span></td>
+    <td class="note">Semi-online model with O(1/ε) recourse per update. Studies robustness of Pivot under adversarial arrivals.</td>
+</tr>
+
+<tr data-tags="stream" data-text="ahn cormode guha mcgregor wirth 2021 1+epsilon dynamic single pass semi-streaming exponential time data streams">
+    <td class="year">2021</td>
+    <td>
+        <div class="paper-title"><a href="https://arxiv.org/pdf/1812.02023" target="_blank">Correlation Clustering in Data Streams</a></div>
+        <div class="paper-authors">Ahn, Cormode, Guha, McGregor, Wirth</div>
+    </td>
+    <td><span class="tag tag-stream">Streaming</span></td>
+    <td><div class="badges"><span class="badge">1 + ε</span></div></td>
+    <td>—</td>
+    <td class="note">Dynamic, single-pass, semi-streaming (Õ(n) space). Exponential time. Near-optimal approximation ratio in streaming.</td>
+</tr>
+
+<tr data-tags="offline" data-text="assadi 2022 constant sublinear time random sampling neighbors">
+    <td class="year">2022</td>
+    <td>
+        <div class="paper-title"><a href="#" target="_blank">Sublinear-Time Correlation Clustering via Random Sampling</a></div>
+        <div class="paper-authors">Assadi et al.</div>
+    </td>
+    <td><span class="tag tag-offline">Offline</span></td>
+    <td><div class="badges"><span class="badge">O(1)</span></div></td>
+    <td>—</td>
+    <td class="note">Sublinear time via random sampling of vertex neighborhoods. Link TBD.</td>
+</tr>
+
+<tr data-tags="parallel" data-text="behnezhad charikar ma tan 2022 3+epsilon almost 3-approximate constant rounds MPC focs">
+    <td class="year">2022</td>
+    <td>
+        <div class="paper-title"><a href="https://arxiv.org/pdf/2205.03710" target="_blank">Almost 3-Approximate Correlation Clustering in Constant Rounds</a></div>
+        <div class="paper-authors">Behnezhad, Charikar, Ma, Tan</div>
+    </td>
+    <td><span class="tag tag-parallel">Parallel / MPC</span></td>
+    <td><div class="badges"><span class="badge">3 + ε</span></div></td>
+    <td>—</td>
+    <td class="note">O(1/ε) parallel rounds; breaks the sequential Pivot bottleneck in the MPC model.</td>
+</tr>
+
+<tr data-tags="online" data-text="cohen-addad 2022 constant online recourse consistent icml online and consistent correlation clustering">
+    <td class="year">2022</td>
+    <td>
+        <div class="paper-title"><a href="https://proceedings.mlr.press/v162/cohen-addad22a/cohen-addad22a.pdf" target="_blank">Online and Consistent Correlation Clustering</a></div>
+        <div class="paper-authors">Cohen-Addad et al.</div>
+    </td>
+    <td><span class="tag tag-online">Online</span></td>
+    <td><div class="badges"><span class="badge">Constant</span></div></td>
+    <td>—</td>
+    <td class="note">Online with recourse; guarantees consistency between consecutive clusterings as the input evolves.</td>
+</tr>
+
+<tr data-tags="stream lb" data-text="assadi 2023 streaming polylogn bits space estimating cost lower bound neurips not find clustering">
+    <td class="year">2023</td>
+    <td>
+        <div class="paper-title"><a href="https://proceedings.neurips.cc/paper_files/paper/2023/file/ee1a1ecc92f35702b5c29dad3dc909ea-Paper-Conference.pdf" target="_blank">Streaming Algorithms and Lower Bounds for Estimating Correlation Clustering Cost</a></div>
+        <div class="paper-authors">Assadi et al.</div>
+    </td>
+    <td><span class="tag tag-stream">Streaming</span> <span class="tag tag-lb">Lower Bound</span></td>
+    <td><div class="badges"><span class="badge">cost estimation only</span></div></td>
+    <td>—</td>
+    <td class="note">Uses polylog(n) bits of space to estimate the clustering cost — does <em>not</em> find the clustering itself. Includes matching lower bounds.</td>
+</tr>
+
+<tr data-tags="stream" data-text="behnezhad 2023 5 single-pass streaming soda">
+    <td class="year">2023</td>
+    <td>
+        <div class="paper-title"><a href="https://epubs.siam.org/doi/epdf/10.1137/1.9781611977554.ch33" target="_blank">Single-Pass Streaming Algorithms for Correlation Clustering</a></div>
+        <div class="paper-authors">Behnezhad et al.</div>
+    </td>
+    <td><span class="tag tag-stream">Streaming</span></td>
+    <td><div class="badges"><span class="badge">5</span></div></td>
+    <td>—</td>
+    <td class="note">Single-pass streaming; 5-approximation.</td>
+</tr>
+
+<tr data-tags="stream pivot" data-text="chakrabarty 2023 3+epsilon insertion only single pass pivot keep it simple">
+    <td class="year">2023</td>
+    <td>
+        <div class="paper-title"><a href="https://arxiv.org/pdf/2305.13560" target="_blank">Single-Pass Pivot Algorithm for Correlation Clustering. Keep it Simple!</a></div>
+        <div class="paper-authors">Chakrabarty et al.</div>
+    </td>
+    <td><span class="tag tag-stream">Streaming</span></td>
+    <td><div class="badges"><span class="badge">3 + ε</span></div></td>
+    <td><span class="tag tag-pivot">Pivot</span></td>
+    <td class="note">Insertion-only, single pass. Pivot-based; simple and practical.</td>
+</tr>
+
+<tr data-tags="offline lp" data-text="cohen-addad 2023 1.73 preclustering correlated rounding LP approximation">
+    <td class="year">2023</td>
+    <td>
+        <div class="paper-title"><a href="https://arxiv.org/pdf/2309.17243" target="_blank">Handling Correlated Rounding Error via Preclustering: A 1.73-Approximation for Correlation Clustering</a></div>
+        <div class="paper-authors">Cohen-Addad et al.</div>
+    </td>
+    <td><span class="tag tag-offline">Offline</span></td>
+    <td><div class="badges"><span class="badge">1.73</span></div></td>
+    <td><span class="tag tag-lp">LP</span></td>
+    <td class="note">LP-based; O(n<sup>1/ε<sup>O(1)</sup></sup>) time. Introduces preclustering to handle correlated rounding errors.</td>
+</tr>
+
+<tr data-tags="stream" data-text="behnezhad 2023 1+epsilon dynamic single pass semi-streaming exponential time streaming">
+    <td class="year">2023</td>
+    <td>
+        <div class="paper-title"><a href="#" target="_blank">Streaming Correlation Clustering with 1+ε Approximation</a></div>
+        <div class="paper-authors">Behnezhad et al.</div>
+    </td>
+    <td><span class="tag tag-stream">Streaming</span></td>
+    <td><div class="badges"><span class="badge">1 + ε</span></div></td>
+    <td>—</td>
+    <td class="note">Dynamic, single-pass, semi-streaming; exponential runtime. Link TBD.</td>
+</tr>
+
+<tr data-tags="stream" data-text="cambus dory goldenberg trabelsi 2024 3+epsilon dynamic single pass streaming">
+    <td class="year">2024</td>
+    <td>
+        <div class="paper-title"><a href="https://arxiv.org/pdf/2205.07593" target="_blank">A (3+ε)-Approximate Correlation Clustering Algorithm in Dynamic Streams</a></div>
+        <div class="paper-authors">Cambus, Dory, Goldenberg, Trabelsi</div>
+    </td>
+    <td><span class="tag tag-stream">Streaming</span></td>
+    <td><div class="badges"><span class="badge">3 + ε</span></div></td>
+    <td>—</td>
+    <td class="note">Dynamic streams (insertions and deletions), single pass.</td>
+</tr>
+
+<tr data-tags="parallel lp" data-text="cao 2024 2.4 lp polylogarithmic rounds breaking 3-factor approximation">
+    <td class="year">2024</td>
+    <td>
+        <div class="paper-title"><a href="https://arxiv.org/pdf/2307.06723" target="_blank">Breaking 3-Factor Approximation for Correlation Clustering in Polylogarithmic Rounds</a></div>
+        <div class="paper-authors">Cao et al.</div>
+    </td>
+    <td><span class="tag tag-parallel">Parallel / MPC</span></td>
+    <td><div class="badges"><span class="badge">2.4</span></div></td>
+    <td><span class="tag tag-lp">LP</span></td>
+    <td class="note">LP-based; runs in O(m<sup>7.5</sup>) time. First result breaking the 3-approximation barrier in polylogarithmic parallel rounds.</td>
+</tr>
+
+<tr data-tags="offline lp" data-text="cao 2024 1.437 lp rounding integrality gap cluster linear program understanding stoc">
+    <td class="year">2024</td>
+    <td>
+        <div class="paper-title"><a href="https://dl.acm.org/doi/pdf/10.1145/3618260.3649749" target="_blank">Understanding the Cluster Linear Program for Correlation Clustering</a></div>
+        <div class="paper-authors">Cao et al.</div>
+    </td>
+    <td><span class="tag tag-offline">Offline</span></td>
+    <td><div class="badges"><span class="badge">1.437</span></div></td>
+    <td><span class="tag tag-lp">LP</span></td>
+    <td class="note">LP-based rounding; integrality gap of 4/3. Significant advance in offline approximability.</td>
+</tr>
+
+<tr data-tags="offline" data-text="cohen-addad 2024 2-2/13 local search combinatorial correlation clustering">
+    <td class="year">2024</td>
+    <td>
+        <div class="paper-title"><a href="https://arxiv.org/pdf/2404.05433" target="_blank">Combinatorial Correlation Clustering</a></div>
+        <div class="paper-authors">Cohen-Addad et al.</div>
+    </td>
+    <td><span class="tag tag-offline">Offline</span></td>
+    <td><div class="badges"><span class="badge">2 − 2/13 + ε</span></div></td>
+    <td>—</td>
+    <td class="note">Local-search based; no LP required. Breaks the 2-approximation barrier combinatorially.</td>
+</tr>
+
+<tr data-tags="stream" data-text="cohen-addad 2024 1.847 insertion only streams combinatorial streaming">
+    <td class="year">2024</td>
+    <td>
+        <div class="paper-title"><a href="https://arxiv.org/pdf/2404.05433" target="_blank">Combinatorial Correlation Clustering (Streaming)</a></div>
+        <div class="paper-authors">Cohen-Addad et al.</div>
+    </td>
+    <td><span class="tag tag-stream">Streaming</span></td>
+    <td><div class="badges"><span class="badge">1.847</span></div></td>
+    <td>—</td>
+    <td class="note">Insertion-only streams. Best known approximation for streaming CC to date.</td>
+</tr>
+
+<tr data-tags="stream la lp pivot" data-text="dong iclr 2025 learning augmented streaming min 2.06 beta 3 epsilon insertion only single pass lp pivot good prediction worst case">
+    <td class="year">2025</td>
+    <td>
+        <div class="paper-title"><a href="https://openreview.net/pdf?id=QSTv4os59f" target="_blank">Learning-Augmented Streaming Algorithms for Correlation Clustering</a></div>
+        <div class="paper-authors">Dong et al.</div>
+    </td>
+    <td><span class="tag tag-stream">Streaming</span> <span class="tag tag-la">Learning-Aug.</span></td>
+    <td><div class="badges"><span class="badge">min{2.06β, 3} + ε</span></div></td>
+    <td><span class="tag tag-lp">LP</span> <span class="tag tag-pivot">Pivot</span></td>
+    <td class="note">
+        Two variants: <em>insertion-only</em> and <em>dynamic</em>, both single-pass.
+        Uses ML-predicted pairwise distances (β = prediction quality). Achieves better-than-3 with good predictions; degrades gracefully to Pivot otherwise.
+        <em>ICLR 2025.</em>
+    </td>
+</tr>
+
+</tbody>
+</table>
+<div id="no-results">No papers match the current filter or search.</div>
+</div>
+
+<footer>
+    <a href="/">andishehghasemi.com</a> · Last updated February 2026 · Based on known results as of 2025
+</footer>
+
+<script>
+function toggleTheme() {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.documentElement.setAttribute('data-theme', dark ? '' : 'dark');
+    document.getElementById('theme-btn').textContent = dark ? 'Dark' : 'Light';
+    localStorage.setItem('theme', dark ? 'light' : 'dark');
+}
+(function(){
+    const t = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    if (t === 'dark') {
+        document.documentElement.setAttribute('data-theme','dark');
+        document.addEventListener('DOMContentLoaded', () => {
+            const b = document.getElementById('theme-btn');
+            if (b) b.textContent = 'Light';
+        });
+    }
+})();
+
+let currentFilter = 'all', currentSearch = '';
+
+function setFilter(f, btn) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    apply();
+}
+function doSearch() {
+    currentSearch = document.getElementById('search').value.toLowerCase();
+    apply();
+}
+function apply() {
+    const rows = document.querySelectorAll('#tbody tr');
+    let visible = 0;
+    rows.forEach(row => {
+        const tags = (row.dataset.tags || '').split(' ');
+        const text = (row.dataset.text || '') + ' ' + row.textContent.toLowerCase();
+        const mf = currentFilter === 'all' || tags.includes(currentFilter);
+        const ms = !currentSearch || text.includes(currentSearch);
+        if (mf && ms) { row.classList.remove('hidden'); visible++; }
+        else row.classList.add('hidden');
+    });
+    document.getElementById('no-results').style.display = visible === 0 ? 'block' : 'none';
+    const total = rows.length;
+    document.getElementById('stats').textContent = visible === total
+        ? `Showing all ${total} papers`
+        : `Showing ${visible} of ${total} papers`;
+}
+
+let _col = -1, _asc = true;
+function sortCol(c) {
+    if (_col === c) _asc = !_asc; else { _col = c; _asc = true; }
+    const tbody = document.getElementById('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    rows.sort((a, b) => {
+        const ta = a.cells[c]?.textContent.trim() || '';
+        const tb = b.cells[c]?.textContent.trim() || '';
+        return _asc ? ta.localeCompare(tb, undefined, {numeric:true})
+                    : tb.localeCompare(ta, undefined, {numeric:true});
+    });
+    rows.forEach(r => tbody.appendChild(r));
+    document.querySelectorAll('thead th').forEach((th, i) => {
+        th.classList.toggle('sorted', i === c);
+        const s = th.querySelector('.si');
+        if (s) s.textContent = i === c ? (_asc ? '↑' : '↓') : '↕';
+    });
+    apply();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    apply();
+    document.getElementById('search').addEventListener('keydown', e => {
+        if (e.key === 'Escape') { e.target.value = ''; doSearch(); }
+    });
+});
+</script>
+</body>
+</html>
